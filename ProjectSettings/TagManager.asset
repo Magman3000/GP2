@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - SoundSystem
+  - MainMenu
+  - CreditsMenu
+  - OptionsMenu
   layers:
   - Default
   - TransparentFX

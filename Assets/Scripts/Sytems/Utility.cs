@@ -7,26 +7,40 @@ using UnityEngine;
 namespace MyUtility { 
     public class Utility {
 
+        public enum ValidationLevel {
+            DEBUG,
+            WARNING,
+            ERROR
+        }
+
         public static void Log(object mesage) {
-            Debug.Log(mesage);
+            Debug.Log("[" + Time.frameCount + "]\t" + mesage);
         }
         public static void Warning(object mesage) {
-            Debug.LogWarning(mesage);
+            Debug.LogWarning("[" + Time.frameCount + "]\t" + mesage);
         }
         public static void Error(object mesage) {
-            Debug.LogError(mesage);
+            Debug.LogError("[" + Time.frameCount + "]\t" + mesage);
+        }
+
+        public static bool Validate(object target, string message, ValidationLevel level = ValidationLevel.DEBUG, bool abortOnFail = false) {
+            if (target != null)
+                return true;
+
+            if (level == ValidationLevel.DEBUG)
+                Log(message);
+            else if (level == ValidationLevel.WARNING)
+                Warning(message);
+            else if (level == ValidationLevel.ERROR)
+                Error(message);
+
+            if (abortOnFail)
+                GameInstance.AbortApplication();
+
+            return false;
         }
 
 
-        public static void AbortApplication(object message) {
 
-#if UNITY_EDITOR
-            EditorApplication.isPlaying = false;
-            Error(message);
-#else
-    Application.Quit();
-
-#endif
-        }
     }
 }
