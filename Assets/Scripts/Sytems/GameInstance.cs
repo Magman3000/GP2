@@ -295,7 +295,7 @@ public class GameInstance : MonoBehaviour {
 
     //State Update
     private void UpdateStatelessSystems() {
-        //soundSystemScript.Tick();
+        soundSystemScript.Tick();
     }
     private void UpdateMainMenuState() {
 

@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 94c3c60189e2f124eae0c3a991690fa7
   m_currentHash:
     serializedVersion: 2
-    Hash: f05434b7ecd191c6c1601265bd839454
+    Hash: 9970f21d28c21a71e1fa0bdab8464b8c
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_BundleLocalCatalog: 0
@@ -46,6 +46,7 @@ MonoBehaviour:
   m_GroupAssets:
   - {fileID: 11400000, guid: fa21900f018229e458236f868f650765, type: 2}
   - {fileID: 11400000, guid: 904d72b9683747942a0fb0574d1e65d8, type: 2}
+  - {fileID: 11400000, guid: 8577243484eb39d4dbdb104ddf8f710c, type: 2}
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
     m_CleanupStreamingAssetsAfterBuilds: 1
@@ -94,6 +95,8 @@ MonoBehaviour:
     - MainMenu
     - OptionsMenu
     - CreditsMenu
+    - SFXBundle
+    - TracksBundle
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 2757415009693904f94a56e08552bb60, type: 2}
