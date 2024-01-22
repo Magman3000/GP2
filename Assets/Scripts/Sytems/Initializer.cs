@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -5,9 +6,10 @@ using UnityEngine.SceneManagement;
 namespace Initialization {
     public class Initializer {
 
-        [RuntimeInitializeOnLoadMethod]
-        public static void InitializeGame() {
+        //TODO: Load GameInstance using addressables
 
+        [RuntimeInitializeOnLoadMethod]
+        private static void InitializeGame() {
             var resource = Resources.Load<GameObject>("GameInstance");
             GameObject game = Object.Instantiate(resource);
             Object.DontDestroyOnLoad(game);
@@ -17,5 +19,8 @@ namespace Initialization {
 
            //ceneManager.GetSceneAt(0).GetRootGameObjects()[0].
         }
+
+
+
     }
 }

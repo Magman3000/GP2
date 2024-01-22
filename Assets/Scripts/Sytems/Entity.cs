@@ -2,6 +2,7 @@ using MyUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static MyUtility.Utility;
 
 public abstract class Entity : MonoBehaviour {
 
@@ -27,13 +28,16 @@ public abstract class Entity : MonoBehaviour {
     /// <para>  -Check if 'initialized' is TRUE at start then return if it is FALSE and print a message using Utility.Error  </para>
     /// </summary>
     public virtual void FixedTick() {
-        Debug.LogWarning("Fixed tick called on an entity that does not provide implementation for FixedTick!");
+        Warning("Fixed tick called on an entity that does not provide implementation for FixedTick!");
     }
 
     /// <summary>
     /// Called to clean up resources allocated by this entity.
     /// </summary>
-    public virtual void CleanUp() {
-        Utility.Log(name + " cleaned up successfully!");
+    public virtual void CleanUp(string message = "Entity cleaned up successfully!") {
+        //The order of which Monobehaviors get destroyed is out of my control.
+        //-Thus i cannot use this.name.
+        if (GameInstance.showSystemMessages)
+            Log(message);
     }
 }

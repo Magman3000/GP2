@@ -9,6 +9,7 @@ using System.Xml.Serialization;
 using System;
 using UnityEngine.UIElements;
 using UnityEditor.VersionControl;
+using UnityEngine.SceneManagement;
 
 public class GameInstance : MonoBehaviour {
 
@@ -26,7 +27,7 @@ public class GameInstance : MonoBehaviour {
         PAUSED
     }
 
-    [SerializeField] private bool showSystemMessages = true;
+    [SerializeField] public static bool showSystemMessages = true;
 
 
     //Addressables Labels
@@ -41,14 +42,14 @@ public class GameInstance : MonoBehaviour {
 
 
 
-    private ApplicationStatus currentApplicationStatus = ApplicationStatus.ERROR;
-    private GameState currentGameState = GameState.ERROR;
+    public ApplicationStatus currentApplicationStatus = ApplicationStatus.ERROR;
+    public GameState currentGameState = GameState.ERROR;
 
 
 
-    private bool initialized = false;
-    private bool initializationInProgress = false;
-    private bool assetsLoadingInProgress = false;
+    public bool initialized = false;
+    public bool initializationInProgress = false;
+    public bool assetsLoadingInProgress = false;
 
     private AsyncOperationHandle<IList<GameObject>> loadedAssetsHandle;
 
@@ -88,7 +89,6 @@ public class GameInstance : MonoBehaviour {
 
     //ResourceManagment
     private void LoadAssets() {
-
         if (showSystemMessages)
             Log("Started Loading Assets!");
 
@@ -97,22 +97,6 @@ public class GameInstance : MonoBehaviour {
 
         loadedAssetsHandle = Addressables.LoadAssetsAsync<GameObject>("Essential", AssetLoadedCallback);
         loadedAssetsHandle.Completed += FinishedLoadingAssetsCallback;
-    }
-
-
-
-    private bool FinishedLoadingAssets() {
-
-        if (loadedAssetsHandle.Status == AsyncOperationStatus.Succeeded) {
-            assetsLoadingInProgress = false;
-            return true;
-        }
-        else if (loadedAssetsHandle.Status == AsyncOperationStatus.Failed) {
-            AbortApplication("Failed to load assets!");
-            return false;
-        }
-
-        return false;
     }
 
 
@@ -136,26 +120,26 @@ public class GameInstance : MonoBehaviour {
         //-Destroy gameobjects
         //-Release resources
 
-        playerScript.CleanUp();
-        mainCameraScript.CleanUp();
-        soundSystemScript.CleanUp();
+        playerScript.CleanUp("Player cleaned up successfully!");
+        mainCameraScript.CleanUp("MainCamera cleaned up successfully!");
+        soundSystemScript.CleanUp("SoundSystem cleaned up successfully!");
 
-
+        //Needed to guarantee destruction of all entities before attempting to release resources.
         ValidateAndDestroy(player);
         ValidateAndDestroy(mainCamera);
         ValidateAndDestroy(soundSystem);
+        if (showSystemMessages)
+            Log("Destroyed all entities successfully!");
 
+        if (loadedAssetsHandle.IsValid())
+            Addressables.Release(loadedAssetsHandle);
 
-        Addressables.Release(loadedAssetsHandle);
         if (showSystemMessages)
             Log("Released all resources successfully!");
     }
     private void ValidateAndDestroy(GameObject target) {
-        if (target) {
+        if (target)
             Destroy(target);
-            if (showSystemMessages)
-                Log("Destroyed " + target.name + " entity successfully!");
-        }
     }
 
 
@@ -193,10 +177,12 @@ public class GameInstance : MonoBehaviour {
             return;
         }
 
+        initialized = true;
+        initializationInProgress = false;
         currentApplicationStatus = ApplicationStatus.RUNNING;
         SetGameState(GameState.MAIN_MENU);
-
-
+        if (showSystemMessages)
+            Log("Game successfully initialized!");
     }
     private void UpdateApplicationRunningState() {
         if (currentGameState == GameState.ERROR) {
@@ -241,7 +227,6 @@ public class GameInstance : MonoBehaviour {
                 UpdateFixedPlayingState();
                 break;
         }
-
     }
 
 
@@ -280,26 +265,30 @@ public class GameInstance : MonoBehaviour {
     //State Setup
     private void SetupMainMenuState() {
         currentGameState = GameState.MAIN_MENU;
-        HideAllMenus();
         SetCursorState(true);
+        HideAllMenus();
+        mainMenu.SetActive(true);
 
     }
     private void SetupOptionsMenuState() {
         currentGameState = GameState.OPTIONS_MENU;
-        HideAllMenus();
         SetCursorState(true);
+        HideAllMenus();
+        optionsMenu.SetActive(true);
 
     }
     private void SetupCreditsMenuState() {
         currentGameState = GameState.CREDITS_MENU;
-        HideAllMenus();
         SetCursorState(true);
+        HideAllMenus();
+        creditsMenu.SetActive(true);
 
     }
     private void SetupStartState() {
         currentGameState = GameState.PLAYING;
-        HideAllMenus();
         SetCursorState(false);
+        HideAllMenus();
+
 
     }
 
@@ -326,6 +315,10 @@ public class GameInstance : MonoBehaviour {
 
 
     private void HideAllMenus() {
+        //Add all GUI here!
+        mainMenu.SetActive(false);
+        optionsMenu.SetActive(false);
+        creditsMenu.SetActive(false);
 
     }
     private void SetCursorState(bool state) {

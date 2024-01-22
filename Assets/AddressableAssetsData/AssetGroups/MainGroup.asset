@@ -71,6 +71,16 @@ MonoBehaviour:
     - Essential
     - OptionsMenu
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d8ff9dc308652954699e35543fefae1d
+    m_Address: Assets/ScriptableObjects/TrackBundle.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2fb473e22f145464dac6fefef1cc9b24
+    m_Address: Assets/ScriptableObjects/SFXBundle.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: da51f17292af1bf42a5a2d71c923b64c, type: 2}
   m_SchemaSet:
