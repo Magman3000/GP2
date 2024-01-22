@@ -193,18 +193,33 @@ public class GameInstance : MonoBehaviour {
             return;
         }
 
-
-        //if (!FinishedLoadingAssets())
-            //return;
-
-        //if asset loading in progress
-        //Check status
-
+        currentApplicationStatus = ApplicationStatus.RUNNING;
+        SetGameState(GameState.MAIN_MENU);
 
 
     }
     private void UpdateApplicationRunningState() {
+        if (currentGameState == GameState.ERROR) {
+            Warning("Unable to update game\nCurrent game state is set to ERROR!");
+            return;
+        }
 
+        UpdateStatelessSystems();
+        //Here you can add more states if needed!
+        switch (currentGameState) {
+            case GameState.MAIN_MENU: 
+                UpdateMainMenuState();
+                break;
+            case GameState.OPTIONS_MENU: 
+                UpdateOptionsMenuState();
+                break;
+            case GameState.CREDITS_MENU:
+                UpdateCreditsMenuState();
+                break;
+            case GameState.PLAYING:
+                UpdatePlayingState();
+                break;
+        }
     }
 
 
@@ -214,23 +229,43 @@ public class GameInstance : MonoBehaviour {
         if (currentApplicationStatus != ApplicationStatus.RUNNING)
             return;
 
+        if (currentGameState == GameState.ERROR) {
+            Warning("Unable to call fixed-update \nCurrent game state is set to ERROR!");
+            return;
+        }
 
+
+        //Here you can add more states if needed!
+        switch (currentGameState) {
+            case GameState.PLAYING:
+                UpdateFixedPlayingState();
+                break;
+        }
 
     }
-
-
-
-    void Start() {
-        
-    }
-
-
 
 
 
 
     public void SetGameState(GameState state) {
 
+        switch (state) {
+            case GameState.MAIN_MENU:
+                SetupMainMenuState();
+                break;
+            case GameState.OPTIONS_MENU:
+                SetupOptionsMenuState();
+                break;
+            case GameState.CREDITS_MENU:
+                SetupCreditsMenuState();
+                break;
+            case GameState.PLAYING:
+                SetupStartState();
+                break;
+            case GameState.PAUSED:
+                Warning("Use PauseGame/UnpauseGame instead of calling SetGameState(GameState.PAUSED)");
+                break;
+        }
     }
     public void Transition(GameState state) {
 
@@ -242,19 +277,52 @@ public class GameInstance : MonoBehaviour {
 
     }
 
+    //State Setup
     private void SetupMainMenuState() {
+        currentGameState = GameState.MAIN_MENU;
+        HideAllMenus();
+        SetCursorState(true);
 
     }
     private void SetupOptionsMenuState() {
+        currentGameState = GameState.OPTIONS_MENU;
+        HideAllMenus();
+        SetCursorState(true);
 
     }
     private void SetupCreditsMenuState() {
+        currentGameState = GameState.CREDITS_MENU;
+        HideAllMenus();
+        SetCursorState(true);
 
     }
     private void SetupStartState() {
+        currentGameState = GameState.PLAYING;
+        HideAllMenus();
+        SetCursorState(false);
 
     }
 
+
+    //State Update
+    private void UpdateStatelessSystems() {
+        //soundSystemScript.Tick();
+    }
+    private void UpdateMainMenuState() {
+
+    }
+    private void UpdateOptionsMenuState() {
+
+    }
+    private void UpdateCreditsMenuState() {
+
+    }
+    private void UpdatePlayingState() {
+        playerScript.Tick();
+    }
+    private void UpdateFixedPlayingState() {
+        playerScript.FixedTick();
+    }
 
 
     private void HideAllMenus() {
@@ -290,6 +358,7 @@ public class GameInstance : MonoBehaviour {
             Log("Started creating " + asset.name + " entity");
             player = Instantiate(asset);
             playerScript = player.GetComponent<Player>();
+            playerScript.Initialize(this);
             Validate(playerScript, "Player component is missing on entity!", ValidationLevel.ERROR, true);
             
         }
@@ -297,12 +366,14 @@ public class GameInstance : MonoBehaviour {
             Log("Started creating " + asset.name + " entity");
             mainCamera = Instantiate(asset);
             mainCameraScript = mainCamera.GetComponent<MainCamera>();
+            mainCameraScript.Initialize(this);
             Validate(mainCameraScript, "MainCamera component is missing on entity!", ValidationLevel.ERROR, true);
         }
         else if (asset.CompareTag("SoundSystem")) {
             Log("Started creating " + asset.name + " entity");
             soundSystem = Instantiate(asset);
             soundSystemScript = soundSystem.GetComponent<SoundSystem>();
+            soundSystemScript.Initialize(this);
             Validate(soundSystemScript, "SoundSystem component is missing on entity!", ValidationLevel.ERROR, true);
         }
         else if (asset.CompareTag("MainMenu")) {

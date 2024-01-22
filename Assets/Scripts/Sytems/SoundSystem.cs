@@ -5,13 +5,11 @@ using UnityEngine;
 public class SoundSystem : Entity {
 
 
-    public override void Initialize() {
+    public override void Initialize(GameInstance game) {
         if (initialized)
             return;
 
-
-
-
+        gameInstanceRef = game;
         initialized = true;
     }
     public override void Tick() {
