@@ -7,7 +7,7 @@ using UnityEngine.AddressableAssets;
 [Serializable]
 public struct LevelEntry {
     public string key;
-    public AssetReferenceGameObject asset;
+    public AssetReference asset;
 }
 
 [CreateAssetMenu(fileName = "LevelsBundle", menuName = "Level/LevelsBundle", order = 0)]

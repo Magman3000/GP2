@@ -2,7 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : Entity {
+public class Player : NetworkedEntity {
+
+    public enum PlayerIdentity {
+        NONE = 0,
+        PLAYER_1,
+        PLAYER_2
+    }
+
+    private PlayerIdentity assignedPlayerIdentity = PlayerIdentity.NONE;
 
     public override void Initialize(GameInstance game) {
         if (initialized)
@@ -18,6 +26,9 @@ public class Player : Entity {
 
     }
 
+    public void AssignPlayerIdentity(PlayerIdentity playerIdentity) {
+        assignedPlayerIdentity = playerIdentity;
+    }
 
 
 

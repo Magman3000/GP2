@@ -6,7 +6,34 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using static MyUtility.Utility;
 
+
+
+
 public class SoundSystem : Entity {
+
+    private struct SFXRequest {
+        public string key;
+        public GameObject owner;
+        public AudioSource unit;
+    }
+
+
+    [Space(5)]
+    [Header("Optimization")]
+    [SerializeField] private uint soundUnitsLimit = 20;
+
+    [Space(5)]
+    [Header("Fade")]
+    [Range(0.01f, 1.0f)] private float fadeInSpeed = 0.1f;
+    [Range(0.01f, 1.0f)] private float fadeOutSpeed = 0.1f;
+    [Tooltip("Should interrupt a fade in/out and immediately play the new track")]
+    [SerializeField] private bool canInterruptFade = false;
+
+    [Space(5)]
+    [Header("Volume")]
+    [Range(0.0f, 1.0f)] private float masterVolume = 1.0f;
+    [Range(0.0f, 1.0f)] private float musicVolume = 1.0f;
+    [Range(0.0f, 1.0f)] private float SFXVolume = 1.0f;
 
 
     private const string SFXBundleLabel = "SFXBundle";
@@ -25,12 +52,29 @@ public class SoundSystem : Entity {
     private Dictionary<string, AsyncOperationHandle<AudioClip>> loadedSFXAssetsHandles;
     private Dictionary<string, AsyncOperationHandle<AudioClip>> loadedTracksAssets;
 
+
+    private bool fadingIn = false;
+    private bool fadingOut = false;
+    private TrackEntry? fadeTargetTrack = null;
+    private string currentPlayingTrackKey = null;
+
+    private float currentTrackVolume = 0.0f;
+    private float targetTrackEntryVolume = 0.0f;
+
+
+    private GameObject unit = null;
+    private AudioSource trackAudioSource = null; //TODO: Create this only if i know that i can play track sounds!
+    private List<AudioSource> soundUnits = new List<AudioSource>(); //TODO: Create this only if i know that i can play sfx sounds!
+    private List<SFXRequest> SFXRequests = new List<SFXRequest>(); //TODO: Create this only if i know that i can play sfx sounds!
+
+
+
     public override void Initialize(GameInstance game) {
         if (initialized || initializing)
             return;
 
         gameInstanceRef = game;
-        initializing = true; //This was my last problem
+        initializing = true;
         LoadBundles();
     }
     public override void Tick() {
@@ -63,14 +107,40 @@ public class SoundSystem : Entity {
     }
     private void UpdateNormalState() {
 
+
+
+
+
+
+
     }
 
     //Resource Management
     private void UnloadResources() {
-        if (SFXBundleHandle.IsValid())
+        if (SFXBundleHandle.IsValid()) {
             Addressables.Release(SFXBundleHandle);
-        if (tracksBundleHandle.IsValid())
+            if (GameInstance.showSystemMessages)
+                Log("SoundSystem has unloaded SFXBundle successfully!");
+        }
+        if (tracksBundleHandle.IsValid()) {
             Addressables.Release(tracksBundleHandle);
+            if (GameInstance.showSystemMessages)
+                Log("SoundSystem has unloaded TracksBundle successfully!");
+        }
+
+        foreach (var asset in loadedSFXAssetsHandles) {
+            Addressables.Release(asset.Value);
+            if (GameInstance.showSystemMessages)
+                Log("SoundSystem has unloaded SFX audio clip [" + asset.Key + "]");
+        }
+        foreach (var asset in loadedTracksAssets) {
+            Addressables.Release(asset.Value);
+            if (GameInstance.showSystemMessages)
+                Log("SoundSystem has unloaded track audio clip [" + asset.Key + "]");
+        }
+
+        if (GameInstance.showSystemMessages)
+            Log("SoundSystem has released all resources successfully!");
     }
     private void LoadBundles() {
         if (GameInstance.showSystemMessages)
@@ -141,13 +211,14 @@ public class SoundSystem : Entity {
     private bool HasFinishedLoadingAudioClips() {
         bool result = true;
 
-        //The weird ordering is cause of this
-        //Check individual handles saved in dictionary or list
+        foreach(var asset in loadedSFXAssetsHandles)
+            result &= asset.Value.IsDone;
+        foreach (var asset in loadedTracksAssets)
+            result &= asset.Value.IsDone;
 
-        loadingAudioClips = result;
+        loadingAudioClips = !result;
         return result;
     }
-
     private void ConfirmInitialization() {
         if (GameInstance.showSystemMessages)
             Log("SoundSystem has been initialized successfully!");
@@ -156,22 +227,62 @@ public class SoundSystem : Entity {
         initialized = true;
     }
 
+
     //User
     public bool PlayLocalSFX(string key) {
+        if (!canPlaySFX) {
+            Warning("Unable to play local sfx associated with key [" + key + "]\n Reason: SoundSystem is not able to play SFX audio clips!");
+            return false;
+        }
+
+
+
+
+
 
         return true;
     }
     public bool PlayGlobalSFX(string key) {
+        if (!canPlaySFX) {
+            Warning("Unable to play global sfx associated with key [" + key + "]\n Reason: SoundSystem is not able to play SFX audio clips!");
+            return false;
+        }
+
+
+
 
         return true;
     }
     public bool PlayTrack(string key) {
+        if (!canPlayTracks) {
+            Warning("Unable to play track associated with key [" + key + "]\n Reason: SoundSystem is not able to play track audio clips!");
+            return false;
+        }
+
+
+
+
+
 
         return true;
     }
     public void StopTrack() {
 
     }
+
+    //Look into how to update the current used values for sounds when these change!
+    public void SetMasterVolume(float volume) {
+        masterVolume = volume;
+    }
+    public void SetMusicVolume(float volume) {
+        musicVolume = volume;
+    }
+    public void SetSFXVolume(float volume) {
+        SFXVolume = volume;
+    }
+    public float GetMasterVolume() { return masterVolume; }
+    public float GetMusicVolume() { return musicVolume; }
+    public float GetSFXVolume() { return SFXVolume; }
 
 
     //Callbacks

@@ -8,6 +8,11 @@ TagManager:
   - MainMenu
   - CreditsMenu
   - OptionsMenu
+  - Netcode
+  - EventSystem
+  - LevelSelectMenu
+  - LoseMenu
+  - WinMenu
   layers:
   - Default
   - TransparentFX

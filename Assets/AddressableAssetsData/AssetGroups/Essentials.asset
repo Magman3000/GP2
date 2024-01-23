@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: MainGroup
+  m_Name: Essentials
   m_EditorClassIdentifier: 
-  m_GroupName: MainGroup
+  m_GroupName: Essentials
   m_Data:
     m_SerializedData: []
   m_GUID: 94c3c60189e2f124eae0c3a991690fa7
@@ -39,12 +39,7 @@ MonoBehaviour:
     m_Address: Assets/ScriptableObjects/LevelsBundle.asset
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Essential
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 88ac0122e9e772e489f54cfbc5094994
-    m_Address: Assets/Levels/TestLevel.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
+    - LevelsBundle
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8688cc6ee0b9bca44b850954d16ec43a
     m_Address: Assets/Prefabs/GUI/MainMenu.prefab
@@ -60,6 +55,36 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a2f311f25bb3aca4c861b7331dda5529
     m_Address: Assets/Prefabs/GUI/OptionsMenu.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Essential
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: be381d9363e5ba740af803f4b299a4eb
+    m_Address: Assets/Prefabs/Systems/Netcode.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Essential
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4b99e44ff497bd8429bf4ce966e6ede8
+    m_Address: Assets/Prefabs/Systems/EventSystem.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Essential
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0dff06f1bab76b1498fa7e3e689c4e3a
+    m_Address: Assets/Prefabs/GUI/LevelSelectMenu.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Essential
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dfce351ba46ff2c4e8824957bf6cc93d
+    m_Address: Assets/Prefabs/GUI/LoseMenu.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Essential
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9875211592d656940884e39230cc6b34
+    m_Address: Assets/Prefabs/GUI/WinMenu.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
     - Essential
