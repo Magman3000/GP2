@@ -101,6 +101,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Essential
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4d11fbfad4eb30d4bab9c84916250df3
+    m_Address: Assets/Prefabs/Entities/FadeTransition.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Essential
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: da51f17292af1bf42a5a2d71c923b64c, type: 2}
   m_SchemaSet:

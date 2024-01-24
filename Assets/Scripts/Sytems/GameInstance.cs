@@ -26,7 +26,8 @@ public class GameInstance : MonoBehaviour {
         PAUSED
     }
 
-    [SerializeField] public static bool showSystemMessages = true; //Turning it static, removed the serialization
+    [SerializeField] private bool initializeOnStartup = true;
+    [SerializeField] private bool debugging = true;
 
 
     //Addressables Labels
@@ -44,6 +45,9 @@ public class GameInstance : MonoBehaviour {
     private bool initializationInProgress = false;
     private bool assetsLoadingInProgress = false;
     private bool gamePaused = false;
+
+    private int powerSavingFrameTarget = 20;
+    private int gameplayFrameTarget = 60;
 
     private AsyncOperationHandle<IList<GameObject>> loadedAssetsHandle;
     private AsyncOperationHandle<ScriptableObject> levelsBundleHandle;
@@ -69,6 +73,7 @@ public class GameInstance : MonoBehaviour {
     private GameObject winMenu;
     private GameObject loseMenu;
     private GameObject pauseMenu;
+    private GameObject fadeTransition;
 
     //Scripts
     private SoundSystem soundSystemScript;
@@ -77,10 +82,15 @@ public class GameInstance : MonoBehaviour {
     private Netcode netcodeScript;
     private MainMenu mainMenuScript;
     private OptionsMenu optionsMenuScript;
+    private ConnectionMenu connectionMenuScript;
+    private FadeTransition fadeTransitionScript;
 
 
 
     public void Initialize() {
+        if (!initializeOnStartup)
+            return;
+
         if (initialized) {
             Warning("Attempted to initialize game while its already initialized!");
             return;
@@ -107,14 +117,14 @@ public class GameInstance : MonoBehaviour {
         currentApplicationStatus = ApplicationStatus.LOADING_ASSETS;
     }
     private void LoadEssentials() {
-        if (showSystemMessages)
+        if (debugging)
             Log("Started loading essential assets!");
 
         loadedAssetsHandle = Addressables.LoadAssetsAsync<GameObject>(essentialAssetsLabel, AssetLoadedCallback);
         loadedAssetsHandle.Completed += FinishedLoadingAssetsCallback;
     }
     private void LoadLevelsBundle() {
-        if (showSystemMessages)
+        if (debugging)
             Log("Started loading levels bundle!");
 
         levelsBundleHandle = Addressables.LoadAssetAsync<ScriptableObject>(levelsBundleLabel);
@@ -135,7 +145,7 @@ public class GameInstance : MonoBehaviour {
     private void SetupApplicationInitialSettings() {
         Input.gyro.enabled = true;
         deviceResolution = Screen.currentResolution;
-        if (showSystemMessages) {
+        if (debugging) {
             Log("Application started on device.");
             Log("Device information:\nScreen Width: [" + deviceResolution.width 
                 + "]\nScreen Height: [" + deviceResolution.height + "]\nRefresh Rate: [" 
@@ -144,6 +154,11 @@ public class GameInstance : MonoBehaviour {
 
         //Framerate
 
+    }
+    private void SetApplicationTargetFrameRate(int target) {
+        Application.targetFrameRate = target;
+        if (debugging)
+            Log("Framerate has been set to " + target + "!");
     }
     public static void AbortApplication(object message = null) {
 #if UNITY_EDITOR
@@ -172,7 +187,7 @@ public class GameInstance : MonoBehaviour {
         ValidateAndDestroy(player);
         ValidateAndDestroy(mainCamera);
         ValidateAndDestroy(soundSystem);
-        if (showSystemMessages)
+        if (debugging)
             Log("Destroyed all entities successfully!");
 
         //TODO: Add messages for each of these two
@@ -184,23 +199,23 @@ public class GameInstance : MonoBehaviour {
         if (currentLoadedLevelHandle.IsValid()) {
             ValidateAndDestroy(currentLoadedLevel);
             Addressables.Release(currentLoadedLevelHandle);
-            if (showSystemMessages)
+            if (debugging)
                 Log("Level was destroyed and unloaded successfully!");
         }
 
         if (levelsBundleHandle.IsValid()) {
             Addressables.Release(levelsBundleHandle);
-            if (showSystemMessages)
+            if (debugging)
                 Log("Levels bundle was unloaded successfully!");
         }
 
         if (loadedAssetsHandle.IsValid()) {
             Addressables.Release(loadedAssetsHandle);
-            if (showSystemMessages)
+            if (debugging)
                 Log("Assets were unloaded successfully!");
         }
 
-        if (showSystemMessages) {
+        if (debugging) {
             Log("Released all resources successfully!");
             Log("Application has been stopped!");
         }
@@ -213,7 +228,7 @@ public class GameInstance : MonoBehaviour {
     private void UpdateDebuggingCode() {
         //Level Loading
         if (Input.GetKeyDown(KeyCode.W))
-            LoadLevel("Matilda");
+            LoadLevel("Test");
         if (Input.GetKeyDown(KeyCode.Q))
             UnloadLevel();
 
@@ -254,7 +269,7 @@ public class GameInstance : MonoBehaviour {
 
         if (assetsLoadingInProgress) {
             CheckAssetsLoadingStatus();
-            if (showSystemMessages)
+            if (debugging)
                 Log("Loading Assets In Progress...");
             return;
         }
@@ -263,7 +278,7 @@ public class GameInstance : MonoBehaviour {
         initializationInProgress = false;
         currentApplicationStatus = ApplicationStatus.RUNNING;
         SetGameState(GameState.MAIN_MENU);
-        if (showSystemMessages)
+        if (debugging)
             Log("Game successfully initialized!");
     }
     private void UpdateApplicationRunningState() {
@@ -339,7 +354,39 @@ public class GameInstance : MonoBehaviour {
     }
     public void Transition(GameState state) {
 
+        switch (state) {
+            case GameState.MAIN_MENU:
+                fadeTransitionScript.StartTransition(SetupMainMenuState);
+                break;
+            case GameState.OPTIONS_MENU:
+                fadeTransitionScript.StartTransition(SetupOptionsMenuState);
+                break;
+            case GameState.CREDITS_MENU:
+                fadeTransitionScript.StartTransition(SetupCreditsMenuState);
+                break;
+            case GameState.LEVEL_SELECT_MENU:
+                fadeTransitionScript.StartTransition(SetupLevelSelectMenuState);
+                break;
+            case GameState.CONNECTION_MENU:
+                fadeTransitionScript.StartTransition(SetupConnectionMenuState);
+                break;
+            case GameState.WIN_MENU:
+                fadeTransitionScript.StartTransition(SetupWinMenuState);
+                break;
+            case GameState.LOSE_MENU:
+                fadeTransitionScript.StartTransition(SetupLoseMenuState);
+                break;
+            case GameState.PLAYING:
+                fadeTransitionScript.StartTransition(SetupStartState);
+                break;
+            case GameState.PAUSED:
+                Warning("Use PauseGame/UnpauseGame instead of calling Transition(GameState.PAUSED)");
+                break;
+        }
     }
+
+
+
     public void PauseGame() {
         gamePaused = true;
         Time.timeScale = 0.0f;
@@ -356,48 +403,55 @@ public class GameInstance : MonoBehaviour {
         currentGameState = GameState.MAIN_MENU;
         HideAllMenus();
         mainMenu.SetActive(true);
+        SetApplicationTargetFrameRate(powerSavingFrameTarget);
 
     }
     private void SetupOptionsMenuState() {
         currentGameState = GameState.OPTIONS_MENU;
         HideAllMenus();
         optionsMenu.SetActive(true);
+        SetApplicationTargetFrameRate(powerSavingFrameTarget);
 
     }
     private void SetupCreditsMenuState() {
         currentGameState = GameState.CREDITS_MENU;
         HideAllMenus();
         creditsMenu.SetActive(true);
+        SetApplicationTargetFrameRate(powerSavingFrameTarget);
 
     }
     private void SetupConnectionMenuState() {
         currentGameState = GameState.CONNECTION_MENU;
         HideAllMenus();
         connectionMenu.SetActive(true);
+        SetApplicationTargetFrameRate(powerSavingFrameTarget);
 
     }
     private void SetupLevelSelectMenuState() {
         currentGameState = GameState.LEVEL_SELECT_MENU;
         HideAllMenus();
         levelSelectMenu.SetActive(true);
+        SetApplicationTargetFrameRate(powerSavingFrameTarget);
 
     }
     private void SetupStartState() {
         currentGameState = GameState.PLAYING;
         HideAllMenus();
-
+        SetApplicationTargetFrameRate(gameplayFrameTarget); //Make sure to call this the moment the gameplay state is ready!
 
     }
     private void SetupWinMenuState() {
         currentGameState = GameState.WIN_MENU;
         HideAllMenus();
         winMenu.SetActive(true);
+        SetApplicationTargetFrameRate(powerSavingFrameTarget);
 
     }
     private void SetupLoseMenuState() {
         currentGameState = GameState.LOSE_MENU;
         HideAllMenus();
         loseMenu.SetActive(true);
+        SetApplicationTargetFrameRate(powerSavingFrameTarget);
 
     }
 
@@ -415,7 +469,7 @@ public class GameInstance : MonoBehaviour {
 
 
 
-    //Level Loading
+    //Level Loading - TODO: Move into LevelManagement class along with related vars
     public bool LoadLevel(string levelName) {
         if (currentLoadedLevel) {
             Error("Failed to load level!\nUnload current level first before loading a new one!");
@@ -447,7 +501,7 @@ public class GameInstance : MonoBehaviour {
         }
         currentLoadedLevelHandle.Completed += FinishedLoadingLevelCallback;
 
-        if (showSystemMessages)
+        if (debugging)
             Log("Started loading level associated with key [" + levelName + "]");
 
         return true;
@@ -461,8 +515,22 @@ public class GameInstance : MonoBehaviour {
         ValidateAndDestroy(currentLoadedLevel);
         Addressables.Release(currentLoadedLevelHandle);
 
-        if (showSystemMessages)
+        if (debugging)
             Log("Started unloading current level!");
+
+        return true;
+    }
+    private bool CreateLevel(GameObject asset) {
+        if (currentLoadedLevel) {
+            Error("Failed to create level\nThere is currently a level loaded already!");
+            return false;
+        }
+
+        currentLoadedLevel = Instantiate(asset);
+        if (!currentLoadedLevel) {
+            Error("Failed to create level\nInstantiation failed!");
+            return false;
+        }
 
         return true;
     }
@@ -479,6 +547,8 @@ public class GameInstance : MonoBehaviour {
         connectionMenu.SetActive(false);
         pauseMenu.SetActive(false);
     }
+
+    //Unused
     private void SetCursorState(bool state) {
         UnityEngine.Cursor.visible = state;
         if (state)
@@ -487,15 +557,18 @@ public class GameInstance : MonoBehaviour {
             UnityEngine.Cursor.lockState = CursorLockMode.Locked;
     }
 
-
+    public bool IsDebuggingEnabled() { return debugging; }
 
     
+
+    //Getters
+    public Netcode GetNetcode() { return netcodeScript; }
 
 
 
     //Callbacks
     private void AssetLoadedCallback(GameObject asset) {
-        if (showSystemMessages)
+        if (debugging)
             Log(asset.name + " has been loaded successfully!");
 
         //Notes:
@@ -559,6 +632,8 @@ public class GameInstance : MonoBehaviour {
         else if (asset.CompareTag("ConnectionMenu")) {
             Log("Started creating " + asset.name + " entity");
             connectionMenu = Instantiate(asset);
+            connectionMenuScript = connectionMenu.GetComponent<ConnectionMenu>();
+            connectionMenuScript.Initialize(this);
         }
         else if (asset.CompareTag("LevelSelectMenu")) {
             Log("Started creating " + asset.name + " entity");
@@ -576,13 +651,19 @@ public class GameInstance : MonoBehaviour {
             Log("Started creating " + asset.name + " entity");
             pauseMenu = Instantiate(asset);
         }
+        else if (asset.CompareTag("FadeTransition")) {
+            Log("Started creating " + asset.name + " entity");
+            fadeTransition = Instantiate(asset);
+            fadeTransitionScript = fadeTransition.GetComponent<FadeTransition>();
+            fadeTransitionScript.Initialize(this);
+        }
         else
             Warning("Loaded an asset that was not recognized!\n[" + asset.name + "]");
     }
 
     private void FinishedLoadingAssetsCallback(AsyncOperationHandle<IList<GameObject>> handle) {
         if (handle.Status == AsyncOperationStatus.Succeeded) {
-            if (showSystemMessages)
+            if (debugging)
                 Log("Finished loading assets successfully!");
             //assetsLoadingInProgress = false; //Move this to function that checks the status of the assets handle and the levels bundle handle!
         }
@@ -593,7 +674,7 @@ public class GameInstance : MonoBehaviour {
     private void FinishedLoadingLevelsBundleCallback(AsyncOperationHandle<ScriptableObject> handle) {
         //NOTE: Could ditch even assinging the callbacks depending on showSystemMessages if its only debugging code in them
         if (handle.Status == AsyncOperationStatus.Succeeded) {
-            if (showSystemMessages)
+            if (debugging)
                 Log("Finished loading levels bundle successfully!");
         }
         else if (handle.Status == AsyncOperationStatus.Failed) {
@@ -602,11 +683,12 @@ public class GameInstance : MonoBehaviour {
     }
     private void FinishedLoadingLevelCallback(AsyncOperationHandle<GameObject> handle) {
         if (handle.Status == AsyncOperationStatus.Succeeded) {
-            if (showSystemMessages)
+            if (debugging)
                 Log("Finished loading level successfully!");
 
-            //TODO: Move to func!
-            currentLoadedLevel = Instantiate(handle.Result);
+            bool result = CreateLevel(handle.Result);
+            if (!result)
+                Error("Failed to create level!\nCheck asset for any errors!");
             //Other script stuff!
 
             //Start game or any registered callback for level loading

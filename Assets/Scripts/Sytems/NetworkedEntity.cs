@@ -36,7 +36,7 @@ public abstract class NetworkedEntity : NetworkBehaviour {
     public virtual void CleanUp(string message = "Entity cleaned up successfully!") {
         //The order of which Monobehaviors get destroyed is out of my control.
         //-Thus i cannot use this.name.
-        if (GameInstance.showSystemMessages)
+        if (gameInstanceRef.IsDebuggingEnabled())
             Log(message);
     }
 }

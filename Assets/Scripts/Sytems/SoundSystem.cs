@@ -84,7 +84,7 @@ public class SoundSystem : Entity {
             UpdateNormalState();
     }
     public override void CleanUp(string message = "Entity cleaned up successfully!") {
-        if (GameInstance.showSystemMessages)
+        if (gameInstanceRef.IsDebuggingEnabled())
             Log(message);
 
         UnloadResources();
@@ -97,7 +97,7 @@ public class SoundSystem : Entity {
         }
         else if (loadingAudioClips) {
             if (HasFinishedLoadingAudioClips()) {
-                if (GameInstance.showSystemMessages)
+                if (gameInstanceRef.IsDebuggingEnabled())
                     Log("SoundSystem has finished loading AudioClips");
                 ConfirmInitialization();
             }
@@ -119,31 +119,31 @@ public class SoundSystem : Entity {
     private void UnloadResources() {
         if (SFXBundleHandle.IsValid()) {
             Addressables.Release(SFXBundleHandle);
-            if (GameInstance.showSystemMessages)
+            if (gameInstanceRef.IsDebuggingEnabled())
                 Log("SoundSystem has unloaded SFXBundle successfully!");
         }
         if (tracksBundleHandle.IsValid()) {
             Addressables.Release(tracksBundleHandle);
-            if (GameInstance.showSystemMessages)
+            if (gameInstanceRef.IsDebuggingEnabled())
                 Log("SoundSystem has unloaded TracksBundle successfully!");
         }
 
         foreach (var asset in loadedSFXAssetsHandles) {
             Addressables.Release(asset.Value);
-            if (GameInstance.showSystemMessages)
+            if (gameInstanceRef.IsDebuggingEnabled())
                 Log("SoundSystem has unloaded SFX audio clip [" + asset.Key + "]");
         }
         foreach (var asset in loadedTracksAssets) {
             Addressables.Release(asset.Value);
-            if (GameInstance.showSystemMessages)
+            if (gameInstanceRef.IsDebuggingEnabled())
                 Log("SoundSystem has unloaded track audio clip [" + asset.Key + "]");
         }
 
-        if (GameInstance.showSystemMessages)
+        if (gameInstanceRef.IsDebuggingEnabled())
             Log("SoundSystem has released all resources successfully!");
     }
     private void LoadBundles() {
-        if (GameInstance.showSystemMessages)
+        if (gameInstanceRef.IsDebuggingEnabled())
             Log("SoundSystem started loading bundles!");
 
         //Notes:
@@ -179,7 +179,7 @@ public class SoundSystem : Entity {
                 var handle = Addressables.LoadAssetAsync<AudioClip>(asset.clip);
                 handle.Completed += FinishedLoadingAudioClipCallback;
                 loadedSFXAssetsHandles.Add(asset.key, handle);
-                if (GameInstance.showSystemMessages)
+                if (gameInstanceRef.IsDebuggingEnabled())
                     Log("SoundSystem started loading SFX audio clip with key [" + asset.key + "]");
             }
             loadingAudioClips = true;
@@ -190,7 +190,7 @@ public class SoundSystem : Entity {
                 var handle = Addressables.LoadAssetAsync<AudioClip>(asset.clip);
                 handle.Completed += FinishedLoadingAudioClipCallback;
                 loadedTracksAssets.Add(asset.key, handle);
-                if (GameInstance.showSystemMessages)
+                if (gameInstanceRef.IsDebuggingEnabled())
                     Log("SoundSystem started loading track audio clip with key [" + asset.key + "]");
             }
             loadingAudioClips = true;
@@ -220,7 +220,7 @@ public class SoundSystem : Entity {
         return result;
     }
     private void ConfirmInitialization() {
-        if (GameInstance.showSystemMessages)
+        if (gameInstanceRef.IsDebuggingEnabled())
             Log("SoundSystem has been initialized successfully!");
 
         initializing = false;
@@ -288,7 +288,7 @@ public class SoundSystem : Entity {
     //Callbacks
     private void FinishedLoadingTracksBundleCallback(AsyncOperationHandle<ScriptableObject> handle) {
         if (handle.Status == AsyncOperationStatus.Succeeded) {
-            if (GameInstance.showSystemMessages)
+            if (gameInstanceRef.IsDebuggingEnabled())
                 Log("SoundSystem finished loading TracksBundle successfully!");
             canPlayTracks = true;
         }
@@ -298,7 +298,7 @@ public class SoundSystem : Entity {
     }
     private void FinishedLoadingSFXBundleCallback(AsyncOperationHandle<ScriptableObject> handle) {
         if (handle.Status == AsyncOperationStatus.Succeeded) {
-            if (GameInstance.showSystemMessages)
+            if (gameInstanceRef.IsDebuggingEnabled())
                 Log("SoundSystem finished loading SFXBundle successfully!");
             canPlaySFX = true;
         }
@@ -308,7 +308,7 @@ public class SoundSystem : Entity {
     }
     private void FinishedLoadingAudioClipCallback(AsyncOperationHandle<AudioClip> handle) {
         if (handle.Status == AsyncOperationStatus.Succeeded) {
-            if (GameInstance.showSystemMessages)
+            if (gameInstanceRef.IsDebuggingEnabled())
                 Log("SoundSystem loaded audio clip [" + handle.Result.name + "] successfully!");
         }
         else if (handle.Status == AsyncOperationStatus.Failed)
