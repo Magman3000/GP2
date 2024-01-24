@@ -89,6 +89,18 @@ MonoBehaviour:
     m_SerializedLabels:
     - Essential
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8f62795117ac1c74db5a7785ff0d550c
+    m_Address: Assets/Prefabs/GUI/ConnectionMenu.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Essential
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 57a120ecd4d5aff46be010dbde3139ed
+    m_Address: Assets/Prefabs/GUI/PauseMenu.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Essential
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: da51f17292af1bf42a5a2d71c923b64c, type: 2}
   m_SchemaSet:

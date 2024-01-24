@@ -18,6 +18,7 @@ public class GameInstance : MonoBehaviour {
         MAIN_MENU,
         OPTIONS_MENU,
         CREDITS_MENU,
+        CONNECTION_MENU,
         LEVEL_SELECT_MENU,
         WIN_MENU,
         LOSE_MENU,
@@ -63,9 +64,11 @@ public class GameInstance : MonoBehaviour {
     private GameObject mainMenu;
     private GameObject optionsMenu;
     private GameObject creditsMenu;
+    private GameObject connectionMenu;
     private GameObject levelSelectMenu;
     private GameObject winMenu;
     private GameObject loseMenu;
+    private GameObject pauseMenu;
 
     //Scripts
     private SoundSystem soundSystemScript;
@@ -317,6 +320,9 @@ public class GameInstance : MonoBehaviour {
             case GameState.LEVEL_SELECT_MENU:
                 SetupLevelSelectMenuState();
                 break;
+            case GameState.CONNECTION_MENU:
+                SetupConnectionMenuState();
+                break;
             case GameState.WIN_MENU:
                 SetupWinMenuState();
                 break;
@@ -362,6 +368,12 @@ public class GameInstance : MonoBehaviour {
         currentGameState = GameState.CREDITS_MENU;
         HideAllMenus();
         creditsMenu.SetActive(true);
+
+    }
+    private void SetupConnectionMenuState() {
+        currentGameState = GameState.CONNECTION_MENU;
+        HideAllMenus();
+        connectionMenu.SetActive(true);
 
     }
     private void SetupLevelSelectMenuState() {
@@ -464,7 +476,8 @@ public class GameInstance : MonoBehaviour {
         levelSelectMenu.SetActive(false);
         winMenu.SetActive(false);
         loseMenu.SetActive(false);
-
+        connectionMenu.SetActive(false);
+        pauseMenu.SetActive(false);
     }
     private void SetCursorState(bool state) {
         UnityEngine.Cursor.visible = state;
@@ -543,6 +556,10 @@ public class GameInstance : MonoBehaviour {
             Log("Started creating " + asset.name + " entity");
             creditsMenu = Instantiate(asset);
         }
+        else if (asset.CompareTag("ConnectionMenu")) {
+            Log("Started creating " + asset.name + " entity");
+            connectionMenu = Instantiate(asset);
+        }
         else if (asset.CompareTag("LevelSelectMenu")) {
             Log("Started creating " + asset.name + " entity");
             levelSelectMenu = Instantiate(asset);
@@ -554,6 +571,10 @@ public class GameInstance : MonoBehaviour {
         else if (asset.CompareTag("WinMenu")) {
             Log("Started creating " + asset.name + " entity");
             winMenu = Instantiate(asset);
+        }
+        else if (asset.CompareTag("PauseMenu")) {
+            Log("Started creating " + asset.name + " entity");
+            pauseMenu = Instantiate(asset);
         }
         else
             Warning("Loaded an asset that was not recognized!\n[" + asset.name + "]");

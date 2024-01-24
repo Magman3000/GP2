@@ -1,16 +1,25 @@
+using System;
 using Unity.Netcode;
+using UnityEngine;
 using static MyUtility.Utility;
 
-public class Netcode : NetworkedEntity {
+public class Netcode : Entity {
+
+
+    public static ulong INVALID_CLIENT_ID = 0;
 
     private const uint clientsLimit = 2;
+    private ulong clientID = INVALID_CLIENT_ID;
 
-
+    private NetworkManager networkManagerRef = null;
     
     public override void Initialize(GameInstance game) {
         if (initialized)
             return;
 
+        networkManagerRef = GetComponent<NetworkManager>();
+
+        SetupCallbacks();
         gameInstanceRef = game;
         initialized = true;
     }
@@ -24,31 +33,53 @@ public class Netcode : NetworkedEntity {
 
 
     }
-
-    public void StartNetworking() {
-        
+    private void SetupCallbacks() {
+        networkManagerRef.OnClientConnectedCallback += OnClientConnectedCallback;
+        networkManagerRef.OnClientDisconnectCallback += OnClientDisconnectCallback;
+        networkManagerRef.ConnectionApprovalCallback += ConnectionApprovalCallback;
     }
+
+
+
     public void StopNetworking() {
 
-        NetworkManager.Shutdown();
+        networkManagerRef.Shutdown();
+        //Destory entities from game instance side? might not be required.
     }
 
     public bool StartAsClient() {
 
-        return NetworkManager.StartClient();
+        return networkManagerRef.StartClient();
     }        
     public bool StartAsHost() {
 
-        return NetworkManager.StartHost();
+        return networkManagerRef.StartHost();
     }
 
     public new bool IsHost() {
-        return NetworkManager.IsHost;
+        return networkManagerRef.IsHost;
     }
     public new bool IsClient() {
-        return NetworkManager.IsClient;
+        return networkManagerRef.IsClient;
     }
     public uint GetConnectedClientsCount() {
-        return (uint)NetworkManager.ConnectedClients.Count;
+        return (uint)networkManagerRef.ConnectedClients.Count;
+    }
+    public ulong GetClientID() {
+        return clientID;
+    }
+
+
+
+    //Callbacks
+    private void OnClientConnectedCallback(ulong ID) {
+        Log("Connection request received from " + ID);
+    }
+    private void OnClientDisconnectCallback(ulong ID) {
+        Log("Disconnection request received from " + ID);
+    }
+    private void ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response) {
+        Log("Connection request received from " + request.ClientNetworkId);
+
     }
 }
