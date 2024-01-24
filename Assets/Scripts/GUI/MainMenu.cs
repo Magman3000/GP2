@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class MainMenu : Entity {
 
-    //Could be made non abstract?
-    public override void Tick() {
-        
-    }
     public override void Initialize(GameInstance game) {
         if (initialized)
             return;
@@ -20,6 +16,6 @@ public class MainMenu : Entity {
 
 
     public void TestButton() {
-        gameInstanceRef.SetGameState(GameInstance.GameState.OPTIONS_MENU);
+        gameInstanceRef.Transition(GameInstance.GameState.CONNECTION_MENU);
     }
 }

@@ -6,8 +6,8 @@ public class Player : NetworkedEntity {
 
     public enum PlayerIdentity {
         NONE = 0,
-        PLAYER_1,
-        PLAYER_2
+        PLAYER_1, //Daredevil
+        PLAYER_2 //Coordinator
     }
 
     private PlayerIdentity assignedPlayerIdentity = PlayerIdentity.NONE;

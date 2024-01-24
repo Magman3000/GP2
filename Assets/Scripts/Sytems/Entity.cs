@@ -18,7 +18,9 @@ public abstract class Entity : MonoBehaviour {
     /// Called instead of Update by MonoBehaviour.
     /// <para>  -Check if 'initialized' is TRUE at start then return if it is FALSE and print a message using Utility.Error  </para>
     /// </summary>
-    public abstract void Tick();
+    public virtual void Tick() {
+        Warning("Tick called on an entity that does not provide implementation for Tick!");
+    }
 
     /// <summary>
     /// Called instead of FixedUpdate by MonoBehaviour.
@@ -34,7 +36,7 @@ public abstract class Entity : MonoBehaviour {
     public virtual void CleanUp(string message = "Entity cleaned up successfully!") {
         //The order of which Monobehaviors get destroyed is out of my control.
         //-Thus i cannot use this.name.
-        if (GameInstance.showSystemMessages)
+        if (gameInstanceRef.IsDebuggingEnabled())
             Log(message);
     }
 }

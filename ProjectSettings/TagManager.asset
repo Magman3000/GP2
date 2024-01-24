@@ -15,6 +15,7 @@ TagManager:
   - WinMenu
   - ConnectionMenu
   - PauseMenu
+  - FadeTransition
   layers:
   - Default
   - TransparentFX

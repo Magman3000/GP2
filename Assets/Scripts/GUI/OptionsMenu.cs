@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class OptionsMenu : Entity {
 
-    public override void Tick() {
-        
-    }
     public override void Initialize(GameInstance game) {
         if (initialized)
             return;
