@@ -1,4 +1,5 @@
 using System;
+using System.Net.NetworkInformation;
 using Unity.Netcode;
 using UnityEngine;
 using static MyUtility.Utility;
@@ -18,6 +19,7 @@ public class Netcode : Entity {
             return;
 
         networkManagerRef = GetComponent<NetworkManager>();
+
 
         SetupCallbacks();
         gameInstanceRef = game;
