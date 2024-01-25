@@ -1,49 +1,54 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
-public class DoorMovement : MonoBehaviour
-{
-    public enum ObstacleState
-    {
-        error, active, inactive
+public class DoorMovement : MonoBehaviour {
+    public enum ObstacleState { ERROR = 0, 
+        ACTIVE, 
+        INACTIVE 
     }
-    [SerializeField] Vector3 secondPosition;
-    [SerializeField] Vector3 secondRotation;
+
+
+    [SerializeField] Vector3 openedPosition;
+    [SerializeField] Vector3 openedRotation;
+
     [SerializeField] float interpolationRatio;
     [SerializeField] float interpolationLimit;
-    public Boolean moving = false;
+
+
+    public bool moving = false;
+
     Vector3 initialPosition;
     Vector3 initialRotation;
-    ObstacleState doorState = new ObstacleState();
-    // Start is called before the first frame update
-    void Initialize()
+    ObstacleState doorState = ObstacleState.ERROR;
+
+
+
+    void init()
     {
-        doorState = ObstacleState.inactive;
+        //TODO: To func! - Negative rotation requires testing
+        doorState = ObstacleState.INACTIVE;
         initialRotation = gameObject.transform.rotation.eulerAngles;
         initialPosition = gameObject.transform.position;
 
     }
     private void Update()
     {
-        if (doorState == ObstacleState.active && moving)
+        if (doorState == ObstacleState.ACTIVE && moving)
         {
-            Vector3 postionCalculation = Vector3.Lerp(transform.position, secondPosition, interpolationRatio * Time.deltaTime);
+            Vector3 postionCalculation = Vector3.Lerp(transform.position, openedPosition, interpolationRatio * Time.deltaTime);
             transform.position = postionCalculation;
-            Vector3 rotationCalculation = Vector3.Lerp(transform.eulerAngles, secondRotation, interpolationRatio * Time.deltaTime);
+            Vector3 rotationCalculation = Vector3.Lerp(transform.eulerAngles, openedRotation, interpolationRatio * Time.deltaTime);
             transform.eulerAngles = rotationCalculation;
-            float positionDistance = Vector3.Distance(postionCalculation, secondPosition);
-            float rotationDistance = Vector3.Distance(rotationCalculation, secondRotation);
+            float positionDistance = Vector3.Distance(postionCalculation, openedPosition);
+            float rotationDistance = Vector3.Distance(rotationCalculation, openedRotation);
             if (positionDistance < interpolationLimit && rotationDistance < interpolationLimit)
             {
-                transform.position = secondPosition;
-                transform.eulerAngles = secondRotation;
+                transform.position = openedPosition;
+                transform.eulerAngles = openedRotation;
                 moving = false;
             }
         }
-        else if (doorState == ObstacleState.inactive && moving)
+        else if (doorState == ObstacleState.INACTIVE && moving)
         {
             Vector3 postionCalculation = Vector3.Lerp(transform.position, initialPosition, interpolationRatio * Time.deltaTime);
             transform.position = postionCalculation;
@@ -62,14 +67,12 @@ public class DoorMovement : MonoBehaviour
 
     public void StateChange(ObstacleState state)
     {
+        if (state == ObstacleState.ERROR) {
+            Debug.Log("Door Error");
+            return;
+        }
+
         doorState = state;
-        if (doorState != ObstacleState.error)
-        {
-            moving = true;
-        }
-        else if (doorState == ObstacleState.error)
-        {
-            Debug.Log("Error");
-        }
+        moving = true;
     }
 }
