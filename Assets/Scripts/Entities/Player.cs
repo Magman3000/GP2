@@ -30,6 +30,7 @@ public class Player : NetworkedEntity {
 
     private PlayerIdentity assignedPlayerIdentity = PlayerIdentity.NONE;
 
+
     private float currentSpeed;
     private float timer = 0.0f;
     private bool boosting = false;
@@ -59,6 +60,7 @@ public class Player : NetworkedEntity {
     {
         assignedPlayerIdentity = playerIdentity;
     }
+
     private void SetupReference() {
         rigidbody = GetComponent<Rigidbody>();
     }
@@ -122,4 +124,8 @@ public class Player : NetworkedEntity {
         }
 
     }
+
+
+    public float GetCurrentSpeed() {  return currentSpeed; }
+    public float GetCurrentSpeedPercentage() { return currentSpeed / maxSpeed; }
 }
