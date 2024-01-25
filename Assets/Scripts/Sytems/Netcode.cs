@@ -218,16 +218,27 @@ public class Netcode : Entity {
 
     //Callbacks
     private void OnClientConnectedCallback(ulong ID) {
-        Log("Client " + ID + " has connected!");
+        if (gameInstanceRef.IsDebuggingEnabled())
+            Log("Client " + ID + " has connected!");
+
+        //Need to do stuff with the client ID
+        if (GetConnectedClientsCount() == 1)
+            gameInstanceRef.CreatePlayerEntity(Player.PlayerIdentity.PLAYER_1);
+        else if (GetConnectedClientsCount() == 2)
+            gameInstanceRef.CreatePlayerEntity(Player.PlayerIdentity.PLAYER_2);
     }
     private void OnClientDisconnectCallback(ulong ID) {
-        Log("Disconnection request received from " + ID);
+        if (gameInstanceRef.IsDebuggingEnabled())
+            Log("Disconnection request received from " + ID);
     }
     private void ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response) {
-        Log("Connection request received from " + request.ClientNetworkId);
+        if (gameInstanceRef.IsDebuggingEnabled())
+            Log("Connection request received from " + request.ClientNetworkId);
 
         
         response.CreatePlayerObject = false;
         response.Approved = true;
+        if (gameInstanceRef.IsDebuggingEnabled())
+            Log("Connection request was accepted!");
     }
 }
