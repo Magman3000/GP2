@@ -63,11 +63,7 @@ public class DoorMovement : MonoBehaviour
     public void StateChange(ObstacleState state)
     {
         doorState = state;
-        if (doorState == ObstacleState.active)
-        {
-            moving = true;
-        }
-        else if (doorState == ObstacleState.inactive)
+        if (doorState != ObstacleState.error)
         {
             moving = true;
         }
