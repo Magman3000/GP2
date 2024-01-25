@@ -20,7 +20,14 @@ public class Player : NetworkedEntity {
         initialized = true;
     }
     public override void Tick() {
-        
+
+
+
+
+
+
+
+
     }
     public override void FixedTick() {
 

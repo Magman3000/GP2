@@ -8,6 +8,8 @@ using UnityEngine.AddressableAssets;
 public struct LevelEntry {
     public string key;
     public AssetReference asset;
+    public Sprite preview;
+    public bool debugOnly; //TODO: Change name later!
 }
 
 [CreateAssetMenu(fileName = "LevelsBundle", menuName = "Level/LevelsBundle", order = 0)]

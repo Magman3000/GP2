@@ -100,7 +100,6 @@ public class GameInstance : MonoBehaviour {
             return;
         }
 
-
         //Loading bundles could be completely skipped
         //Look into other loading strategies and read sebastians notes
         SetupApplicationInitialSettings();
@@ -126,8 +125,9 @@ public class GameInstance : MonoBehaviour {
     private void LoadLevelsBundle() {
         if (debugging)
             Log("Started loading levels bundle!");
-
+        
         levelsBundleHandle = Addressables.LoadAssetAsync<ScriptableObject>(levelsBundleLabel);
+        //TODO: Validate
         levelsBundleHandle.Completed += FinishedLoadingLevelsBundleCallback;
     }
     private bool CheckAssetsLoadingStatus() {
