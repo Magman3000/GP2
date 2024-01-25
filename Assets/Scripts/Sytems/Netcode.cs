@@ -2,9 +2,11 @@ using System;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Text;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static MyUtility.Utility;
 
 public class Netcode : Entity {
@@ -74,6 +76,53 @@ public class Netcode : Entity {
         }
     }
 
+
+    public string GetEncryptedLocalHost() {
+
+        Byte[] addressBytes = localIPAddress.GetAddressBytes();
+        for (int i = 0; i < addressBytes.Length; i++)
+            addressBytes[i] ^= (Byte)(encryptionKey >> 8 * i);
+
+        //
+
+        return Encoding.ASCII.GetString(addressBytes); ;
+    }
+    public string ApplyEncryptionKey(string address) {
+
+
+        //for (int i = 0; i < addressBytes.Length; i++) {
+        //  addressBytes[i] ^= (Byte)(encryptionKey >> 8 * i);
+        //}
+
+
+
+    //Make sure its a certain size!
+    IPAddress Result = localIPAddress;
+        string encryptedAddress = address;
+
+        var addressLength = address.Length;
+        Byte[] Bytes = new byte[4];
+
+        IPAddress test = new IPAddress(address[0]);
+
+        for (int i = 0; i < localIPAddress.GetAddressBytes().Length; i++) {
+            Byte encryptionByte = (Byte)(encryptionKey >> 8 * i); //0xff
+            Byte dataByte = Result.GetAddressBytes()[i];
+
+            Log("Before encryption " + dataByte);
+            dataByte ^= encryptionByte;
+            Log("After encryption " + dataByte);
+            //Log("Encryption Byte " + i + " is " + encryptionByte);
+
+        }
+
+        return encryptedAddress;
+    }
+
+    public IPAddress GetLocalIPAddress() {
+        return localIPAddress;
+    }
+
     public void StopNetworking() {
 
         networkManagerRef.Shutdown();
@@ -83,15 +132,18 @@ public class Netcode : Entity {
         //Destory entities from game instance side? might not be required.
     }
 
-    public bool StartAsClient() {
+    public bool StartAsClient(string targetAddress) {
         //localIPAddress.ToString();
-        transportLayer.ConnectionData.Address = "192.168.0.255";
-        Log(transportLayer.ConnectionData.Address);
-        return networkManagerRef.StartClient();
+        Log("Attempting to connect to..." + targetAddress);
+        transportLayer.ConnectionData.Address = targetAddress;
+
+
+        //Log(transportLayer.ConnectionData.Address);
+        return networkManagerRef.StartClient(); //Start as client on code being received! callable by connection menu
     }        
     public bool StartAsHost() {
 
-        transportLayer.ConnectionData.Address = "0.0.0.0";
+        transportLayer.ConnectionData.Address = "0.0.0.0"; //??
         Log(transportLayer.ConnectionData.Address);
         return networkManagerRef.StartHost();
     }

@@ -1,8 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : NetworkedEntity {
+
+
 
     public enum PlayerIdentity {
         NONE = 0,
@@ -22,13 +25,13 @@ public class Player : NetworkedEntity {
     public override void Tick() {
 
 
-
-
-
+        
 
 
 
     }
+
+
     public override void FixedTick() {
 
     }

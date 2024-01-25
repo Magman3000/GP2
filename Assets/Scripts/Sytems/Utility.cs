@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEditor;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 
 namespace MyUtility { 
@@ -40,7 +42,12 @@ namespace MyUtility {
             return false;
         }
 
+        public static float LinearConversion(float value, float oldMin, float oldMax, float newMin, float newMax) {
 
+            float oldRange = oldMax - oldMin;
+            float newRange = newMax - newMin;
+            return (((value -  oldMin) * newRange) / oldRange) + newMin;
+        }
 
     }
 }

@@ -19,3 +19,5 @@ MonoBehaviour:
       m_SubObjectName: 
       m_SubObjectType: 
       m_EditorAssetChanged: 0
+    preview: {fileID: 0}
+    debugOnly: 0

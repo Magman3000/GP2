@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,22 +8,28 @@ public class ConnectionMenu : Entity {
 
 
     private const string hostWaitingMessage = "Waiting for player 2 to join...";
-    private const string clientSearchingMessage = "Searching for players to connect with...";
+    private const string clientSearchingMessage = "Enter code to connect!";
 
 
     private Button hostButtonComp = null;
     private Button clientButtonComp = null;
     private TextMeshProUGUI statusTextComp = null;
+    private TextMeshProUGUI localHostComp = null; //Could be reused for the join code later
+
+    private TMP_InputField connectionCodeInputComp = null;
 
 
-    private bool performingTask = false;
+    private bool networkingActivated = false;
 
     public override void Initialize(GameInstance game) {
         if (initialized)
             return;
 
-        SetupReferences();
+
         gameInstanceRef = game;
+
+        SetupReferences();
+        SetupStartState();
         initialized = true;
     }
     private void SetupReferences() {
@@ -45,6 +50,14 @@ public class ConnectionMenu : Entity {
         if (!Validate(clientButtonComp, "ConnectionMenu failed to get reference to client Button component", ValidationLevel.ERROR, false))
             return;
 
+        //Connection Code Input Field
+        Transform connectionCodeTransform = transform.Find("ConnectionCodeInputField");
+        if (!Validate(connectionCodeTransform, "ConnectionMenu failed to get reference to ConnectionCodeInputField transform", ValidationLevel.ERROR, false))
+            return;
+        connectionCodeInputComp = connectionCodeTransform.GetComponent<TMP_InputField>();
+        if (!Validate(connectionCodeInputComp, "ConnectionMenu failed to get reference to InputField component", ValidationLevel.ERROR, false))
+            return;
+
         //Status Text
         Transform statusTextTransform = transform.Find("StatusText");
         if (!Validate(statusTextTransform, "ConnectionMenu failed to get reference to status text transform", ValidationLevel.ERROR, false))
@@ -52,35 +65,66 @@ public class ConnectionMenu : Entity {
         statusTextComp = statusTextTransform.GetComponent<TextMeshProUGUI>();
         if (!Validate(statusTextComp, "ConnectionMenu failed to get reference to status Text component", ValidationLevel.ERROR, false))
             return;
+
+        //LocalHost Text
+        Transform localHostTextTransform = transform.Find("LocalHost");
+        if (!Validate(localHostTextTransform, "ConnectionMenu failed to get reference to LocalHost text transform", ValidationLevel.ERROR, false))
+            return;
+        localHostComp = localHostTextTransform.GetComponent<TextMeshProUGUI>();
+        if (!Validate(localHostComp, "ConnectionMenu failed to get reference to LocalHost Text component", ValidationLevel.ERROR, false))
+            return;
+    }
+    private void SetupStartState() {
+        localHostComp.gameObject.SetActive(false);
+        statusTextComp.gameObject.SetActive(false);
+        hostButtonComp.gameObject.SetActive(true);
+        clientButtonComp.gameObject.SetActive(true);
+        connectionCodeInputComp.gameObject.SetActive(false);
+        networkingActivated = false;
+        connectionCodeInputComp.characterLimit = 15; //This should be the limit on ip address decrypted values XXX.XXX.XXX.XXX
     }
 
 
+    public void ConfirmConnectionCode() {
+
+        Netcode netcodeRef = gameInstanceRef.GetNetcode();
+        string connectionCode = netcodeRef.ApplyEncryptionKey(connectionCodeInputComp.text);
+        gameInstanceRef.GetNetcode().StartAsClient(connectionCode);
+        if (gameInstanceRef.IsDebuggingEnabled())
+            Log("Attempting to connect to " + connectionCode);
+    }
     public void HostButton() {
         gameInstanceRef.GetNetcode().StartAsHost();
         statusTextComp.gameObject.SetActive(true);
+        localHostComp.gameObject.SetActive(true);
         hostButtonComp.gameObject.SetActive(false);
         clientButtonComp.gameObject.SetActive(false);
+        connectionCodeInputComp.gameObject.SetActive(false);
         statusTextComp.text = hostWaitingMessage;
-        performingTask = true;
+        localHostComp.text = "Local Host: " + gameInstanceRef.GetNetcode().GetEncryptedLocalHost();
+        networkingActivated = true;
     }
     public void ClientButton() {
-        gameInstanceRef.GetNetcode().StartAsClient();
+        //gameInstanceRef.GetNetcode().StartAsClient();
+        connectionCodeInputComp.gameObject.SetActive(true);
         statusTextComp.gameObject.SetActive(true);
+        localHostComp.gameObject.SetActive(false);
         hostButtonComp.gameObject.SetActive(false);
         clientButtonComp.gameObject.SetActive(false);
         statusTextComp.text = clientSearchingMessage;
-        performingTask = true;
+        networkingActivated = true;
     }
     public void BackButton() {
-        if (performingTask) {
+        if (networkingActivated) {
             gameInstanceRef.GetNetcode().StopNetworking();
             statusTextComp.gameObject.SetActive(false);
+            localHostComp.gameObject.SetActive(false);
+            connectionCodeInputComp.gameObject.SetActive(false); //Reset its text too!
             hostButtonComp.gameObject.SetActive(true);
             clientButtonComp.gameObject.SetActive(true);
-            performingTask = false;
-            return;
+            networkingActivated = false;
         }
-
-        gameInstanceRef.Transition(GameInstance.GameState.MAIN_MENU);
+        else
+            gameInstanceRef.Transition(GameInstance.GameState.MAIN_MENU);
     }
 }
