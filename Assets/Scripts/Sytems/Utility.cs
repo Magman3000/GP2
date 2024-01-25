@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEditor;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 
 namespace MyUtility { 
@@ -47,6 +46,12 @@ namespace MyUtility {
             float oldRange = oldMax - oldMin;
             float newRange = newMax - newMin;
             return (((value -  oldMin) * newRange) / oldRange) + newMin;
+        }
+        public static int LinearConversion(int value, int oldMin, int oldMax, int newMin, int newMax) {
+
+            int oldRange = oldMax - oldMin;
+            int newRange = newMax - newMin;
+            return (((value - oldMin) * newRange) / oldRange) + newMin;
         }
 
     }

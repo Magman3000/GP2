@@ -88,7 +88,7 @@ public class ConnectionMenu : Entity {
     public void ConfirmConnectionCode() {
 
         Netcode netcodeRef = gameInstanceRef.GetNetcode();
-        string connectionCode = netcodeRef.ApplyEncryptionKey(connectionCodeInputComp.text);
+        string connectionCode = netcodeRef.DecryptConnectionCode(connectionCodeInputComp.text);
         gameInstanceRef.GetNetcode().StartAsClient(connectionCode);
         if (gameInstanceRef.IsDebuggingEnabled())
             Log("Attempting to connect to " + connectionCode);
@@ -101,7 +101,7 @@ public class ConnectionMenu : Entity {
         clientButtonComp.gameObject.SetActive(false);
         connectionCodeInputComp.gameObject.SetActive(false);
         statusTextComp.text = hostWaitingMessage;
-        localHostComp.text = "Local Host: " + gameInstanceRef.GetNetcode().GetEncryptedLocalHost();
+        localHostComp.text = "Join Code: " + gameInstanceRef.GetNetcode().GetEncryptedLocalHost();
         networkingActivated = true;
     }
     public void ClientButton() {
