@@ -27,7 +27,7 @@ public class DoorMovement : MonoBehaviour
         doorState = state; 
         if(doorState == ObstacleState.active)
         {
-            transform.Rotate(secondRotation);
+            transform.eulerAngles = secondRotation;
             transform.position = secondPosition;
         }
         else if(doorState == ObstacleState.inactive)
