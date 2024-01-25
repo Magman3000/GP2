@@ -44,4 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa534c285760e784c8d5673e9775e249, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showDebugMessages: 1
+  initializeOnStartup: 1
+  debugging: 1
+  currentApplicationStatus: 0
+  currentGameState: 0

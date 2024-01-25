@@ -16,8 +16,6 @@ namespace Initialization {
 
             GameInstance gameInstance = game.GetComponent<GameInstance>();
             gameInstance.Initialize();
-
-           //ceneManager.GetSceneAt(0).GetRootGameObjects()[0].
         }
 
 

@@ -11,6 +11,7 @@ public class Netcode : Entity {
 
 
     public static ulong INVALID_CLIENT_ID = 0;
+    private const UInt32 encryptionKey = 0x04080219;
 
     private const uint clientsLimit = 2;
     private ulong clientID = INVALID_CLIENT_ID;
@@ -30,6 +31,7 @@ public class Netcode : Entity {
         //transportLayer.ConnectionData.Address = "192.0.0.1";
 
         QueuryOwnIPAddress();
+        EncryptionTest();
         SetupCallbacks();
         gameInstanceRef = game;
         initialized = true;
@@ -58,7 +60,19 @@ public class Netcode : Entity {
             }
         }
     }
+    private void EncryptionTest() {
+        IPAddress testAddress = localIPAddress;
+        for (int i = 0; i < localIPAddress.GetAddressBytes().Length; i++) {
+            Byte encryptionByte = (Byte)(encryptionKey >> 8 * i); //0xff
+            Byte dataByte = testAddress.GetAddressBytes()[i];
 
+            Log("Before encryption " + dataByte);
+            dataByte ^= encryptionByte;
+            Log("After encryption " + dataByte);
+            //Log("Encryption Byte " + i + " is " + encryptionByte);
+
+        }
+    }
 
     public void StopNetworking() {
 
