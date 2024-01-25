@@ -1,20 +1,21 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : NetworkedEntity
-{
-    private Rigidbody rb;
+public class Player : NetworkedEntity {
+    public enum PlayerIdentity {
+        NONE = 0,
+        PLAYER_1, //Daredevil
+        PLAYER_2 //Coordinator
+    }
+
+
 
     [Header("Speed Settings")]
     [Tooltip("Speed of acceleration")]
     [SerializeField] private float accelerationSpeed;
     [Tooltip("Speed of deAcceleration")]
-    [SerializeField] private float deAccelerationSpeed;
+    [SerializeField] private float deccelerationSpeed;
     [Tooltip("Maximum amount of speed attainable")]
     [SerializeField] private float maxSpeed;
-    private float currentSpeed;
 
     [Tooltip("How much you turn left and right each turning action")]
     [SerializeField] private float turnSpeed;
@@ -26,34 +27,31 @@ public class Player : NetworkedEntity
     [SerializeField] private float boostCharges;
     [Tooltip("The duration of the boost")]
     [SerializeField] private float boostDuration;
-    private float timer = 0.0f;
-    private bool boosting = false;
-
-    public enum PlayerIdentity
-    {
-        NONE = 0,
-        PLAYER_1, //Daredevil
-        PLAYER_2 //Coordinator
-    }
 
     private PlayerIdentity assignedPlayerIdentity = PlayerIdentity.NONE;
 
-    public override void Initialize(GameInstance game)
-    {
+    private float currentSpeed;
+    private float timer = 0.0f;
+    private bool boosting = false;
+
+
+    private Rigidbody rigidbody;
+
+
+    public override void Initialize(GameInstance game) {
         if (initialized)
             return;
 
+        SetupReference();
         gameInstanceRef = game;
         initialized = true;
     }
-    public override void Tick()
-    {
+    public override void Tick() {
 
 
 
     }
-    public override void FixedTick()
-    {
+    public override void FixedTick() {
 
     }
 
@@ -61,15 +59,14 @@ public class Player : NetworkedEntity
     {
         assignedPlayerIdentity = playerIdentity;
     }
-
-    private void GetComponentRigidBody()
-    {
-        rb = GetComponent<Rigidbody>();
+    private void SetupReference() {
+        rigidbody = GetComponent<Rigidbody>();
     }
+
 
     private void UpdateVelocity()
     {
-        rb.velocity = transform.forward * currentSpeed;
+        rigidbody.velocity = transform.forward * currentSpeed;
     }
 
     private void IncreaseCurrentSpeed()
@@ -80,49 +77,49 @@ public class Player : NetworkedEntity
             currentSpeed = maxSpeed;
         }
     }
-
     private void DecreaseCurrentSpeed()
     {
-        currentSpeed += -deAccelerationSpeed * Time.deltaTime;
-        if (currentSpeed < 0)
+        currentSpeed -= deccelerationSpeed * Time.deltaTime;
+        if (currentSpeed < 0.0f)
         {
-            currentSpeed = 0;
+            currentSpeed = 0.0f;
         }
     }
+
 
     private void TurnRight()
     {
         transform.eulerAngles += new Vector3(0, turnSpeed, 0) * Time.deltaTime;
     }
-
     private void TurnLeft()
     {
         transform.eulerAngles += new Vector3(0, -turnSpeed, 0) * Time.deltaTime;
     }
 
+
     private void SpeedBoost()
     {
-        if (boostCharges > 0 && boosting == false)
-        {
-            rb.velocity = (transform.forward * currentSpeed) * boostMultiplier;
-            boostCharges -= 1;
-            boosting = true;
-            timer = boostDuration;
-        }
-    }
+        if (boostCharges <= 0.0f || boosting)
+            return;
 
+
+        boostCharges -= 1;
+        boosting = true;
+        timer = boostDuration;
+
+        rigidbody.velocity = (transform.forward * currentSpeed) * boostMultiplier;
+    }
     private void BoostTimer()
     {
-        if (timer > 0)
+        if (timer > 0.0f)
         {
             timer -= Time.deltaTime;
-            if (timer < 0.0f)
+            if (timer <= 0.0f)
             {
-                boosting = false;
                 timer = 0.0f;
+                boosting = false;
             }
         }
 
     }
-
 }
