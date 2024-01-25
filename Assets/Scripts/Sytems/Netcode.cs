@@ -78,11 +78,16 @@ public class Netcode : Entity {
 
 
     public string GetEncryptedLocalHost() {
+        //65 - 90 A-Z
+        //Old Range: 
 
         Byte[] addressBytes = localIPAddress.GetAddressBytes();
-        for (int i = 0; i < addressBytes.Length; i++)
+        for (int i = 0; i < addressBytes.Length; i++) {
             addressBytes[i] ^= (Byte)(encryptionKey >> 8 * i);
+            //if(addressBytes[i] > )
+        }
 
+        
         //
 
         return Encoding.ASCII.GetString(addressBytes); ;

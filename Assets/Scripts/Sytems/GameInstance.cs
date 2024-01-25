@@ -591,6 +591,7 @@ public class GameInstance : MonoBehaviour {
             mainCamera = Instantiate(asset);
             mainCameraScript = mainCamera.GetComponent<MainCamera>();
             mainCameraScript.Initialize(this);
+            mainCameraScript.SetPlayerReference(playerScript);
             Validate(mainCameraScript, "MainCamera component is missing on entity!", ValidationLevel.ERROR, true);
         }
         else if (asset.CompareTag("SoundSystem")) {
