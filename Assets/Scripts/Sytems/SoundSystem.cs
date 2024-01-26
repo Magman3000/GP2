@@ -128,16 +128,22 @@ public class SoundSystem : Entity {
                 Log("SoundSystem has unloaded TracksBundle successfully!");
         }
 
-        foreach (var asset in loadedSFXAssetsHandles) {
-            Addressables.Release(asset.Value);
-            if (gameInstanceRef.IsDebuggingEnabled())
-                Log("SoundSystem has unloaded SFX audio clip [" + asset.Key + "]");
+        if (loadedSFXAssetsHandles != null) {
+            foreach (var asset in loadedSFXAssetsHandles) {
+                Addressables.Release(asset.Value);
+                if (gameInstanceRef.IsDebuggingEnabled())
+                    Log("SoundSystem has unloaded SFX audio clip [" + asset.Key + "]");
+            }
         }
-        foreach (var asset in loadedTracksAssets) {
-            Addressables.Release(asset.Value);
-            if (gameInstanceRef.IsDebuggingEnabled())
-                Log("SoundSystem has unloaded track audio clip [" + asset.Key + "]");
+
+        if (loadedTracksAssets != null) {
+            foreach (var asset in loadedTracksAssets) {
+                Addressables.Release(asset.Value);
+                if (gameInstanceRef.IsDebuggingEnabled())
+                    Log("SoundSystem has unloaded track audio clip [" + asset.Key + "]");
+            }
         }
+
 
         if (gameInstanceRef.IsDebuggingEnabled())
             Log("SoundSystem has released all resources successfully!");

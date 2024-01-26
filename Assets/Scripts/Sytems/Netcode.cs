@@ -1,14 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
-using UnityEngine;
-using UnityEngine.UIElements;
 using static MyUtility.Utility;
 
 
@@ -60,8 +55,13 @@ enum DecryptionCodes {
     zZ2 = 253, xX3 = 254, cC4 = 255
 }
 
+//192.145.0.1
+//230.032.0.6
+//21alkjfhasiflkha
 
-
+//21alkjfhasiflkha
+//230.032.0.6
+//192.145.0.1
 
 public class Netcode : Entity {
 
@@ -74,9 +74,11 @@ public class Netcode : Entity {
 
     private IPAddress localIPAddress = null;
     
+    private Encryptor encryptor;
 
     private NetworkManager networkManagerRef = null;
     private UnityTransport transportLayer = null;
+
 
     public override void Initialize(GameInstance game) {
         if (initialized)
@@ -86,6 +88,7 @@ public class Netcode : Entity {
         transportLayer = networkManagerRef.GetComponent<UnityTransport>();
         //transportLayer.ConnectionData.Address = "192.0.0.1";
 
+        encryptor = new Encryptor();
         QueuryOwnIPAddress();
         SetupCallbacks();
         gameInstanceRef = game;
@@ -118,54 +121,56 @@ public class Netcode : Entity {
 
     public string GetEncryptedLocalHost() {
 
-        string connectionCode = "";
-        Byte[] addressBytes = localIPAddress.GetAddressBytes();
-        for (int i = 0; i < addressBytes.Length; i++) {
-            addressBytes[i] ^= (Byte)(encryptionKey >> 8 * i); //First encryption
-            connectionCode += ((DecryptionCodes)addressBytes[i]); //Second encryption
-        }
+        //string connectionCode = "";
+        //Byte[] addressBytes = localIPAddress.GetAddressBytes();
+        //for (int i = 0; i < addressBytes.Length; i++) {
+        //    addressBytes[i] ^= (Byte)(encryptionKey >> 8 * i); //First encryption
+        //    connectionCode += ((DecryptionCodes)addressBytes[i]); //Second encryption
+        //}
 
-        return connectionCode;
+        return encryptor.Encrypt(localIPAddress.GetAddressBytes());
     }
     public string DecryptConnectionCode(string targetCode) {
-        if (targetCode.Length != 12) //Double check that its 12 bytes (X.X.X.X = 4 * 3 characters per code)
-            return null;
+        //if (targetCode.Length != 12) //Double check that its 12 bytes (X.X.X.X = 4 * 3 characters per code)
+        //    return null;
 
 
-        //ConnectionCode decryption (1st decryption)
-        Byte[] parsedAddress = new byte[4];
-        int addressCursor = 0;
+        ////ConnectionCode decryption (1st decryption)
+        //Byte[] parsedAddress = new byte[4];
+        //int addressCursor = 0;
 
-        Byte[] addressBytes = Encoding.ASCII.GetBytes(targetCode);
-        for (int i = 0; i < addressBytes.Length;) { 
+        //Byte[] addressBytes = Encoding.ASCII.GetBytes(targetCode);
+        //for (int i = 0; i < addressBytes.Length;) { 
 
-            //Pack each 3 bytes together
-            Byte[] decryptedBytes = new Byte[3];
-            for (int j = 0; j < 3; j++)
-                decryptedBytes[j] = addressBytes[i + j];
+        //    //Pack each 3 bytes together
+        //    Byte[] decryptedBytes = new Byte[3];
+        //    for (int j = 0; j < 3; j++)
+        //        decryptedBytes[j] = addressBytes[i + j];
 
-            //Parse code and get value
-            string code = Encoding.ASCII.GetString(decryptedBytes);
-            DecryptionCodes parsedCode = (DecryptionCodes)System.Enum.Parse(typeof(DecryptionCodes), code);
-            int value = (int)parsedCode;
-            parsedAddress[addressCursor] = (byte)value;
-            addressCursor++;
+        //    //Parse code and get value
+        //    string code = Encoding.ASCII.GetString(decryptedBytes);
+        //    DecryptionCodes parsedCode = (DecryptionCodes)System.Enum.Parse(typeof(DecryptionCodes), code);
+        //    int value = (int)parsedCode;
+        //    parsedAddress[addressCursor] = (byte)value;
+        //    addressCursor++;
 
-            i += 3;//Move 3 bytes each step
-        }
+        //    i += 3;//Move 3 bytes each step
+        //}
 
 
-        string connectionCode = "";
-        //IP Address decryption (2nd decryption)
-        for (int i = 0; i < parsedAddress.Length; i++) {
-            parsedAddress[i] ^= (Byte)(encryptionKey >> 8 * i);
-            if (i == parsedAddress.Length - 1)
-                connectionCode += parsedAddress[i];
-            else
-                connectionCode += parsedAddress[i] + ".";
-        }
+        //string connectionCode = "";
+        ////IP Address decryption (2nd decryption)
+        //for (int i = 0; i < parsedAddress.Length; i++) {
+        //    parsedAddress[i] ^= (Byte)(encryptionKey >> 8 * i);
+        //    if (i == parsedAddress.Length - 1)
+        //        connectionCode += parsedAddress[i];
+        //    else
+        //        connectionCode += parsedAddress[i] + ".";
+        //}
 
-        return connectionCode;
+        //return connectionCode;
+
+        return encryptor.Decrypt(targetCode);
     }
 
 
@@ -197,6 +202,7 @@ public class Netcode : Entity {
     public bool StartAsHost() {
 
         transportLayer.ConnectionData.Address = "0.0.0.0"; //??
+
         Log(transportLayer.ConnectionData.Address);
         return networkManagerRef.StartHost();
     }

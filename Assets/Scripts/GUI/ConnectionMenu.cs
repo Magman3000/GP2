@@ -89,7 +89,13 @@ public class ConnectionMenu : Entity {
 
         Netcode netcodeRef = gameInstanceRef.GetNetcode();
         string connectionCode = netcodeRef.DecryptConnectionCode(connectionCodeInputComp.text);
-        gameInstanceRef.GetNetcode().StartAsClient(connectionCode);
+        if (connectionCode != null)
+            gameInstanceRef.GetNetcode().StartAsClient(connectionCode);
+        else {
+            if (gameInstanceRef.IsDebuggingEnabled())
+                Warning("Invalid code received after decryption");
+        }
+            
         if (gameInstanceRef.IsDebuggingEnabled())
             Log("Attempting to connect to " + connectionCode);
     }

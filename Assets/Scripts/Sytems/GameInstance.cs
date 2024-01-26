@@ -91,6 +91,7 @@ public class GameInstance : MonoBehaviour {
     private Netcode netcodeScript;
     private MainMenu mainMenuScript;
     private OptionsMenu optionsMenuScript;
+    private CreditsMenu creditsMenuScript;
     private ConnectionMenu connectionMenuScript;
     private LevelSelectMenu levelSelectMenuScript;
     private FadeTransition fadeTransitionScript;
@@ -697,23 +698,28 @@ public class GameInstance : MonoBehaviour {
             Log("Started creating " + asset.name + " entity");
             optionsMenu = Instantiate(asset);
             optionsMenuScript = optionsMenu.GetComponent<OptionsMenu>();
-            optionsMenuScript.Initialize(this);
             Validate(optionsMenuScript, "OptionMenu component is missing on entity!", ValidationLevel.ERROR, true);
+            optionsMenuScript.Initialize(this);
         }
         else if (asset.CompareTag("CreditsMenu")) {
             Log("Started creating " + asset.name + " entity");
             creditsMenu = Instantiate(asset);
+            creditsMenuScript = creditsMenu.GetComponent<CreditsMenu>();
+            Validate(creditsMenuScript, "CreditsMenu component is missing on entity!", ValidationLevel.ERROR, true);
+            creditsMenuScript.Initialize(this);
         }
         else if (asset.CompareTag("ConnectionMenu")) {
             Log("Started creating " + asset.name + " entity");
             connectionMenu = Instantiate(asset);
             connectionMenuScript = connectionMenu.GetComponent<ConnectionMenu>();
+            Validate(connectionMenuScript, "ConnectionMenu component is missing on entity!", ValidationLevel.ERROR, true);
             connectionMenuScript.Initialize(this);
         }
         else if (asset.CompareTag("LevelSelectMenu")) {
             Log("Started creating " + asset.name + " entity");
             levelSelectMenu = Instantiate(asset);
             levelSelectMenuScript = levelSelectMenu.GetComponent<LevelSelectMenu>();
+            Validate(levelSelectMenuScript, "LevelSelectMenu component is missing on entity!", ValidationLevel.ERROR, true);
             levelSelectMenuScript.Initialize(this);
         }
         else if (asset.CompareTag("LoseMenu")) {
