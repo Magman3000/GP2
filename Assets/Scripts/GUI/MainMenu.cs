@@ -33,6 +33,6 @@ public class MainMenu : Entity {
 
     public void QuitButton()
     {
-        //GameInstance.AbortApplication();
+        GameInstance.AbortApplication();
     }
 }

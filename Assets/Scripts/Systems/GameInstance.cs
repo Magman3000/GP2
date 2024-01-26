@@ -4,7 +4,6 @@ using static MyUtility.Utility;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEditor;
-using System;
 
 public class GameInstance : MonoBehaviour {
 
@@ -33,6 +32,7 @@ public class GameInstance : MonoBehaviour {
     //Addressables Labels
     private const string essentialAssetsLabel       = "Essential";
     private const string levelsBundleLabel          = "LevelsBundle";
+    private const string loadingScreenLabel         = "LoadingScreen";
 
 
 
@@ -52,6 +52,7 @@ public class GameInstance : MonoBehaviour {
 
     private AsyncOperationHandle<IList<GameObject>> loadedAssetsHandle;
     private AsyncOperationHandle<ScriptableObject> levelsBundleHandle;
+    private AsyncOperationHandle<GameObject> loadingScreenHandle;
 
     private AsyncOperationHandle<GameObject> currentLoadedLevelHandle;
     private GameObject currentLoadedLevel = null;
@@ -68,7 +69,7 @@ public class GameInstance : MonoBehaviour {
     private GameObject playerAssetRef;
     private GameObject player1;
     private GameObject player2;
-    private GameObject player1HUD;
+    private GameObject player1HUD; //nOT NEED. HUDS MOVED TO PLAYER
     private GameObject player2HUD;
 
     private GameObject mainCamera;
@@ -79,8 +80,10 @@ public class GameInstance : MonoBehaviour {
     private GameObject levelSelectMenu;
     private GameObject winMenu;
     private GameObject loseMenu;
+
     private GameObject pauseMenu;
     private GameObject fadeTransition;
+    private GameObject loadingScreen;
 
     //Scripts
     private SoundSystem soundSystemScript;
@@ -95,6 +98,7 @@ public class GameInstance : MonoBehaviour {
     private ConnectionMenu connectionMenuScript;
     private LevelSelectMenu levelSelectMenuScript;
     private FadeTransition fadeTransitionScript;
+    private LoadingScreen loadingScreenScript;
 
 
 
@@ -121,10 +125,22 @@ public class GameInstance : MonoBehaviour {
 
     //ResourceManagment
     private void LoadAssets() {
+        LoadLoadingScreen();
         LoadEssentials();
         LoadLevelsBundle();
         assetsLoadingInProgress = true;
         currentApplicationStatus = ApplicationStatus.LOADING_ASSETS;
+    }
+    private void LoadLoadingScreen() {
+        if (debugging)
+            Log("Started loading LoadingScreen!");
+
+        loadingScreenHandle = Addressables.LoadAssetAsync<GameObject>(loadingScreenLabel);
+        if (!loadingScreenHandle.IsValid()) {
+            AbortApplication("Failed to load loading screen\nCheck if label is correct!");
+            return;
+        }
+        loadingScreenHandle.Completed += FinishedLoadingLoadingScreenCallback;
     }
     private void LoadEssentials() {
         if (debugging)
@@ -171,6 +187,10 @@ public class GameInstance : MonoBehaviour {
         if (debugging)
             Log("Framerate has been set to " + target + "!");
     }
+
+
+
+    //This is kinda problamatic consedering i cant free the resources from here! cause its static
     public static void AbortApplication(object message = null) {
 #if UNITY_EDITOR
         EditorApplication.isPlaying = false;
@@ -276,10 +296,16 @@ public class GameInstance : MonoBehaviour {
 
         if (assetsLoadingInProgress) {
             CheckAssetsLoadingStatus();
+            if (loadingScreenScript)
+                loadingScreenScript.UpdateLoadingBar(loadedAssetsHandle.PercentComplete);
             if (debugging)
                 Log("Loading Assets In Progress...");
             return;
         }
+        else if (loadingScreenScript && loadingScreenScript.IsLoadingProcessRunning())
+            loadingScreenScript.FinishLoadingProcess();
+
+
 
         initialized = true;
         initializationInProgress = false;
@@ -751,6 +777,35 @@ public class GameInstance : MonoBehaviour {
         else
             Warning("Loaded an asset that was not recognized!\n[" + asset.name + "]");
     }
+
+
+
+
+
+
+    private void FinishedLoadingLoadingScreenCallback(AsyncOperationHandle<GameObject> handle) {
+        if (handle.Status == AsyncOperationStatus.Succeeded) {
+            if (debugging)
+                Log("Finished loading LoadingScreen successfully!");
+
+            loadingScreen = Instantiate(handle.Result);
+            loadingScreen.SetActive(false);
+            loadingScreenScript = loadingScreen.GetComponent<LoadingScreen>();
+            loadingScreenScript.Initialize(this);
+            if (assetsLoadingInProgress)
+                loadingScreenScript.StartLoadingProcess(LoadingScreen.LoadingProcess.LOADING_ASSETS);
+
+            //Start Using it?
+            if (debugging)
+                Log("Created " + handle.Result.name);
+        }
+        else if (handle.Status == AsyncOperationStatus.Failed) {
+            AbortApplication("Failed to load LoadingScreen!\nCheck if label is correct.");
+        }
+    }
+
+
+
 
     private void FinishedLoadingAssetsCallback(AsyncOperationHandle<IList<GameObject>> handle) {
         if (handle.Status == AsyncOperationStatus.Succeeded) {
