@@ -22,6 +22,7 @@ public class Coordinator
 
 
         playerRef = player;
+        boostCharges = playerRef.playerOneStats.GetBoostCharges();
         gameInstanceRef = game;
         initialized = true;
     }
