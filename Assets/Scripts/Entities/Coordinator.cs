@@ -22,7 +22,6 @@ public class Coordinator
 
 
         playerRef = player;
-        boostCharges = playerRef.playerOneStats.GetBoostCharges();
         gameInstanceRef = game;
         initialized = true;
     }
@@ -35,6 +34,11 @@ public class Coordinator
     public void FixedTick()
     {
 
+    }
+
+    private void RestoreCharges()
+    {
+        boostCharges = playerRef.playerOneStats.GetBoostCharges();
     }
 
     private void SpeedBoost()
