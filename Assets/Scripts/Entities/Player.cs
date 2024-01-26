@@ -9,33 +9,17 @@ public class Player : NetworkedEntity {
 
 
 
-    [Header("Speed Settings")]
-    [Tooltip("Speed of acceleration")]
-    [SerializeField] private float accelerationSpeed;
-    [Tooltip("Speed of deAcceleration")]
-    [SerializeField] private float deccelerationSpeed;
-    [Tooltip("Maximum amount of speed attainable")]
-    [SerializeField] private float maxSpeed;
-
-    [Tooltip("How much you turn left and right each turning action")]
-    [SerializeField] private float turnSpeed;
-
-    [Header("Speed Boost Settings")]
-    [Tooltip("The multiplied increase of speed during the boost")]
-    [SerializeField] private float boostMultiplier;
-    [Tooltip("The amount of boost charges")]
-    [SerializeField] private float boostCharges;
-    [Tooltip("The duration of the boost")]
-    [SerializeField] private float boostDuration;
 
     private PlayerIdentity assignedPlayerIdentity = PlayerIdentity.NONE;
 
 
+    
     private float currentSpeed;
     private float timer = 0.0f;
     private bool boosting = false;
+    private int boostCharges;
 
-
+    PlayerOneStats playerOneStats;
     private Rigidbody rigidbody;
 
 
@@ -44,6 +28,7 @@ public class Player : NetworkedEntity {
             return;
 
         SetupReference();
+        boostCharges = playerOneStats.GetBoostCharges();
         gameInstanceRef = game;
         initialized = true;
     }
@@ -73,15 +58,21 @@ public class Player : NetworkedEntity {
 
     private void IncreaseCurrentSpeed()
     {
-        currentSpeed += accelerationSpeed * Time.deltaTime;
-        if (currentSpeed > maxSpeed)
+        
+        currentSpeed += playerOneStats.GetAccelerationSpeed() * Time.deltaTime;
+        if (currentSpeed > playerOneStats.GetMaxSpeed() && !boosting)
         {
-            currentSpeed = maxSpeed;
+            currentSpeed = playerOneStats.GetMaxSpeed();
         }
+        if (boosting && currentSpeed > playerOneStats.GetMaxBoostSpeed())
+        {
+            currentSpeed = playerOneStats.GetMaxBoostSpeed();
+        }
+
     }
     private void DecreaseCurrentSpeed()
     {
-        currentSpeed -= deccelerationSpeed * Time.deltaTime;
+        currentSpeed -= playerOneStats.GetDeccelerationSpeed() * Time.deltaTime;
         if (currentSpeed < 0.0f)
         {
             currentSpeed = 0.0f;
@@ -91,41 +82,41 @@ public class Player : NetworkedEntity {
 
     private void TurnRight()
     {
-        transform.eulerAngles += new Vector3(0, turnSpeed, 0) * Time.deltaTime;
+        transform.eulerAngles += new Vector3(0, playerOneStats.GetTurnSpeed(), 0) * Time.deltaTime;
     }
     private void TurnLeft()
     {
-        transform.eulerAngles += new Vector3(0, -turnSpeed, 0) * Time.deltaTime;
+        transform.eulerAngles -= new Vector3(0, playerOneStats.GetTurnSpeed(), 0) * Time.deltaTime;
     }
 
 
     private void SpeedBoost()
     {
-        if (boostCharges <= 0.0f || boosting)
+        if (playerOneStats.GetBoostCharges() <= 0 || boosting)
             return;
 
 
         boostCharges -= 1;
         boosting = true;
-        timer = boostDuration;
+        timer = playerOneStats.GetBoostCharges();
 
-        rigidbody.velocity = (transform.forward * currentSpeed) * boostMultiplier;
+        
     }
     private void BoostTimer()
     {
-        if (timer > 0.0f)
+        if (timer <= 0.0f)
+            return;
+
+        timer -= Time.deltaTime;
+        if (timer <= 0.0f)
         {
-            timer -= Time.deltaTime;
-            if (timer <= 0.0f)
-            {
-                timer = 0.0f;
-                boosting = false;
-            }
+            timer = 0.0f;
+            boosting = false;
         }
 
     }
 
 
     public float GetCurrentSpeed() {  return currentSpeed; }
-    public float GetCurrentSpeedPercentage() { return currentSpeed / maxSpeed; }
+    public float GetCurrentSpeedPercentage() { return currentSpeed / playerOneStats.GetMaxSpeed(); }
 }
