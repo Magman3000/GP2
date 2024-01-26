@@ -45,6 +45,7 @@ public class GameInstance : MonoBehaviour {
     private bool initializationInProgress = false;
     private bool assetsLoadingInProgress = false;
     private bool gamePaused = false;
+    private bool gameStarted = false;
 
     private int powerSavingFrameTarget = 20;
     private int gameplayFrameTarget = 60;
@@ -54,6 +55,7 @@ public class GameInstance : MonoBehaviour {
 
     private AsyncOperationHandle<GameObject> currentLoadedLevelHandle;
     private GameObject currentLoadedLevel = null;
+    private Level currentLoadedLevelScript = null;
 
     private Resolution deviceResolution;
 
@@ -63,7 +65,12 @@ public class GameInstance : MonoBehaviour {
     private GameObject eventSystem;
     private GameObject netcode;
 
-    private GameObject player;
+    private GameObject playerAssetRef;
+    private GameObject player1;
+    private GameObject player2;
+    private GameObject player1HUD;
+    private GameObject player2HUD;
+
     private GameObject mainCamera;
     private GameObject mainMenu;
     private GameObject optionsMenu;
@@ -77,12 +84,15 @@ public class GameInstance : MonoBehaviour {
 
     //Scripts
     private SoundSystem soundSystemScript;
-    private Player playerScript;
+    private Player player1Script;
+    private Player player2Script;
+
     private MainCamera mainCameraScript;
     private Netcode netcodeScript;
     private MainMenu mainMenuScript;
     private OptionsMenu optionsMenuScript;
     private ConnectionMenu connectionMenuScript;
+    private LevelSelectMenu levelSelectMenuScript;
     private FadeTransition fadeTransitionScript;
 
 
@@ -179,14 +189,29 @@ public class GameInstance : MonoBehaviour {
         //-Destroy gameobjects
         //-Release resources
 
-        playerScript.CleanUp("Player cleaned up successfully!");
+        //Needs reworking after networking solution
+        if (player1Script) //Temp
+            player1Script.CleanUp("Player 1 cleaned up successfully!");
+
+        if (player2Script)//Temp
+            player2Script.CleanUp("Player 2 cleaned up successfully!");
+
+
         mainCameraScript.CleanUp("MainCamera cleaned up successfully!");
         soundSystemScript.CleanUp("SoundSystem cleaned up successfully!");
 
         //Needed to guarantee destruction of all entities before attempting to release resources.
-        ValidateAndDestroy(player);
+        ValidateAndDestroy(player1);
+        ValidateAndDestroy(player2);
         ValidateAndDestroy(mainCamera);
         ValidateAndDestroy(soundSystem);
+
+
+
+        //ADD REST OF THE MENUS!
+
+
+
         if (debugging)
             Log("Destroyed all entities successfully!");
 
@@ -197,6 +222,7 @@ public class GameInstance : MonoBehaviour {
         //-on unloading, it becomes invalid! the handle!
 
         if (currentLoadedLevelHandle.IsValid()) {
+            currentLoadedLevelScript.CleanUp();
             ValidateAndDestroy(currentLoadedLevel);
             Addressables.Release(currentLoadedLevelHandle);
             if (debugging)
@@ -225,27 +251,9 @@ public class GameInstance : MonoBehaviour {
             Destroy(target);
     }
 
-    private void UpdateDebuggingCode() {
-        //Level Loading
-        if (Input.GetKeyDown(KeyCode.W))
-            LoadLevel("Test");
-        if (Input.GetKeyDown(KeyCode.Q))
-            UnloadLevel();
-
-        //Input
-        //Input.gyro.enabled = true;
-        //Input.GetTouch(0).
-        //Log(Input.gyro.rotationRate);
-
-        //Input.GetTouch(0).
-    }
-
 
     //Update/Tick
     void Update() {
-
-        UpdateDebuggingCode();
-
         switch (currentApplicationStatus) {
             case ApplicationStatus.LOADING_ASSETS:
                 UpdateApplicationLoadingAssetsState();
@@ -258,8 +266,6 @@ public class GameInstance : MonoBehaviour {
                 break;
         }
     }
-
-
     private void UpdateApplicationLoadingAssetsState() {
         if (initialized) {
             Warning("Attempted to update application initialization state while game was already initialized!");
@@ -438,6 +444,11 @@ public class GameInstance : MonoBehaviour {
         currentGameState = GameState.PLAYING;
         HideAllMenus();
         SetApplicationTargetFrameRate(gameplayFrameTarget); //Make sure to call this the moment the gameplay state is ready!
+        mainCameraScript.SetPlayerReference(player1Script);
+        player1.SetActive(true);
+        player2.SetActive(true);
+        //Enable controls! turn on and enable huds for each (SetActive(true) pretty much)
+
 
     }
     private void SetupWinMenuState() {
@@ -461,13 +472,25 @@ public class GameInstance : MonoBehaviour {
         soundSystemScript.Tick();
     }
     private void UpdatePlayingState() {
-        playerScript.Tick();
+        mainCameraScript.Tick();
+        player1Script.Tick();
+        player2Script.Tick();
     }
     private void UpdateFixedPlayingState() {
-        playerScript.FixedTick();
+        player1Script.FixedTick();
+        player2Script.FixedTick();
     }
 
 
+
+
+    public void StartGame(string levelName) {
+        if (!LoadLevel(levelName))
+            return;
+
+        fadeTransitionScript.StartTransition(SetupStartState);
+        gameStarted = true;
+    }
 
     //Level Loading - TODO: Move into LevelManagement class along with related vars
     public bool LoadLevel(string levelName) {
@@ -512,6 +535,7 @@ public class GameInstance : MonoBehaviour {
             return false;
         }
 
+        currentLoadedLevelScript.CleanUp();
         ValidateAndDestroy(currentLoadedLevel);
         Addressables.Release(currentLoadedLevelHandle);
 
@@ -532,6 +556,13 @@ public class GameInstance : MonoBehaviour {
             return false;
         }
 
+        currentLoadedLevelScript = currentLoadedLevel.GetComponent<Level>();
+        if (!currentLoadedLevelScript) {
+            Error("Failed to create level\nLevel is missing essential component!");
+            return false;
+        }
+
+        currentLoadedLevelScript.Initialize(this);
         return true;
     }
 
@@ -565,6 +596,45 @@ public class GameInstance : MonoBehaviour {
     public Netcode GetNetcode() { return netcodeScript; }
 
 
+    public void CreatePlayerEntity(Player.PlayerIdentity identity) {
+        if (identity == Player.PlayerIdentity.NONE)
+            return;
+
+        //Kinda weird tbh - Maybe i should create both at the start. Cause now i have to delete these if networking stops!
+        //NOTE: Dont lean into it feeling like i have to show that a player apperas when someone connects!
+        if (identity == Player.PlayerIdentity.PLAYER_1) {
+            if (player1)
+                return;
+
+            player1 = Instantiate(playerAssetRef);
+            player1.name = "Player_1_(Daredevil)";
+            player1.SetActive(false);
+            player1Script = player1.GetComponent<Player>();
+            Validate(player1Script, "Player 1 component is missing on entity!", ValidationLevel.ERROR, true);
+            player1Script.Initialize(this);
+            player1Script.AssignPlayerIdentity(identity);
+            if (debugging)
+                Log("Player 1 (Daredevil) has been created");
+        }
+        else if (identity == Player.PlayerIdentity.PLAYER_2) {
+            if (player2)
+                return;
+
+            player2 = Instantiate(playerAssetRef);
+            player2.name = "Player_2_(Coordinator)";
+            player2.SetActive(false);
+            player2Script = player2.GetComponent<Player>();
+            Validate(player2Script, "Player 2 component is missing on entity!", ValidationLevel.ERROR, true);
+            player2Script.Initialize(this);
+            player2Script.AssignPlayerIdentity(identity);
+            if (debugging)
+                Log("Player 2 (Coordinator) has been created");
+        }
+
+        if (player1 && player2)
+            Transition(GameState.LEVEL_SELECT_MENU);
+    }
+
 
     //Callbacks
     private void AssetLoadedCallback(GameObject asset) {
@@ -579,18 +649,23 @@ public class GameInstance : MonoBehaviour {
         //TODO: Do something about this!
 
         if (asset.CompareTag("Player")) {
-            Log("Started creating " + asset.name + " entity");
-            player = Instantiate(asset);
-            playerScript = player.GetComponent<Player>();
-            playerScript.Initialize(this);
-            Validate(playerScript, "Player component is missing on entity!", ValidationLevel.ERROR, true);
+            playerAssetRef = asset;
+            return;
+            //Log("Started creating " + asset.name + " entity");
+            //player1 = Instantiate(asset);
+            //player1Script = player1.GetComponent<Player>();
+            //player1Script.Initialize(this);
+            //Validate(player1Script, "Player component is missing on entity!", ValidationLevel.ERROR, true);
             
         }
-        else if (asset.CompareTag("MainCamera")) {
+
+
+        if (asset.CompareTag("MainCamera")) {
             Log("Started creating " + asset.name + " entity");
             mainCamera = Instantiate(asset);
             mainCameraScript = mainCamera.GetComponent<MainCamera>();
             mainCameraScript.Initialize(this);
+            //mainCameraScript.SetPlayerReference(player1Script); //Cant guarantee order!
             Validate(mainCameraScript, "MainCamera component is missing on entity!", ValidationLevel.ERROR, true);
         }
         else if (asset.CompareTag("SoundSystem")) {
@@ -638,6 +713,8 @@ public class GameInstance : MonoBehaviour {
         else if (asset.CompareTag("LevelSelectMenu")) {
             Log("Started creating " + asset.name + " entity");
             levelSelectMenu = Instantiate(asset);
+            levelSelectMenuScript = levelSelectMenu.GetComponent<LevelSelectMenu>();
+            levelSelectMenuScript.Initialize(this);
         }
         else if (asset.CompareTag("LoseMenu")) {
             Log("Started creating " + asset.name + " entity");
@@ -646,6 +723,14 @@ public class GameInstance : MonoBehaviour {
         else if (asset.CompareTag("WinMenu")) {
             Log("Started creating " + asset.name + " entity");
             winMenu = Instantiate(asset);
+        }
+        else if (asset.CompareTag("DaredevilHUD")) {
+            Log("Started creating " + asset.name + " entity");
+            player1HUD = Instantiate(asset);
+        }
+        else if (asset.CompareTag("CoordinatorHUD")) {
+            Log("Started creating " + asset.name + " entity");
+            player2HUD = Instantiate(asset);
         }
         else if (asset.CompareTag("PauseMenu")) {
             Log("Started creating " + asset.name + " entity");

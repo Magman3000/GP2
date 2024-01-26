@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: LevelsBundle
   m_EditorClassIdentifier: 
   Entries:
-  - key: TestLevel
+  - key: DebugLevel
     asset:
       m_AssetGUID: 88ac0122e9e772e489f54cfbc5094994
       m_SubObjectName: 
       m_SubObjectType: 
       m_EditorAssetChanged: 0
+    preview: {fileID: 0}
+    selectable: 1

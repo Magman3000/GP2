@@ -2,9 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainMenu : Entity {
-
-
+public class LevelSelectMenu : Entity {
 
     public override void Initialize(GameInstance game) {
         if (initialized)
@@ -16,8 +14,8 @@ public class MainMenu : Entity {
     }
 
 
-
-    public void TestButton() {
-        gameInstanceRef.Transition(GameInstance.GameState.CONNECTION_MENU);
+    public void DebugLevelButton() {
+        gameInstanceRef.StartGame("DebugLevel");
     }
+
 }

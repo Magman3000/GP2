@@ -16,6 +16,8 @@ TagManager:
   - ConnectionMenu
   - PauseMenu
   - FadeTransition
+  - DaredevilHUD
+  - CoordinatorHUD
   layers:
   - Default
   - TransparentFX

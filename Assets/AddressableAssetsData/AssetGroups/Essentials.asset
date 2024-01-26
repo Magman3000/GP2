@@ -107,6 +107,18 @@ MonoBehaviour:
     m_SerializedLabels:
     - Essential
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 82457f23a5188024bbea595e417cc898
+    m_Address: Assets/Prefabs/GUI/HUD_Daredevil.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Essential
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 458a053b5f2aa3a4eb23d0b48c9bd0e3
+    m_Address: Assets/Prefabs/GUI/HUD_Coordinator.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Essential
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: da51f17292af1bf42a5a2d71c923b64c, type: 2}
   m_SchemaSet:
