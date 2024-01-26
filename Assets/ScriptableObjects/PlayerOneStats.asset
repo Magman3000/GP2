@@ -9,10 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee82d7b320fa4fd5849b7057dc7fd87f, type: 3}
-  m_Name: MainCameraValues
+  m_Script: {fileID: 11500000, guid: f801d3f99de33b74aa6803e2c9f6c5fc, type: 3}
+  m_Name: PlayerOneStats
   m_EditorClassIdentifier: 
-  _offset: {x: 0, y: 5, z: 0}
-  _cameraFollowSpeed: 1
-  _minCameraZOffset: 0
-  _maxCameraZOffset: 0
+  accelerationSpeed: 1
+  deccelerationSpeed: 1
+  maxSpeed: 1
+  turnSpeed: 1
+  boostAccelerationMultiplier: 0.1
+  boostCharges: 1
+  boostDuration: 1
+  maxBoostSpeed: 1
