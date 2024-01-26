@@ -22,7 +22,7 @@ public class MainCamera : Entity
         var cameraValuesOffSet = _cameraValuesSo.GetOffset();      
 
         var zOffset = (_cameraValuesSo.GetMaxCameraZOffset() - _cameraValuesSo.GetMinCameraZOffset()) *
-                      _player.GetCurrentSpeedPercentage();
+                      _player._dareDevil.GetCurrentSpeedPercentage();
         var offset = new Vector3(0f, cameraValuesOffSet.y, zOffset);
 
         var transform1 = _player.transform;
