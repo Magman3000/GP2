@@ -76,5 +76,4 @@ public class DareDevil
 
     public float GetCurrentSpeed() { return currentSpeed; }
     public float GetCurrentSpeedPercentage() { return currentSpeed / playerRef.playerOneStats.GetMaxSpeed(); }
-
 }

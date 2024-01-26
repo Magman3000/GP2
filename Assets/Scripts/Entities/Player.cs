@@ -9,7 +9,8 @@ public class Player : NetworkedEntity
         PLAYER_2 //Coordinator
     }
 
-
+    [SerializeField]private CoordinatorHUD _coordinatorHUD;
+    [SerializeField]private DaredevilHUD _daredevilHUD;
 
 
     private PlayerIdentity assignedPlayerIdentity = PlayerIdentity.NONE;
@@ -17,7 +18,7 @@ public class Player : NetworkedEntity
 
 
     public DareDevil _dareDevil = new DareDevil();
-    private Coordinator _coordinatior = new Coordinator();
+    private Coordinator _coordinator = new Coordinator();
 
     [SerializeField] public PlayerOneStats playerOneStats;
     public Rigidbody rigidbody;
@@ -29,10 +30,16 @@ public class Player : NetworkedEntity
 
 
         _dareDevil.Initialize(game, this);
-        _coordinatior.Initialize(game, this);
+        _coordinator.Initialize(game, this);
         SetupReference();
         gameInstanceRef = game;
         initialized = true;
+        
+        _daredevilHUD.Initialize(game);
+        _daredevilHUD.SetPlayerReference(this);
+        
+        _coordinatorHUD.Initialize(game);
+        _coordinatorHUD.SetPlayerReference(this);
     }
     public override void Tick()
     {

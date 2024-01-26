@@ -19,11 +19,11 @@ public class MainCamera : Entity
         if (!initialized)
             return;
 
-        var cameraValuesOffSet = _cameraValuesSo.GetOffset();      
+        var cameraValuesYOffSet = _cameraValuesSo.GetYOffset();      
 
         var zOffset = (_cameraValuesSo.GetMaxCameraZOffset() - _cameraValuesSo.GetMinCameraZOffset()) *
                       _player._dareDevil.GetCurrentSpeedPercentage();
-        var offset = new Vector3(0f, cameraValuesOffSet.y, zOffset);
+        var offset = new Vector3(0f, cameraValuesYOffSet, zOffset);
 
         var transform1 = _player.transform;
         transform.position = Vector3.Lerp(transform.position, transform1.position + offset,
