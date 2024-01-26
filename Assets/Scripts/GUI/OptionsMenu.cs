@@ -13,7 +13,10 @@ public class OptionsMenu : Entity {
         initialized = true;
     }
 
+    public void IdkButton()
+    {
 
+    }
 
     public void BackButton() {
         gameInstanceRef.SetGameState(GameInstance.GameState.MAIN_MENU);
