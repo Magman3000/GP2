@@ -19,10 +19,7 @@ public class MainCamera : Entity
         if (!initialized)
             return;
 
-        var cameraValuesOffSet = _cameraValuesSo.GetOffset();
-        Debug.Log($"{_cameraValuesSo.GetMaxCameraZOffset()} max z offset"); 
-        Debug.Log($"{_cameraValuesSo.GetMinCameraZOffset()} min z offset"); 
-        Debug.Log($"{_player.GetCurrentSpeedPercentage()} current speed percentage");   
+        var cameraValuesOffSet = _cameraValuesSo.GetOffset();      
 
         var zOffset = (_cameraValuesSo.GetMaxCameraZOffset() - _cameraValuesSo.GetMinCameraZOffset()) *
                       _player.GetCurrentSpeedPercentage();
