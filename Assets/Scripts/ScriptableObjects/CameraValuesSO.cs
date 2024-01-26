@@ -19,12 +19,12 @@ public class CameraValuesSO : ScriptableObject
         return _cameraFollowSpeed;
     }
 
-    public float GetMinCameraZOffsetDependingOnSpeed()
+    public float GetMinCameraZOffset()
     {
         return _minCameraZOffset;
     }
 
-    public float GetMaxCameraZOffsetDependingOnSpeed()
+    public float GetMaxCameraZOffset()
     {
         return _maxCameraZOffset;
     }

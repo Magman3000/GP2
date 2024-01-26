@@ -1,7 +1,7 @@
 using UnityEngine;
 
-public class MainCamera : Entity {
-
+public class MainCamera : Entity
+{
     [SerializeField] private CameraValuesSO _cameraValuesSo;
     private Player _player;
 
@@ -20,19 +20,23 @@ public class MainCamera : Entity {
             return;
 
         var cameraValuesOffSet = _cameraValuesSo.GetOffset();
+        Debug.Log($"{_cameraValuesSo.GetMaxCameraZOffset()} max z offset"); 
+        Debug.Log($"{_cameraValuesSo.GetMinCameraZOffset()} min z offset"); 
+        Debug.Log($"{_player.GetCurrentSpeedPercentage()} current speed percentage");   
 
-        var offset = new Vector3(cameraValuesOffSet.x, cameraValuesOffSet.y,
-            -Mathf.Lerp(_cameraValuesSo.GetMinCameraZOffsetDependingOnSpeed(),
-                _cameraValuesSo.GetMaxCameraZOffsetDependingOnSpeed(), _player.GetCurrentSpeedPercentage()));
+        var zOffset = (_cameraValuesSo.GetMaxCameraZOffset() - _cameraValuesSo.GetMinCameraZOffset()) *
+                      _player.GetCurrentSpeedPercentage();
+        var offset = new Vector3(0f, cameraValuesOffSet.y, zOffset);
 
-        transform.position = Vector3.Lerp(transform.position,
-            _player.transform.position + offset + _player.transform.forward,
+        var transform1 = _player.transform;
+        transform.position = Vector3.Lerp(transform.position, transform1.position + offset,
             _cameraValuesSo.GetCameraFollowSpeed() * Time.deltaTime);
-        
-        transform.LookAt(_player.transform);
+
+        transform.LookAt(transform1);
     }
 
-    public void SetPlayerReference(Player player) {
+    public void SetPlayerReference(Player player)
+    {
         _player = player;
     }
 
