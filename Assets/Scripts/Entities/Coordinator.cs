@@ -37,6 +37,11 @@ public class Coordinator
 
     }
 
+    private void RestoreCharges()
+    {
+        boostCharges = playerRef.playerOneStats.GetBoostCharges();
+    }
+
     private void SpeedBoost()
     {
         if (playerRef.playerOneStats.GetBoostCharges() <= 0 || playerRef._dareDevil.boosting)

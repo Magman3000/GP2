@@ -6,14 +6,10 @@ using UnityEngine;
 public class DareDevil
 {
 
-    
-
     bool initialized = false;
     GameInstance gameInstanceRef;
     Player playerRef;
     
-
-
     public bool boosting = false;
     
     private float currentSpeed;
@@ -38,8 +34,6 @@ public class DareDevil
     {
 
     }
-
-
 
     private void UpdateVelocity()
     {

@@ -24,7 +24,7 @@ public class PlayerOneStats : ScriptableObject
     [Tooltip("The duration of the boost")]
     [Range(0.1f, 500.0f)][SerializeField] private float boostDuration = 1;
     [Range(0.1f, 500.0f)][SerializeField] private float maxBoostSpeed = 1;
-    private bool boosting = false;
+    
 
     public float GetAccelerationSpeed()
     {
