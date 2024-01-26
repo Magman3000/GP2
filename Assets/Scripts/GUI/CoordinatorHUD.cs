@@ -16,4 +16,22 @@ public class CoordinatorHUD : Entity
     {
         _player = player;
     }
+    
+    //TODO: Implement methods for the buttons
+    private void TrapOne()
+    {
+        //Calls a function on the coordinator
+    }
+    private void TrapTwo()
+    {
+        //Calls a function on the coordinator
+    }
+    private void TrapThree()
+    {
+        //Calls a function on the coordinator
+    }
+    private void TrapFour()
+    {
+        //Calls a function on the coordinator
+    }
 }

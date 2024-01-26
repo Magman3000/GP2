@@ -16,4 +16,10 @@ public class DaredevilHUD : Entity
     {
         _player = player;
     }
+    
+    //TODO: Implement methods for the buttons
+    private void Move()
+    {
+        //Calls a function on the daredevil
+    }
 }
