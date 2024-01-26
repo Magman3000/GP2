@@ -12,3 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f801d3f99de33b74aa6803e2c9f6c5fc, type: 3}
   m_Name: PlayerOneStats
   m_EditorClassIdentifier: 
+  accelerationSpeed: 1
+  deccelerationSpeed: 1
+  maxSpeed: 1
+  turnSpeed: 1
+  boostAccelerationMultiplier: 0.1
+  boostCharges: 1
+  boostDuration: 1
+  maxBoostSpeed: 1
