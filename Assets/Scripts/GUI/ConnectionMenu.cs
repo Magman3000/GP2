@@ -1,3 +1,4 @@
+using System.Net;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
@@ -6,9 +7,17 @@ using static MyUtility.Utility;
 
 public class ConnectionMenu : Entity {
 
+    private enum ConnectionMenuState {
+        SELECT_MODE,
+        HOST_SELECTED,
+        CLIENT_SELECTED
+    }
+
 
     private const string hostWaitingMessage = "Waiting for player 2 to join...";
     private const string clientSearchingMessage = "Enter code to connect!";
+
+    private ConnectionMenuState currentState = ConnectionMenuState.SELECT_MODE;
 
 
     private Button hostButtonComp = null;
@@ -84,30 +93,46 @@ public class ConnectionMenu : Entity {
         connectionCodeInputComp.characterLimit = 15; //This should be the limit on ip address decrypted values XXX.XXX.XXX.XXX
     }
 
-
+    public void SearchButton() {
+        //Netcode netcodeRef = gameInstanceRef.GetNetcode();
+        //string code = IPAddress.Broadcast.ToString();
+        //IPAddress address = netcodeRef.GetLocalIPAddress();
+        //
+        //code = address.GetAddressBytes()[0].ToString() + "." + address.GetAddressBytes()[1].ToString() + "." + address.GetAddressBytes()[2].ToString() + "." + "255";
+        //Log("Broadcasting at " + code);
+        //netcodeRef.StartAsClient(code);
+    }
     public void ConfirmConnectionCode() {
 
         Netcode netcodeRef = gameInstanceRef.GetNetcode();
-        string connectionCode = netcodeRef.DecryptConnectionCode(connectionCodeInputComp.text);
-        if (connectionCode != null)
-            gameInstanceRef.GetNetcode().StartAsClient(connectionCode);
+        //string connectionCode = netcodeRef.DecryptConnectionCode(connectionCodeInputComp.text);
+        if (connectionCodeInputComp.text != null)
+            netcodeRef.StartAsClient(connectionCodeInputComp.text);
         else {
             if (gameInstanceRef.IsDebuggingEnabled())
                 Warning("Invalid code received after decryption");
         }
             
         if (gameInstanceRef.IsDebuggingEnabled())
-            Log("Attempting to connect to " + connectionCode);
+            Log("Attempting to connect to " + connectionCodeInputComp.text);
+    }
+
+    public void UpdateConnectionCode(string code) {
+        localHostComp.text = "Join Code: " + code;
     }
     public void HostButton() {
-        gameInstanceRef.GetNetcode().StartAsHost();
+        gameInstanceRef.GetNetcode().StartGlobalHost(UpdateConnectionCode);
         statusTextComp.gameObject.SetActive(true);
         localHostComp.gameObject.SetActive(true);
         hostButtonComp.gameObject.SetActive(false);
         clientButtonComp.gameObject.SetActive(false);
         connectionCodeInputComp.gameObject.SetActive(false);
         statusTextComp.text = hostWaitingMessage;
-        localHostComp.text = "Join Code: " + gameInstanceRef.GetNetcode().GetEncryptedLocalHost();
+
+
+
+        
+        
         networkingActivated = true;
     }
     public void ClientButton() {
@@ -121,6 +146,22 @@ public class ConnectionMenu : Entity {
         networkingActivated = true;
     }
     public void BackButton() {
+
+        if (currentState == ConnectionMenuState.HOST_SELECTED) {
+            currentState = ConnectionMenuState.SELECT_MODE;
+
+
+        }
+        if (currentState == ConnectionMenuState.CLIENT_SELECTED) {
+            currentState = ConnectionMenuState.SELECT_MODE;
+
+
+        }
+        if (currentState == ConnectionMenuState.SELECT_MODE)
+            gameInstanceRef.Transition(GameInstance.GameState.MAIN_MENU);
+
+
+
         if (networkingActivated) {
             gameInstanceRef.GetNetcode().StopNetworking();
             statusTextComp.gameObject.SetActive(false);

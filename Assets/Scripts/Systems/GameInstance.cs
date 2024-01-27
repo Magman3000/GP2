@@ -497,6 +497,7 @@ public class GameInstance : MonoBehaviour {
     //State Update
     private void UpdateStatelessSystems() {
         soundSystemScript.Tick();
+        netcodeScript.Tick();
     }
     private void UpdatePlayingState() {
         mainCameraScript.Tick();
@@ -688,7 +689,8 @@ public class GameInstance : MonoBehaviour {
 
 
         if (asset.CompareTag("MainCamera")) {
-            Log("Started creating " + asset.name + " entity");
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
             mainCamera = Instantiate(asset);
             mainCameraScript = mainCamera.GetComponent<MainCamera>();
             mainCameraScript.Initialize(this);
@@ -696,80 +698,94 @@ public class GameInstance : MonoBehaviour {
             Validate(mainCameraScript, "MainCamera component is missing on entity!", ValidationLevel.ERROR, true);
         }
         else if (asset.CompareTag("SoundSystem")) {
-            Log("Started creating " + asset.name + " entity");
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
             soundSystem = Instantiate(asset);
             soundSystemScript = soundSystem.GetComponent<SoundSystem>();
             soundSystemScript.Initialize(this);
             Validate(soundSystemScript, "SoundSystem component is missing on entity!", ValidationLevel.ERROR, true);
         }
         else if (asset.CompareTag("EventSystem")) {
-            Log("Started creating " + asset.name + " entity");
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
             eventSystem = Instantiate(asset);
         }
         else if (asset.CompareTag("Netcode")) {
-            Log("Started creating " + asset.name + " entity");
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
             netcode = Instantiate(asset);
             netcodeScript = netcode.GetComponent<Netcode>();
             netcodeScript.Initialize(this);
             Validate(netcodeScript, "Netcode component is missing on entity!", ValidationLevel.ERROR, true);
         }
         else if (asset.CompareTag("MainMenu")) {
-            Log("Started creating " + asset.name + " entity");
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
             mainMenu = Instantiate(asset);
             mainMenuScript = mainMenu.GetComponent<MainMenu>();
             mainMenuScript.Initialize(this);
             Validate(mainMenuScript, "MainMenu component is missing on entity!", ValidationLevel.ERROR, true);
         }
         else if (asset.CompareTag("OptionsMenu")) {
-            Log("Started creating " + asset.name + " entity");
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
             optionsMenu = Instantiate(asset);
             optionsMenuScript = optionsMenu.GetComponent<OptionsMenu>();
             Validate(optionsMenuScript, "OptionMenu component is missing on entity!", ValidationLevel.ERROR, true);
             optionsMenuScript.Initialize(this);
         }
         else if (asset.CompareTag("CreditsMenu")) {
-            Log("Started creating " + asset.name + " entity");
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
             creditsMenu = Instantiate(asset);
             creditsMenuScript = creditsMenu.GetComponent<CreditsMenu>();
             Validate(creditsMenuScript, "CreditsMenu component is missing on entity!", ValidationLevel.ERROR, true);
             creditsMenuScript.Initialize(this);
         }
         else if (asset.CompareTag("ConnectionMenu")) {
-            Log("Started creating " + asset.name + " entity");
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
             connectionMenu = Instantiate(asset);
             connectionMenuScript = connectionMenu.GetComponent<ConnectionMenu>();
             Validate(connectionMenuScript, "ConnectionMenu component is missing on entity!", ValidationLevel.ERROR, true);
             connectionMenuScript.Initialize(this);
         }
         else if (asset.CompareTag("LevelSelectMenu")) {
-            Log("Started creating " + asset.name + " entity");
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
             levelSelectMenu = Instantiate(asset);
             levelSelectMenuScript = levelSelectMenu.GetComponent<LevelSelectMenu>();
             Validate(levelSelectMenuScript, "LevelSelectMenu component is missing on entity!", ValidationLevel.ERROR, true);
             levelSelectMenuScript.Initialize(this);
         }
         else if (asset.CompareTag("LoseMenu")) {
-            Log("Started creating " + asset.name + " entity");
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
             loseMenu = Instantiate(asset);
         }
         else if (asset.CompareTag("WinMenu")) {
-            Log("Started creating " + asset.name + " entity");
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
             winMenu = Instantiate(asset);
         }
         else if (asset.CompareTag("DaredevilHUD")) {
-            Log("Started creating " + asset.name + " entity");
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
             player1HUD = Instantiate(asset);
         }
         else if (asset.CompareTag("CoordinatorHUD")) {
-            Log("Started creating " + asset.name + " entity");
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
             player2HUD = Instantiate(asset);
         }
         else if (asset.CompareTag("PauseMenu")) {
-            Log("Started creating " + asset.name + " entity");
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
             pauseMenu = Instantiate(asset);
         }
         else if (asset.CompareTag("FadeTransition")) {
-            Log("Started creating " + asset.name + " entity");
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
             fadeTransition = Instantiate(asset);
             fadeTransitionScript = fadeTransition.GetComponent<FadeTransition>();
             fadeTransitionScript.Initialize(this);
