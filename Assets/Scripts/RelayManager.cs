@@ -38,7 +38,6 @@ public class RelayManager {
     public void Tick() {
 
 
-        Log(IsSignedIn());
 
         //Use callbacks to do this instead!
         if (initialized && !signedIn && !test) {
@@ -73,7 +72,8 @@ public class RelayManager {
                 relayServerData
             );
 
-            netcodeRef.StartHost();
+            //netcodeRef.StartHost();
+            netcodeRef.EnableNetworking();
 
         } catch(RelayServiceException exception) {
             Error("Relay exception caught at creating relay!\n" + exception.Message);
@@ -90,7 +90,8 @@ public class RelayManager {
 
             RelayServerData relayServerData2 = new RelayServerData(clientAllocation, "dtls");
             netcodeRef.GetUnityTransport().SetRelayServerData(relayServerData2);
-            netcodeRef.StartAsClient();
+            //netcodeRef.StartAsClient();
+            netcodeRef.EnableNetworking();
         }
         catch (RelayServiceException exception) {
             Error("Relay exception caught!\n" + exception.Message);

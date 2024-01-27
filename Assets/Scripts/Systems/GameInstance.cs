@@ -519,6 +519,16 @@ public class GameInstance : MonoBehaviour {
         fadeTransitionScript.StartTransition(SetupStartState);
         gameStarted = true;
     }
+    public void InterruptGame() {
+        //In case of player disconnection!
+        if (currentLoadedLevel)
+            UnloadLevel();
+
+        gameStarted = false;
+        Transition(GameState.MAIN_MENU);
+    }
+
+
 
     //Level Loading - TODO: Move into LevelManagement class along with related vars
     public bool LoadLevel(string levelName) {

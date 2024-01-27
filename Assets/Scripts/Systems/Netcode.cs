@@ -15,12 +15,27 @@ using static MyUtility.Utility;
 
 public class Netcode : Entity {
 
-    [SerializeField] private bool enableDebugLog = true;
     public static ulong INVALID_CLIENT_ID = 0;
+    public const uint DEFAULT_SERVER_PORT = 6312;
+
+    public enum NetworkingState {
+        NONE = 0,
+        LOCAL_CLIENT,
+        GLOBAL_CLIENT,
+        LOCAL_HOST,
+        GLOBAL_HOST
+    }
+
+    [SerializeField] private bool enableNetworkLog = true;
+
+
+    public NetworkingState currentState = NetworkingState.NONE;
+
+
 
     private const uint clientsLimit = 2;
     private uint connectedClients = 0;
-    private ulong clientID = INVALID_CLIENT_ID;
+    public ulong clientID = INVALID_CLIENT_ID;
 
     private IPAddress localIPAddress = null;
     
@@ -78,8 +93,8 @@ public class Netcode : Entity {
 
     public string GetEncryptedLocalHost() {
 
-        //return encryptor.Encrypt(localIPAddress.GetAddressBytes());
-        return relayManager.currentJoinCode;
+        return encryptor.Encrypt(localIPAddress.GetAddressBytes());
+        //return relayManager.currentJoinCode;
     }
     public string DecryptConnectionCode(string targetCode) {
 
@@ -94,47 +109,74 @@ public class Netcode : Entity {
         return localIPAddress;
     }
 
+
+    private void DisconnectAllClients() {
+        foreach(var client in networkManagerRef.ConnectedClients) {
+            if (client.Value.ClientId != clientID)
+                networkManagerRef.DisconnectClient(client.Value.ClientId, "Server Shutdown");
+        }
+    }
     public void StopNetworking() {
 
         networkManagerRef.Shutdown();
         if (gameInstanceRef.IsDebuggingEnabled())
             Log("Networking has stopped!");
+
+        connectedClients = 0; //This kinda does it. 
         clientID = INVALID_CLIENT_ID;
-        //Destory entities from game instance side? might not be required.
+        currentState = NetworkingState.NONE;
+        if (IsHost())
+            DisconnectAllClients();
+
+        //Destory entities from game instance side? might not be required. No need to destroy anything!
+    }
+    public bool EnableNetworking() {
+
+        if (currentState == NetworkingState.LOCAL_CLIENT || currentState == NetworkingState.GLOBAL_CLIENT)
+            return networkManagerRef.StartClient();
+        else if (currentState == NetworkingState.LOCAL_HOST || currentState == NetworkingState.GLOBAL_HOST)
+            return networkManagerRef.StartHost();
+
+        return false;
     }
 
-    public bool StartAsClient(string targetAddress) {
-        //localIPAddress.ToString();
-        //Log("Attempting to connect to..." + targetAddress);
-        //unityTransportRef.ConnectionData.Address = targetAddress;
-        //Log(transportLayer.ConnectionData.Address);
 
 
+
+    public bool StartLocalClient(string address) {
+        if (enableNetworkLog)
+            Log("Attempting to connect to..." + address);
+
+        unityTransportRef.SetConnectionData(address, (ushort)DEFAULT_SERVER_PORT);
+        currentState = NetworkingState.LOCAL_CLIENT;
+        unityTransportRef.ConnectionData.Address = address;
+        return EnableNetworking();
+    }
+    public bool StartGlobalClient(string targetAddress) {
+
+        currentState = NetworkingState.GLOBAL_CLIENT;
         relayManager.JoinRelay(targetAddress);
         return true; //Start as client on code being received! callable by connection menu
     }
-    public bool StartAsClient() {
 
-        return networkManagerRef.StartClient();
+
+
+    public bool StartLocalHost() {
+        currentState = NetworkingState.LOCAL_HOST;
+        unityTransportRef.SetConnectionData(localIPAddress.ToString(), (ushort)DEFAULT_SERVER_PORT);
+        return EnableNetworking();
     }
-
-
-
-
     public bool StartGlobalHost(Action<string> codeCallback) {
-
-        //transportLayer.ConnectionData.Address = "0.0.0.0"; //??
-        // unityTransportRef.ConnectionData.ServerListenAddress = localIPAddress.ToString();
-
-        //Log("Host started listening on " + unityTransportRef.ConnectionData.Address);
-
+        currentState = NetworkingState.GLOBAL_HOST;
         relayManager.CreateRelay(codeCallback);
         return true;
     }
-    public void StartHost() {
-        networkManagerRef.StartHost();
-    }
 
+
+
+
+
+    public bool IsDebugLogEnabled() { return enableNetworkLog; }
     public bool IsHost() {
         return networkManagerRef.IsHost;
     }
@@ -147,36 +189,48 @@ public class Netcode : Entity {
     public ulong GetClientID() {
         return clientID;
     }
-    public bool IsDebugLogEnabled() { return enableDebugLog; }
+
 
     public UnityTransport GetUnityTransport() { return unityTransportRef; }
+    public RelayManager GetRelayManager() { return relayManager; }
 
 
+
+    //Break it into host code and client code!½
     //Callbacks
     private void OnClientConnectedCallback(ulong ID) {
-        if (gameInstanceRef.IsDebuggingEnabled())
+        if (enableNetworkLog)
             Log("Client " + ID + " has connected!");
 
-        connectedClients++;
+        if (IsHost() && networkManagerRef.ConnectedClients.Count == 1)
+            clientID = ID;
 
-        //Need to do stuff with the client ID
+        connectedClients++; //Disconnecting doesnt trigger this on relay for some reason
+
+        //Need to do stuff with the client ID - Server Auth
         if (GetConnectedClientsCount() == 1)
             gameInstanceRef.CreatePlayerEntity(Player.PlayerIdentity.PLAYER_1);
         else if (GetConnectedClientsCount() == 2)
             gameInstanceRef.CreatePlayerEntity(Player.PlayerIdentity.PLAYER_2);
     }
     private void OnClientDisconnectCallback(ulong ID) {
-        if (gameInstanceRef.IsDebuggingEnabled())
+        if (enableNetworkLog)
             Log("Disconnection request received from " + ID);
+
+        connectedClients--;
+
+        //HMMMM gotta start thinking about authority
+        if (connectedClients != 2) //Technically any disconnection should interrupt.
+            gameInstanceRef.InterruptGame();
     }
     private void ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response) {
-        if (gameInstanceRef.IsDebuggingEnabled())
+        if (enableNetworkLog)
             Log("Connection request received from " + request.ClientNetworkId);
 
         
         response.CreatePlayerObject = false;
         response.Approved = true;
-        if (gameInstanceRef.IsDebuggingEnabled())
+        if (enableNetworkLog)
             Log("Connection request was accepted!");
     }
 }
