@@ -88,7 +88,7 @@ public class Encryptor {
 
             //Parse code and get value
             string code = Encoding.ASCII.GetString(decryptedBytes);
-            DecryptionCodes parsedCode = (DecryptionCodes)System.Enum.Parse(typeof(DecryptionCodes), code);
+            CodeDecryption parsedCode = (CodeDecryption)System.Enum.Parse(typeof(CodeDecryption), code);
             int value = (int)parsedCode;
             parsedAddress[addressCursor] = (byte)value;
             addressCursor++;
