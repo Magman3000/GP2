@@ -4,6 +4,7 @@ using static MyUtility.Utility;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEditor;
+using Unity.Services.Authentication;
 
 public class GameInstance : MonoBehaviour {
 
@@ -44,11 +45,11 @@ public class GameInstance : MonoBehaviour {
     private bool initialized = false;
     private bool initializationInProgress = false;
     private bool assetsLoadingInProgress = false;
-    private bool gamePaused = false;
     private bool gameStarted = false;
+    private bool gamePaused = false;
 
     private int powerSavingFrameTarget = 20;
-    private int gameplayFrameTarget = 60;
+    private int gameplayFrameTarget = -1;
 
     private AsyncOperationHandle<IList<GameObject>> loadedAssetsHandle;
     private AsyncOperationHandle<ScriptableObject> levelsBundleHandle;
@@ -66,11 +67,9 @@ public class GameInstance : MonoBehaviour {
     private GameObject eventSystem;
     private GameObject netcode;
 
-    private GameObject playerAssetRef;
-    private GameObject player1;
-    private GameObject player2;
-    private GameObject player1HUD; //nOT NEED. HUDS MOVED TO PLAYER
-    private GameObject player2HUD;
+    private GameObject player;
+    private GameObject daredevilHUD;
+    private GameObject coordinatorHUD;
 
     private GameObject mainCamera;
     private GameObject mainMenu;
@@ -87,8 +86,10 @@ public class GameInstance : MonoBehaviour {
 
     //Scripts
     private SoundSystem soundSystemScript;
-    private Player player1Script;
-    private Player player2Script;
+    private Player playerScript;
+
+    private DaredevilHUD daredevilHUDScript;
+    private CoordinatorHUD coordinatorHUDScript;
 
     private MainCamera mainCameraScript;
     private Netcode netcodeScript;
@@ -137,7 +138,7 @@ public class GameInstance : MonoBehaviour {
 
         loadingScreenHandle = Addressables.LoadAssetAsync<GameObject>(loadingScreenLabel);
         if (!loadingScreenHandle.IsValid()) {
-            AbortApplication("Failed to load loading screen\nCheck if label is correct!");
+            QuitApplication("Failed to load loading screen\nCheck if label is correct!");
             return;
         }
         loadingScreenHandle.Completed += FinishedLoadingLoadingScreenCallback;
@@ -189,9 +190,19 @@ public class GameInstance : MonoBehaviour {
     }
 
 
-
-    //This is kinda problamatic consedering i cant free the resources from here! cause its static
     public static void AbortApplication(object message = null) {
+#if UNITY_EDITOR
+        EditorApplication.isPlaying = false;
+        if (message != null)
+            Error(message);
+#else
+    Application.Quit();
+
+#endif
+    }
+    //This is kinda problamatic consedering i cant free the resources from here! cause its static
+    public void QuitApplication(object message = null) {
+        UnloadResources();
 #if UNITY_EDITOR
         EditorApplication.isPlaying = false;
         if (message != null)
@@ -211,19 +222,15 @@ public class GameInstance : MonoBehaviour {
         //-Release resources
 
         //Needs reworking after networking solution
-        if (player1Script) //Temp
-            player1Script.CleanUp("Player 1 cleaned up successfully!");
-
-        if (player2Script)//Temp
-            player2Script.CleanUp("Player 2 cleaned up successfully!");
+        if (playerScript) //Temp
+            playerScript.CleanUp("Player 1 cleaned up successfully!");
 
 
         mainCameraScript.CleanUp("MainCamera cleaned up successfully!");
         soundSystemScript.CleanUp("SoundSystem cleaned up successfully!");
 
         //Needed to guarantee destruction of all entities before attempting to release resources.
-        ValidateAndDestroy(player1);
-        ValidateAndDestroy(player2);
+        ValidateAndDestroy(player);
         ValidateAndDestroy(mainCamera);
         ValidateAndDestroy(soundSystem);
 
@@ -283,7 +290,7 @@ public class GameInstance : MonoBehaviour {
                 UpdateApplicationRunningState(); 
                 break;
             case ApplicationStatus.ERROR:
-                AbortApplication("Attempted to update application while status was ERROR");
+                QuitApplication("Attempted to update application while status was ERROR");
                 break;
         }
     }
@@ -302,10 +309,11 @@ public class GameInstance : MonoBehaviour {
                 Log("Loading Assets In Progress...");
             return;
         }
-        else if (loadingScreenScript && loadingScreenScript.IsLoadingProcessRunning())
+        else if (loadingScreenScript.IsLoadingProcessRunning())
             loadingScreenScript.FinishLoadingProcess();
 
 
+        SetupDependencies();
 
         initialized = true;
         initializationInProgress = false;
@@ -326,9 +334,21 @@ public class GameInstance : MonoBehaviour {
             case GameState.PLAYING:
                 UpdatePlayingState();
                 break;
+            case GameState.CONNECTION_MENU:
+                UpdateConnectionMenuState();
+                break;
         }
     }
+    private void SetupDependencies() {
+        mainCameraScript.SetPlayerReference(playerScript);
+        daredevilHUDScript.SetPlayerReference(playerScript);
+        coordinatorHUDScript.SetPlayerReference(playerScript);
+        playerScript.SetCoordinatorHUD(coordinatorHUDScript);
+        playerScript.SetDaredevilHUD(daredevilHUDScript);
 
+        if (debugging)
+            Log("All dependencies has been setup!");
+    }
 
 
 
@@ -340,7 +360,6 @@ public class GameInstance : MonoBehaviour {
             Warning("Unable to call fixed-update \nCurrent game state is set to ERROR!");
             return;
         }
-
 
         //Here you can add more states if needed!
         switch (currentGameState) {
@@ -431,6 +450,7 @@ public class GameInstance : MonoBehaviour {
 
     }
 
+
     //State Setup
     private void SetupMainMenuState() {
         currentGameState = GameState.MAIN_MENU;
@@ -456,6 +476,7 @@ public class GameInstance : MonoBehaviour {
     private void SetupConnectionMenuState() {
         currentGameState = GameState.CONNECTION_MENU;
         HideAllMenus();
+        connectionMenuScript.SetupStartState();
         connectionMenu.SetActive(true);
         SetApplicationTargetFrameRate(powerSavingFrameTarget);
 
@@ -471,9 +492,10 @@ public class GameInstance : MonoBehaviour {
         currentGameState = GameState.PLAYING;
         HideAllMenus();
         SetApplicationTargetFrameRate(gameplayFrameTarget); //Make sure to call this the moment the gameplay state is ready!
-        mainCameraScript.SetPlayerReference(player1Script);
-        player1.SetActive(true);
-        player2.SetActive(true);
+
+
+
+        player.SetActive(true);
         //Enable controls! turn on and enable huds for each (SetActive(true) pretty much)
 
 
@@ -499,14 +521,15 @@ public class GameInstance : MonoBehaviour {
         soundSystemScript.Tick();
         netcodeScript.Tick();
     }
+    private void UpdateConnectionMenuState() {
+        connectionMenuScript.Tick();
+    }
     private void UpdatePlayingState() {
         mainCameraScript.Tick();
-        player1Script.Tick();
-        player2Script.Tick();
+        playerScript.Tick();
     }
     private void UpdateFixedPlayingState() {
-        player1Script.FixedTick();
-        player2Script.FixedTick();
+        playerScript.FixedTick();
     }
 
 
@@ -525,6 +548,12 @@ public class GameInstance : MonoBehaviour {
             UnloadLevel();
 
         gameStarted = false;
+        player.SetActive(false);
+
+
+        if (gamePaused)
+            UnpauseGame();
+
         Transition(GameState.MAIN_MENU);
     }
 
@@ -615,62 +644,20 @@ public class GameInstance : MonoBehaviour {
         loseMenu.SetActive(false);
         connectionMenu.SetActive(false);
         pauseMenu.SetActive(false);
+        //? huds?
     }
 
-    //Unused
-    private void SetCursorState(bool state) {
-        UnityEngine.Cursor.visible = state;
-        if (state)
-            UnityEngine.Cursor.lockState = CursorLockMode.None;
-        else
-            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-    }
 
     public bool IsDebuggingEnabled() { return debugging; }
 
-    
 
     //Getters
     public Netcode GetNetcode() { return netcodeScript; }
 
 
-    public void CreatePlayerEntity(Player.PlayerIdentity identity) {
-        if (identity == Player.PlayerIdentity.NONE)
-            return;
 
-        //Kinda weird tbh - Maybe i should create both at the start. Cause now i have to delete these if networking stops!
-        //NOTE: Dont lean into it feeling like i have to show that a player apperas when someone connects!
-        if (identity == Player.PlayerIdentity.PLAYER_1) {
-            if (player1)
-                return;
-
-            player1 = Instantiate(playerAssetRef);
-            player1.name = "Player_1_(Daredevil)";
-            player1.SetActive(false);
-            player1Script = player1.GetComponent<Player>();
-            Validate(player1Script, "Player 1 component is missing on entity!", ValidationLevel.ERROR, true);
-            player1Script.Initialize(this);
-            player1Script.AssignPlayerIdentity(identity);
-            if (debugging)
-                Log("Player 1 (Daredevil) has been created");
-        }
-        else if (identity == Player.PlayerIdentity.PLAYER_2) {
-            if (player2)
-                return;
-
-            player2 = Instantiate(playerAssetRef);
-            player2.name = "Player_2_(Coordinator)";
-            player2.SetActive(false);
-            player2Script = player2.GetComponent<Player>();
-            Validate(player2Script, "Player 2 component is missing on entity!", ValidationLevel.ERROR, true);
-            player2Script.Initialize(this);
-            player2Script.AssignPlayerIdentity(identity);
-            if (debugging)
-                Log("Player 2 (Coordinator) has been created");
-        }
-
-        if (player1 && player2)
-            Transition(GameState.LEVEL_SELECT_MENU);
+    public void ConfirmAllClientsConnected() {
+        Transition(GameState.LEVEL_SELECT_MENU);
     }
 
 
@@ -687,18 +674,13 @@ public class GameInstance : MonoBehaviour {
         //TODO: Do something about this!
 
         if (asset.CompareTag("Player")) {
-            playerAssetRef = asset;
-            return;
-            //Log("Started creating " + asset.name + " entity");
-            //player1 = Instantiate(asset);
-            //player1Script = player1.GetComponent<Player>();
-            //player1Script.Initialize(this);
-            //Validate(player1Script, "Player component is missing on entity!", ValidationLevel.ERROR, true);
-            
+            player = Instantiate(asset);
+            player.SetActive(false);
+            playerScript = player.GetComponent<Player>();
+            Validate(playerScript, "Player component is missing on entity!", ValidationLevel.ERROR, true);
+            playerScript.Initialize(this);
         }
-
-
-        if (asset.CompareTag("MainCamera")) {
+        else if (asset.CompareTag("MainCamera")) {
             if (debugging)
                 Log("Started creating " + asset.name + " entity");
             mainCamera = Instantiate(asset);
@@ -781,12 +763,18 @@ public class GameInstance : MonoBehaviour {
         else if (asset.CompareTag("DaredevilHUD")) {
             if (debugging)
                 Log("Started creating " + asset.name + " entity");
-            player1HUD = Instantiate(asset);
+            daredevilHUD = Instantiate(asset);
+            daredevilHUDScript = daredevilHUD.GetComponent<DaredevilHUD>();
+            Validate(daredevilHUDScript, "DaredevilHUD component is missing on entity!", ValidationLevel.ERROR, true);
+            daredevilHUDScript.Initialize(this);
         }
         else if (asset.CompareTag("CoordinatorHUD")) {
             if (debugging)
                 Log("Started creating " + asset.name + " entity");
-            player2HUD = Instantiate(asset);
+            coordinatorHUD = Instantiate(asset);
+            coordinatorHUDScript = coordinatorHUD.GetComponent<CoordinatorHUD>();
+            Validate(coordinatorHUDScript, "CoordinatorHUD component is missing on entity!", ValidationLevel.ERROR, true);
+            coordinatorHUDScript.Initialize(this);
         }
         else if (asset.CompareTag("PauseMenu")) {
             if (debugging)
@@ -826,7 +814,7 @@ public class GameInstance : MonoBehaviour {
                 Log("Created " + handle.Result.name);
         }
         else if (handle.Status == AsyncOperationStatus.Failed) {
-            AbortApplication("Failed to load LoadingScreen!\nCheck if label is correct.");
+            QuitApplication("Failed to load LoadingScreen!\nCheck if label is correct.");
         }
     }
 
@@ -840,7 +828,7 @@ public class GameInstance : MonoBehaviour {
             //assetsLoadingInProgress = false; //Move this to function that checks the status of the assets handle and the levels bundle handle!
         }
         else if (handle.Status == AsyncOperationStatus.Failed) {
-            AbortApplication("Failed to load assets!\nCheck if label is correct.");
+            QuitApplication("Failed to load assets!\nCheck if label is correct.");
         }
     }
     private void FinishedLoadingLevelsBundleCallback(AsyncOperationHandle<ScriptableObject> handle) {
@@ -850,7 +838,7 @@ public class GameInstance : MonoBehaviour {
                 Log("Finished loading levels bundle successfully!");
         }
         else if (handle.Status == AsyncOperationStatus.Failed) {
-            AbortApplication("Failed to load levels bundle!\nCheck if label is correct.");
+            QuitApplication("Failed to load levels bundle!\nCheck if label is correct.");
         }
     }
     private void FinishedLoadingLevelCallback(AsyncOperationHandle<GameObject> handle) {

@@ -24,6 +24,8 @@ public class ConnectionMenu : Entity {
     private const string modeSelectionMessage = "Select Connection Option!";
     private const string hostWaitingMessage = "Waiting for player 2 to join...";
     private const string enterConnectionCodeMessage = "Enter code to connect!";
+    //TODO: Add the rest of the hardcoded error messages and name them appropriately!
+
 
 
     public ConnectionMenuState currentMenuState = ConnectionMenuState.SELECT_CONNECTION;
@@ -54,6 +56,109 @@ public class ConnectionMenu : Entity {
         SetMenuState(ConnectionMenuState.SELECT_CONNECTION);
         initialized = true;
     }
+    public override void Tick() {
+        if (!initialized) {
+            Warning("ConnectionMenu was ticked while it was not yet initialized!");
+            return;
+        }
+
+
+        CheckConnectionStatus();
+    }
+    private bool CheckUnityServicesStatus() {
+        if (currentMenuState == ConnectionMenuState.SELECT_CONNECTION) {
+            if (Application.internetReachability == NetworkReachability.NotReachable) {
+                statusTextComp.text = "No internet!\nPlease connect to proceed.";
+                globalMPButtonComp.interactable = false;
+                localMPButtonComp.interactable = false;
+            }
+            else if (!RelayManager.IsUnityServicesInitialized()) {
+                statusTextComp.text = connectionSelectionMessage + "\nGlobal Multiplayer is unavailable!";
+                localMPButtonComp.interactable = true;
+                globalMPButtonComp.interactable = false;
+            }
+            else {
+                statusTextComp.text = connectionSelectionMessage;
+                localMPButtonComp.interactable = true;
+                globalMPButtonComp.interactable = true;
+            }
+            return true;
+        }
+        return false;
+    }
+    private void CheckConnectionStatus() {
+
+        //Check for client screen - Anything before the networking can start!
+        //Notes:
+        //Unity Services - Sign In - Network Connectivity
+        //This should cover up for every possible opening up until the netcode is running
+        //-Then the responsibility of handling these openings falls to the netcode manager and calling InterruptGame()
+
+
+        if (CheckUnityServicesStatus())
+            return;
+        else if (currentMenuState == ConnectionMenuState.SELECT_MODE && connectionSelectionType == ConnectionTypeSelection.GLOBAL) {
+            if (Application.internetReachability == NetworkReachability.NotReachable) { //Somewhat unneccessary since it cant reach this point a 
+                statusTextComp.text = "No internet!\nConnect to sign in.";
+                hostButtonComp.gameObject.SetActive(false);
+                clientButtonComp.gameObject.SetActive(false);
+            }
+            else if (!RelayManager.IsUnityServicesInitialized()) {
+                statusTextComp.text = "Invalid state!\nUnity services are not initialized!";
+                hostButtonComp.gameObject.SetActive(false);
+                clientButtonComp.gameObject.SetActive(false);
+            }
+            else if (!RelayManager.IsSignedIn()) {
+                statusTextComp.text = "Signing in...\nRestart application if it takes too long.";
+                hostButtonComp.gameObject.SetActive(false);
+                clientButtonComp.gameObject.SetActive(false);
+            }
+            else {
+                statusTextComp.text = modeSelectionMessage;
+                hostButtonComp.gameObject.SetActive(true);
+                clientButtonComp.gameObject.SetActive(true);
+            }
+        }
+        else if (currentMenuState == ConnectionMenuState.CLIENT && connectionSelectionType == ConnectionTypeSelection.GLOBAL) {
+            if (Application.internetReachability == NetworkReachability.NotReachable) {
+                statusTextComp.text = "No internet!\nPlease reconnect to continue.";
+                connectionCodeInputComp.gameObject.SetActive(false);
+                connectionCodeInputComp.text = null;
+            }
+            else if (!RelayManager.IsUnityServicesInitialized()) {
+                statusTextComp.text = "Invalid state!\nUnity services are not initialized!";
+                connectionCodeInputComp.gameObject.SetActive(false);
+                connectionCodeInputComp.text = null;
+            }
+            else if (!RelayManager.IsSignedIn()) {
+                statusTextComp.text = "Invalid state!\nUser is not signed in!";
+                connectionCodeInputComp.gameObject.SetActive(false);
+                connectionCodeInputComp.text = null;
+            }
+            else {
+                statusTextComp.text = enterConnectionCodeMessage;
+                connectionCodeInputComp.gameObject.SetActive(true);
+            }
+        }
+        else if (currentMenuState == ConnectionMenuState.CLIENT && connectionSelectionType == ConnectionTypeSelection.LOCAL) {
+            if (Application.internetReachability == NetworkReachability.NotReachable) {
+                statusTextComp.text = "No internet!\nPlease reconnect to continue.";
+                connectionCodeInputComp.gameObject.SetActive(false);
+                connectionCodeInputComp.text = null;
+            }
+            else {
+                statusTextComp.text = enterConnectionCodeMessage;
+                connectionCodeInputComp.gameObject.SetActive(true);
+            }
+        }
+    }
+
+
+    //Called upon opening this menu
+    public void SetupStartState() {
+        CheckUnityServicesStatus();
+    }
+
     private void SetupReferences() {
 
         //Local Multiplayer Button
@@ -216,16 +321,13 @@ public class ConnectionMenu : Entity {
         SetMenuState(ConnectionMenuState.CLIENT);
     }
     public void BackButton() {
-
         if (currentMenuState == ConnectionMenuState.HOST) {
             gameInstanceRef.GetNetcode().StopNetworking();
             SetMenuState(ConnectionMenuState.SELECT_MODE);
-
         }
         else if (currentMenuState == ConnectionMenuState.CLIENT) {
             gameInstanceRef.GetNetcode().StopNetworking();
             SetMenuState(ConnectionMenuState.SELECT_MODE);
-
         }
         else if (currentMenuState == ConnectionMenuState.SELECT_MODE) {
             connectionSelectionType = ConnectionTypeSelection.NONE;

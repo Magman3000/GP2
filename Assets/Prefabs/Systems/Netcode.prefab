@@ -91,7 +91,7 @@ MonoBehaviour:
   m_MaxConnectAttempts: 60
   m_DisconnectTimeoutMS: 30000
   ConnectionData:
-    Address: 192.0.0.1
+    Address: 127.0.0.1
     Port: 6312
     ServerListenAddress: 0.0.0.0
   DebugSimulator:
@@ -110,4 +110,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f2a8702bf13d3140bb14f92caeb23f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableDebugLog: 1
+  enableNetworkLog: 1
+  currentState: 0
+  clientID: 0
