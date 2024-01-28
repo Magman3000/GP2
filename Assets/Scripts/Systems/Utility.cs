@@ -24,6 +24,14 @@ namespace MyUtility {
             Debug.LogError("[" + Time.frameCount + "]     " + mesage);
         }
 
+        /// <summary>
+        /// Abort will only work in editor.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="message"></param>
+        /// <param name="level"></param>
+        /// <param name="abortOnFail"></param>
+        /// <returns></returns>
         public static bool Validate(object target, string message, ValidationLevel level = ValidationLevel.DEBUG, bool abortOnFail = false) {
             if (target != null)
                 return true;

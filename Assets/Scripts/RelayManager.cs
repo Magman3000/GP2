@@ -4,23 +4,31 @@ using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
+using UnityEngine;
 using static MyUtility.Utility;
 
 
 public class RelayManager {
 
-    private bool initialized = false;
-
-
+    private float signInReattemptDuration = 5.0f;
     private const uint maximumAllowedClients = 2;
-    public string currentJoinCode = string.Empty;
-    public bool signedIn = false;
-    public bool test = false;
+
+
+    private bool initialized = false;
+    private static bool unityServicesInitialized = false;
+    private static bool signedIn = false;
+
+    private bool attemptingSignIn = false;
+    private string currentJoinCode = string.Empty;
+
+    private float signInReattemptTimer = 0.0f;
+
 
     private Netcode netcodeRef = null;
     private Allocation hostAllocation = null;
     private JoinAllocation clientAllocation = null;
     private RelayServerData relayServerData;
+
 
     public void Initialize(Netcode netcode) {
         if (initialized) {
@@ -29,80 +37,121 @@ public class RelayManager {
         }
 
 
-        InitializeUnityServices();
-        //SignIn();
-
         netcodeRef = netcode;
-        
+        InitializeUnityServices();
+        initialized = true;
     }
     public void Tick() {
+        if (!initialized || !unityServicesInitialized)
+            return;
+
+        CheckDebbuggingInput();
+        CheckSignInStatus();
+    }
+
+    private void CheckDebbuggingInput() {
+        if (Input.GetKeyDown(KeyCode.S))
+            Log("Signed In: " + signedIn);
+        if (Input.GetKeyDown(KeyCode.U))
+            Log("Unity Services Initialized: " + unityServicesInitialized);
+    }
+    private void CheckSignInStatus() {
+        if (IsSignedIn())
+            return;
+
+        UpdateSignInReattemptTimer();
+        if (signInReattemptTimer == 0.0f && !attemptingSignIn) {
+            signInReattemptTimer = signInReattemptDuration;
+            if (netcodeRef.IsDebugLogEnabled())
+                Log("Attempting to sign in...");
+
+            if (Application.internetReachability == NetworkReachability.NotReachable)
+                Warning("Unable to sign in.\nNo internet connection detected!");
+            else {
+                attemptingSignIn = true;
+                SignIn();
+            }
+        }
+    }
+    private void UpdateSignInReattemptTimer() {
+        if (attemptingSignIn)
+            return;
+
+        signInReattemptTimer -= Time.deltaTime;
+        if (signInReattemptTimer <= 0.0f)
+            signInReattemptTimer = 0.0f;
+    }
 
 
+    private async void InitializeUnityServices() {
+        try {
+            if (netcodeRef.IsDebugLogEnabled())
+                Log("Initializing UnityServices...");
 
-        //Use callbacks to do this instead!
-        if (initialized && !signedIn && !test) {
-            test = true;
-            SignIn();
+            await UnityServices.InitializeAsync();
+
+            unityServicesInitialized = true;
+            if (netcodeRef.IsDebugLogEnabled())
+                Log("UnityServices initialized successfully!");
+
+            AuthenticationService.Instance.SignedIn += SignedInCallback;
+        }
+        catch (Exception exception) {
+            Error("Failed to initialize Unity Services\nGlobal multiplayer will be unavailable!\n" + exception);
         }
     }
 
 
-
-    private async void InitializeUnityServices() {
-        await UnityServices.InitializeAsync();
-        initialized = true;
-    }
     private async void SignIn() {
-        AuthenticationService.Instance.SignedIn += SignInCallback;
-        await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        try {
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            attemptingSignIn = false;
+        }
+        catch (Exception exception) {
+            Warning("Failed to sign in.\nReattempting in " + signInReattemptDuration + " seconds...");
+            Warning("Exception thrown\n" + exception);
+            attemptingSignIn = false;
+        }
     }
 
 
     public async void CreateRelay(Action<string> codeCallback) {
-
         try {
-            hostAllocation = await RelayService.Instance.CreateAllocationAsync((int)maximumAllowedClients - 1, null); //-Host
+            hostAllocation = await RelayService.Instance.CreateAllocationAsync((int)maximumAllowedClients - 1, null); //minus Host
             currentJoinCode = await RelayService.Instance.GetJoinCodeAsync(hostAllocation.AllocationId);
-            Log(currentJoinCode);
-            codeCallback(currentJoinCode);
+
+            codeCallback(currentJoinCode); //THIS...
 
             relayServerData = new RelayServerData(hostAllocation, "dtls");
-            //Approach 1
-            netcodeRef.GetUnityTransport().SetRelayServerData(
-                relayServerData
-            );
-
-            //netcodeRef.StartHost();
+            netcodeRef.GetUnityTransport().SetRelayServerData(relayServerData);
             netcodeRef.EnableNetworking();
 
         } catch(RelayServiceException exception) {
-            Error("Relay exception caught at creating relay!\n" + exception.Message);
+            Error("Failed to host relay!\n" + exception.Message);
         }
-
     }
     public async void JoinRelay(string code) {
-
         try {
             if (netcodeRef.IsDebugLogEnabled())
                 Log("Joining relay with code " + code);
-            clientAllocation =  await RelayService.Instance.JoinAllocationAsync(code);
 
+            clientAllocation =  await RelayService.Instance.JoinAllocationAsync(code);
 
             RelayServerData relayServerData2 = new RelayServerData(clientAllocation, "dtls");
             netcodeRef.GetUnityTransport().SetRelayServerData(relayServerData2);
-            //netcodeRef.StartAsClient();
             netcodeRef.EnableNetworking();
         }
         catch (RelayServiceException exception) {
-            Error("Relay exception caught!\n" + exception.Message);
+            Error("Failed to join relay!\n" + exception.Message);
         }
     }
 
 
-    public static bool IsSignedIn() { return AuthenticationService.Instance.IsSignedIn; }
+    public static bool IsSignedIn() { return signedIn; }
+    public static bool IsUnityServicesInitialized() { return unityServicesInitialized; }
 
 
-    private void SignInCallback() {
+    private void SignedInCallback() {
         if (netcodeRef.IsDebugLogEnabled())
             Log("Signed in using ID " + AuthenticationService.Instance.PlayerId);
         signedIn = true;

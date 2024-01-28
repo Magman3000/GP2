@@ -22,7 +22,7 @@ public class Coordinator
 
 
         playerRef = player;
-        boostCharges = playerRef.playerOneStats.GetBoostCharges();
+        //boostCharges = playerRef.playerStats.GetBoostCharges(); //??
         gameInstanceRef = game;
         initialized = true;
     }
@@ -39,19 +39,19 @@ public class Coordinator
 
     private void RestoreCharges()
     {
-        boostCharges = playerRef.playerOneStats.GetBoostCharges();
+        //boostCharges = playerRef.playerStats.GetBoostCharges();
     }
 
     private void SpeedBoost()
     {
-        if (playerRef.playerOneStats.GetBoostCharges() <= 0 || playerRef._dareDevil.boosting)
-            return;
+        //if (playerRef.playerStats.GetBoostCharges() <= 0 || playerRef.daredevil.boosting)
+            //return;
 
 
         boostCharges -= 1;
-        playerRef._dareDevil.boosting = true;
+        //playerRef.daredevil.boosting = true;
         
-        boostTimer = playerRef.playerOneStats.GetBoostCharges();
+        //boostTimer = playerRef.playerStats.GetBoostCharges();
 
 
     }
@@ -64,7 +64,7 @@ public class Coordinator
         if (boostTimer <= 0.0f)
         {
             boostTimer = 0.0f;
-            playerRef._dareDevil.boosting = false;
+            //playerRef.daredevil.boosting = false;
             
         }
 

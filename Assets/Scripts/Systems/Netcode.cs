@@ -7,12 +7,6 @@ using Unity.Netcode.Transports.UTP;
 using Unity.VisualScripting;
 using UnityEngine;
 using static MyUtility.Utility;
-
-
-
-
-
-
 public class Netcode : Entity {
 
     public static ulong INVALID_CLIENT_ID = 0;
@@ -36,6 +30,7 @@ public class Netcode : Entity {
     private const uint clientsLimit = 2;
     private uint connectedClients = 0;
     public ulong clientID = INVALID_CLIENT_ID;
+    public bool running = false;
 
     private IPAddress localIPAddress = null;
     
@@ -68,10 +63,12 @@ public class Netcode : Entity {
     }
     public override void Tick() {
         if (!initialized) {
-            Error("Attempted to tick Netcode while it was not initialized!");
+            //Error("Attempted to tick Netcode while it was not initialized!");
             return;
         }
 
+        //NOTE: 
+        //Check somehow in case of disconnections and         gameInstanceRef.InterruptGame();
 
         relayManager.Tick();
     }
@@ -92,12 +89,9 @@ public class Netcode : Entity {
 
 
     public string GetEncryptedLocalHost() {
-
         return encryptor.Encrypt(localIPAddress.GetAddressBytes());
-        //return relayManager.currentJoinCode;
     }
     public string DecryptConnectionCode(string targetCode) {
-
         return encryptor.Decrypt(targetCode);
     }
 
@@ -117,6 +111,8 @@ public class Netcode : Entity {
         }
     }
     public void StopNetworking() {
+        if (!running)
+            return;
 
         networkManagerRef.Shutdown();
         if (gameInstanceRef.IsDebuggingEnabled())
@@ -127,17 +123,16 @@ public class Netcode : Entity {
         currentState = NetworkingState.NONE;
         if (IsHost())
             DisconnectAllClients();
-
-        //Destory entities from game instance side? might not be required. No need to destroy anything!
     }
     public bool EnableNetworking() {
 
+        running = false;
         if (currentState == NetworkingState.LOCAL_CLIENT || currentState == NetworkingState.GLOBAL_CLIENT)
-            return networkManagerRef.StartClient();
+            running = networkManagerRef.StartClient();
         else if (currentState == NetworkingState.LOCAL_HOST || currentState == NetworkingState.GLOBAL_HOST)
-            return networkManagerRef.StartHost();
+            running = networkManagerRef.StartHost();
 
-        return false;
+        return running;
     }
 
 
@@ -153,6 +148,10 @@ public class Netcode : Entity {
         return EnableNetworking();
     }
     public bool StartGlobalClient(string targetAddress) {
+        if (!RelayManager.IsUnityServicesInitialized()) {
+            Error("Unable to start global client!\nUnity Services are not initialized.");
+            return false;
+        }
 
         currentState = NetworkingState.GLOBAL_CLIENT;
         relayManager.JoinRelay(targetAddress);
@@ -167,6 +166,11 @@ public class Netcode : Entity {
         return EnableNetworking();
     }
     public bool StartGlobalHost(Action<string> codeCallback) {
+        if (!RelayManager.IsUnityServicesInitialized()) {
+            Error("Unable to start global host!\nUnity Services are not initialized.");
+            return false;
+        }
+
         currentState = NetworkingState.GLOBAL_HOST;
         relayManager.CreateRelay(codeCallback);
         return true;
@@ -208,10 +212,19 @@ public class Netcode : Entity {
         connectedClients++; //Disconnecting doesnt trigger this on relay for some reason
 
         //Need to do stuff with the client ID - Server Auth
-        if (GetConnectedClientsCount() == 1)
-            gameInstanceRef.CreatePlayerEntity(Player.PlayerIdentity.PLAYER_1);
-        else if (GetConnectedClientsCount() == 2)
-            gameInstanceRef.CreatePlayerEntity(Player.PlayerIdentity.PLAYER_2);
+
+        //Assign index instead.
+        //Identity is decided in RoleSelectionMenu
+
+        if (IsHost()) {
+            if (GetConnectedClientsCount() == 2)
+                gameInstanceRef.ConfirmAllClientsConnected();
+        }
+
+        //if (GetConnectedClientsCount() == 1)
+        //    gameInstanceRef.CreatePlayerEntity(Player.PlayerIdentity.PLAYER_1);
+        //else if (GetConnectedClientsCount() == 2)
+        //    gameInstanceRef.CreatePlayerEntity(Player.PlayerIdentity.PLAYER_2);
     }
     private void OnClientDisconnectCallback(ulong ID) {
         if (enableNetworkLog)
@@ -221,7 +234,7 @@ public class Netcode : Entity {
 
         //HMMMM gotta start thinking about authority
         if (connectedClients != 2) //Technically any disconnection should interrupt.
-            gameInstanceRef.InterruptGame();
+            gameInstanceRef.InterruptGame(); //Works well for when both connected and the game started but not while hosting or doing connection menu stuff
     }
     private void ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response) {
         if (enableNetworkLog)
