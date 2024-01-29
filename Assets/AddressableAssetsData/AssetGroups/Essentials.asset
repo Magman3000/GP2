@@ -119,6 +119,17 @@ MonoBehaviour:
     m_SerializedLabels:
     - Essential
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2351cfb60c7d7ba499a5bea49de3bfde
+    m_Address: Assets/Prefabs/GUI/LoadingScreen.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LoadingScreen
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 900054c90c6d3294288c7e1fcb04258a
+    m_Address: Assets/Levels/DebugLevel.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: da51f17292af1bf42a5a2d71c923b64c, type: 2}
   m_SchemaSet:

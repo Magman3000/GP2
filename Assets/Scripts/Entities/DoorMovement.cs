@@ -11,7 +11,7 @@ public class DoorMovement : MonoBehaviour {
     [SerializeField] Vector3 openedPosition;
     [SerializeField] Vector3 openedRotation;
 
-    [SerializeField] float interpolationRatio;
+    [Range(0.1f, 200f)][SerializeField] float interpolationRatio;
     [SerializeField] float interpolationLimit;
 
 
@@ -31,37 +31,15 @@ public class DoorMovement : MonoBehaviour {
         initialPosition = gameObject.transform.position;
 
     }
-    private void Update()
+    private void Tick()
     {
         if (doorState == ObstacleState.ACTIVE && moving)
         {
-            Vector3 postionCalculation = Vector3.Lerp(transform.position, openedPosition, interpolationRatio * Time.deltaTime);
-            transform.position = postionCalculation;
-            Vector3 rotationCalculation = Vector3.Lerp(transform.eulerAngles, openedRotation, interpolationRatio * Time.deltaTime);
-            transform.eulerAngles = rotationCalculation;
-            float positionDistance = Vector3.Distance(postionCalculation, openedPosition);
-            float rotationDistance = Vector3.Distance(rotationCalculation, openedRotation);
-            if (positionDistance < interpolationLimit && rotationDistance < interpolationLimit)
-            {
-                transform.position = openedPosition;
-                transform.eulerAngles = openedRotation;
-                moving = false;
-            }
+            DoorMove(openedPosition, openedRotation);
         }
         else if (doorState == ObstacleState.INACTIVE && moving)
         {
-            Vector3 postionCalculation = Vector3.Lerp(transform.position, initialPosition, interpolationRatio * Time.deltaTime);
-            transform.position = postionCalculation;
-            Vector3 rotationCalculation = Vector3.Lerp(transform.eulerAngles, initialRotation, interpolationRatio * Time.deltaTime);
-            transform.eulerAngles = rotationCalculation;
-            float positionDistance = Vector3.Distance(postionCalculation, initialPosition);
-            float rotationDistance = Vector3.Distance(rotationCalculation, initialRotation);
-            if (positionDistance < interpolationLimit && rotationDistance < interpolationLimit)
-            {
-                transform.position = initialPosition;
-                transform.eulerAngles = initialRotation;
-                moving = false;
-            }
+            DoorMove(initialPosition, initialRotation);
         }
     }
 
@@ -74,5 +52,20 @@ public class DoorMovement : MonoBehaviour {
 
         doorState = state;
         moving = true;
+    }
+    private void DoorMove(Vector3 destination, Vector3 toRotation)
+    {
+        Vector3 postionCalculation = Vector3.Lerp(transform.position, destination, interpolationRatio * Time.deltaTime);
+        transform.position = postionCalculation;
+        Vector3 rotationCalculation = Vector3.Lerp(transform.eulerAngles, toRotation, interpolationRatio * Time.deltaTime);
+        transform.eulerAngles = rotationCalculation;
+        float positionDistance = Vector3.Distance(postionCalculation, destination);
+        float rotationDistance = Vector3.Distance(rotationCalculation, toRotation);
+        if (positionDistance < interpolationLimit && rotationDistance < interpolationLimit)
+        {
+            transform.position = destination;
+            transform.eulerAngles = toRotation;
+            moving = false;
+        }
     }
 }
