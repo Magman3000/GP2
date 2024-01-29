@@ -8,7 +8,7 @@ using static MyUtility.Utility;
 public class Daredevil {
 
     bool initialized = false;
-
+    
     GameInstance gameInstanceRef;
     Player playerRef;
     DaredevilStats stats;
@@ -16,7 +16,6 @@ public class Daredevil {
     public bool boosting = false;
     
     private float currentSpeed;
-
 
     public void Initialize(GameInstance game, Player player) {
         if (initialized)

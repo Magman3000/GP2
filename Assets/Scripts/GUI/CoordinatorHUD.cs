@@ -2,6 +2,11 @@ using UnityEngine;
 
 public class CoordinatorHUD : Entity
 {
+    public enum SymbolCode {
+        CODE_1 = 0,
+    }
+
+
     private Player _player;
     public override void Initialize(GameInstance game)
     {
@@ -18,8 +23,10 @@ public class CoordinatorHUD : Entity
     }
     
     //TODO: Implement methods for the buttons
-    private void TrapOne()
+    public void CodeKeyButton(int keycode)
     {
+        var code = (SymbolCode)keycode;
+
         //Calls a function on the coordinator
     }
     private void TrapTwo()
