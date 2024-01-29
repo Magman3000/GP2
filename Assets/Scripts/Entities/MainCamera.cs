@@ -2,9 +2,13 @@ using UnityEngine;
 
 public class MainCamera : Entity
 {
+    //SerializeFields
     [SerializeField] private CameraStats cameraStats;
-
-
+    [SerializeField] private Animator cameraAnimator; //Should I do it without hard referencing it?
+    
+    private static readonly int shakeCameraTrigger = Animator.StringToHash("ShakeCamera");
+    
+    //Refs
     private Player playerRef;
     private Daredevil daredevilData;
 
@@ -21,7 +25,13 @@ public class MainCamera : Entity
     {
         if (!initialized)
             return;
-        
+    }
+
+    public override void FixedTick()
+    {
+        if (!initialized)
+            return;
+
         var offset = CalculateOffset(out var transform1);
         UpdatePositionAndRotation(transform1, offset);
     }
@@ -46,15 +56,14 @@ public class MainCamera : Entity
         return offset;
     }
 
-    public void SetPlayerReference(Player player) {
+    public void ShakeCamera()
+    {
+        cameraAnimator.SetTrigger(shakeCameraTrigger);
+    }
+    
+    public void SetPlayerReference(Player player)
+    {
         playerRef = player;
         daredevilData = playerRef.GetDaredevilData();
-    }
-
-    public override void FixedTick() {
-        if (!initialized)
-            return;
-
-
     }
 }
