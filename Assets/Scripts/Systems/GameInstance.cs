@@ -502,6 +502,7 @@ public class GameInstance : MonoBehaviour {
     private void SetupLevelSelectMenuState() {
         currentGameState = GameState.LEVEL_SELECT_MENU;
         HideAllMenus();
+        levelSelectMenuScript.SetupMenuStartingState();
         levelSelectMenu.SetActive(true);
         SetApplicationTargetFrameRate(powerSavingFrameTarget);
 
@@ -673,10 +674,11 @@ public class GameInstance : MonoBehaviour {
     //Getters
     public Netcode GetNetcode() { return netcodeScript; }
     public RPCManagment GetRPCManagment() { return rpcManagementScript; }
+    public LevelsBundle GetLevelsBundle() { return (LevelsBundle)levelsBundleHandle.Result; }
 
 
     public void ConfirmAllClientsConnected() {
-        Transition(GameState.ROLE_SELECT_MENU);
+        Transition(GameState.LEVEL_SELECT_MENU);
     }
 
 

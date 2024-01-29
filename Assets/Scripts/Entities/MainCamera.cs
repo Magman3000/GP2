@@ -1,7 +1,22 @@
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
+
+
+
+
+[Serializable]
+public struct CameraShake {
+    public float intensity;
+    public float frequency;
+
+}
 
 public class MainCamera : Entity
 {
+
+    [SerializeField] private CameraShake crashingCameraShake;
+
     //SerializeFields
     [SerializeField] private CameraStats cameraStats;
     [SerializeField] private Animator cameraAnimator; //Should I do it without hard referencing it?
@@ -43,6 +58,7 @@ public class MainCamera : Entity
             transform1.position + offset,
             cameraStats.GetCameraFollowSpeed() * Time.deltaTime
         );
+
         transform.LookAt(transform1);
     }
 
@@ -56,7 +72,7 @@ public class MainCamera : Entity
         return offset;
     }
 
-    public void ShakeCamera()
+    public void ShakeCamera(CameraShake shake)
     {
         cameraAnimator.SetTrigger(shakeCameraTrigger);
     }
