@@ -8,12 +8,14 @@ using static MyUtility.Utility;
 public class Coordinator
 {
 
-    
+
     bool initialized;
 
     private bool speedBoostBool = false;
+    private bool boostOnCooldown = false;
     private int boostCharges = 0;
     private float boostTimer = 0.0f;
+    private float boostCooldown = 0.0f;
 
     GameInstance gameInstanceRef;
     Player playerRef;
@@ -60,13 +62,15 @@ public class Coordinator
 
     private void SpeedBoost()
     {
-        if (boostCharges <= 0 || speedBoostBool)
+        if (boostCharges <= 0 || speedBoostBool || boostOnCooldown)
             return;
 
 
         boostCharges -= 1;
+        boostOnCooldown = true;
         speedBoostBool = true;
         playerRef.SetBoostCheck(speedBoostBool);
+        boostCooldown = stats.GetboostCooldown();
         boostTimer = stats.GetBoostCharges();
 
 
@@ -83,6 +87,22 @@ public class Coordinator
             speedBoostBool = false;
             playerRef.SetBoostCheck(speedBoostBool);
 
+        }
+
+    }
+
+    private void ResetBoostCooldown()
+    {
+        if (boostCooldown <= 0.0f)
+        {
+            return;
+        }
+
+        boostCooldown -= Time.deltaTime;
+        if (boostCooldown <= 0.0f)
+        {
+            boostCooldown = 0.0f;
+            boostOnCooldown = false;
         }
 
     }
