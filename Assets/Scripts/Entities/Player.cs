@@ -79,6 +79,7 @@ public class Player : NetworkedEntity {
     }
 
 
+
     public DaredevilStats GetDaredevilStats() { return daredevilStats; }
     //Coordinator stats getter
     public Daredevil GetDaredevilData() { return daredevilData; }
