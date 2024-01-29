@@ -2,12 +2,21 @@ using UnityEngine;
 
 public class CoordinatorHUD : Entity
 {
-    public enum SymbolCode {
-        CODE_1 = 0,
+    public enum CoordinatorKeyCode
+    {
+        ButtonOne = 0,
+        ButtonTwo = 1,
+        ButtonThree = 2,
+        ButtonFour = 3,
+        ButtonFive = 4,
+        ButtonSix = 5,
+        ButtonSeven = 6,
+        ButtonEight = 7,
+        ButtonNine = 8,
     }
-
-
-    private Player _player;
+    
+    private Player playerRef;
+    private Coordinator coordinatorRef;
     public override void Initialize(GameInstance game)
     {
         if (initialized)
@@ -19,26 +28,14 @@ public class CoordinatorHUD : Entity
     
     public void SetPlayerReference(Player player)
     {
-        _player = player;
+        playerRef = player;
+        if (playerRef)
+            coordinatorRef = playerRef.GetCoordinatorData();
     }
-    
-    //TODO: Implement methods for the buttons
-    public void CodeKeyButton(int keycode)
-    {
-        var code = (SymbolCode)keycode;
 
-        //Calls a function on the coordinator
-    }
-    private void TrapTwo()
+    public void OnButtonPress(int code)
     {
-        //Calls a function on the coordinator
-    }
-    private void TrapThree()
-    {
-        //Calls a function on the coordinator
-    }
-    private void TrapFour()
-    {
-        //Calls a function on the coordinator
+        var keyCode = (CoordinatorKeyCode)code;
+        //coordinatorRef.HandleInput(keyCode);
     }
 }
