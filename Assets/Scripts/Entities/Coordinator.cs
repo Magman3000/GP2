@@ -52,10 +52,9 @@ public class Coordinator
             return;
         }
 
-
     }
 
-    private void RestoreCharges()
+    private void RestoreCharges() //call this before speedBoost
     {
         boostCharges = stats.GetBoostCharges();
     }
@@ -71,7 +70,7 @@ public class Coordinator
         speedBoostBool = true;
         playerRef.SetBoostCheck(speedBoostBool);
         boostCooldown = stats.GetboostCooldown();
-        boostTimer = stats.GetBoostCharges();
+        boostTimer = stats.GetBoostDuration();
 
 
     }

@@ -98,7 +98,7 @@ public class Daredevil {
     }
 
 
-    public void SetBoostBool(bool boosting) { speedBoostBool = boosting; }
+    
     public float GetCurrentSpeed() { return currentSpeed; }
     public float GetCurrentSpeedPercentage() { return currentSpeed / stats.GetMaxSpeed(); }
 }
