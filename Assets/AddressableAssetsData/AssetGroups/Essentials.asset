@@ -23,12 +23,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - Essential
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 25c4e532b2cc4d443a033d3d54e9997d
-    m_Address: Assets/Prefabs/MainCamera.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Essential
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3e571a14ac05f7b4d8976483d7f7335f
     m_Address: Assets/Prefabs/Player.prefab
     m_ReadOnly: 0
