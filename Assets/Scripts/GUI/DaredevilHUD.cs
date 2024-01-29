@@ -30,6 +30,6 @@ public class DaredevilHUD : Entity {
     public void OnButtonPress(int code)
     {
         var keyCode = (DaredevilKeyCode)code;
-        //calls the related function on the daredevil script
+        //daredevilRef.HandleInput(keyCode);
     }
 }

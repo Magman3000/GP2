@@ -36,6 +36,6 @@ public class CoordinatorHUD : Entity
     public void OnButtonPress(int code)
     {
         var keyCode = (CoordinatorKeyCode)code;
-        //call a function on coordinator with passing over the given code
+        //coordinatorRef.HandleInput(keyCode);
     }
 }
