@@ -2,6 +2,14 @@ using UnityEngine;
 
 public class DaredevilHUD : Entity {
 
+    public enum DaredevilKeyCode
+    {
+        MoveLeft = 0,
+        MoveRight = 1,
+        Accelerate = 2,
+        Decelerate = 3
+    }
+    
     private Player playerRef;
     private Daredevil daredevilRef;
 
@@ -18,10 +26,10 @@ public class DaredevilHUD : Entity {
         if (playerRef)
             daredevilRef = playerRef.GetDaredevilData();
     }
-    
-    //TODO: Implement methods for the buttons
-    public void Move()
+
+    public void OnButtonPress(int code)
     {
-        //Calls a function on the daredevil
+        var keyCode = (DaredevilKeyCode)code;
+        //daredevilRef.HandleInput(keyCode);
     }
 }
