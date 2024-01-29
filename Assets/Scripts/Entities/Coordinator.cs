@@ -5,10 +5,12 @@ using UnityEngine;
 
 public class Coordinator
 {
-    private float boostTimer = 0.0f;
-    
+
     private int boostCharges;
     bool initialized;
+
+    private float boostTimer = 0.0f;
+
     GameInstance gameInstanceRef;
     Player playerRef;
     
