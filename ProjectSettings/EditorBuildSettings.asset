@@ -8,5 +8,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Main.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 0
+    path: Assets/Scenes/GabrielTest.unity
+    guid: 073493a793c6e3646a6e5004a88408b4
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 8710f98757e39de46aecaeebdb01b330, type: 2}

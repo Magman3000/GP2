@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 94c3c60189e2f124eae0c3a991690fa7
   m_currentHash:
     serializedVersion: 2
-    Hash: 7de287fa73efd7d9e3a18fe8119907e1
+    Hash: 1da0bf9e71fdf4d36f1d6e75785bcaff
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_BundleLocalCatalog: 0
@@ -51,7 +51,7 @@ MonoBehaviour:
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
     m_CleanupStreamingAssetsAfterBuilds: 1
-    m_LogResourceManagerExceptions: 0
+    m_LogResourceManagerExceptions: 1
     m_BundleBuildPath: Temp/com.unity.addressables/AssetBundles
   m_ProfileSettings:
     m_Profiles:

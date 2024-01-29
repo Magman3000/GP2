@@ -19,6 +19,7 @@ public class GameInstance : MonoBehaviour {
         OPTIONS_MENU,
         CREDITS_MENU,
         CONNECTION_MENU,
+        ROLE_SELECT_MENU,
         LEVEL_SELECT_MENU,
         WIN_MENU,
         LOSE_MENU,
@@ -76,6 +77,7 @@ public class GameInstance : MonoBehaviour {
     private GameObject optionsMenu;
     private GameObject creditsMenu;
     private GameObject connectionMenu;
+    private GameObject roleSelectMenu;
     private GameObject levelSelectMenu;
     private GameObject winMenu;
     private GameObject loseMenu;
@@ -85,6 +87,8 @@ public class GameInstance : MonoBehaviour {
     private GameObject loadingScreen;
 
     //Scripts
+    private GameObject rpcManagement;
+    private RPCManagment rpcManagementScript;
     private SoundSystem soundSystemScript;
     private Player playerScript;
 
@@ -97,6 +101,7 @@ public class GameInstance : MonoBehaviour {
     private OptionsMenu optionsMenuScript;
     private CreditsMenu creditsMenuScript;
     private ConnectionMenu connectionMenuScript;
+    private RoleSelectMenu roleSelectMenuScript;
     private LevelSelectMenu levelSelectMenuScript;
     private FadeTransition fadeTransitionScript;
     private LoadingScreen loadingScreenScript;
@@ -351,7 +356,6 @@ public class GameInstance : MonoBehaviour {
     }
 
 
-
     private void FixedUpdate() {
         if (currentApplicationStatus != ApplicationStatus.RUNNING)
             return;
@@ -390,6 +394,9 @@ public class GameInstance : MonoBehaviour {
             case GameState.CONNECTION_MENU:
                 SetupConnectionMenuState();
                 break;
+            case GameState.ROLE_SELECT_MENU:
+                SetupRoleSelectMenuState();
+                break;
             case GameState.WIN_MENU:
                 SetupWinMenuState();
                 break;
@@ -421,6 +428,9 @@ public class GameInstance : MonoBehaviour {
                 break;
             case GameState.CONNECTION_MENU:
                 fadeTransitionScript.StartTransition(SetupConnectionMenuState);
+                break;
+            case GameState.ROLE_SELECT_MENU:
+                fadeTransitionScript.StartTransition(SetupRoleSelectMenuState);
                 break;
             case GameState.WIN_MENU:
                 fadeTransitionScript.StartTransition(SetupWinMenuState);
@@ -478,6 +488,14 @@ public class GameInstance : MonoBehaviour {
         HideAllMenus();
         connectionMenuScript.SetupStartState();
         connectionMenu.SetActive(true);
+        SetApplicationTargetFrameRate(powerSavingFrameTarget);
+
+    }
+    private void SetupRoleSelectMenuState() {
+        currentGameState = GameState.ROLE_SELECT_MENU;
+        HideAllMenus();
+        roleSelectMenuScript.SetupMenuStartState();
+        roleSelectMenu.SetActive(true);
         SetApplicationTargetFrameRate(powerSavingFrameTarget);
 
     }
@@ -643,6 +661,7 @@ public class GameInstance : MonoBehaviour {
         winMenu.SetActive(false);
         loseMenu.SetActive(false);
         connectionMenu.SetActive(false);
+        roleSelectMenu.SetActive(false);
         pauseMenu.SetActive(false);
         //? huds?
     }
@@ -653,11 +672,11 @@ public class GameInstance : MonoBehaviour {
 
     //Getters
     public Netcode GetNetcode() { return netcodeScript; }
-
+    public RPCManagment GetRPCManagment() { return rpcManagementScript; }
 
 
     public void ConfirmAllClientsConnected() {
-        Transition(GameState.LEVEL_SELECT_MENU);
+        Transition(GameState.ROLE_SELECT_MENU);
     }
 
 
@@ -696,6 +715,14 @@ public class GameInstance : MonoBehaviour {
             soundSystemScript = soundSystem.GetComponent<SoundSystem>();
             soundSystemScript.Initialize(this);
             Validate(soundSystemScript, "SoundSystem component is missing on entity!", ValidationLevel.ERROR, true);
+        }
+        else if (asset.CompareTag("RPCManagement")) {
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
+            rpcManagement = Instantiate(asset);
+            rpcManagementScript = rpcManagement.GetComponent<RPCManagment>();
+            rpcManagementScript.Initialize(this);
+            Validate(rpcManagementScript, "RpcManagement component is missing on entity!", ValidationLevel.ERROR, true);
         }
         else if (asset.CompareTag("EventSystem")) {
             if (debugging)
@@ -741,6 +768,14 @@ public class GameInstance : MonoBehaviour {
             connectionMenuScript = connectionMenu.GetComponent<ConnectionMenu>();
             Validate(connectionMenuScript, "ConnectionMenu component is missing on entity!", ValidationLevel.ERROR, true);
             connectionMenuScript.Initialize(this);
+        }
+        else if (asset.CompareTag("RoleSelectMenu")) {
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
+            roleSelectMenu = Instantiate(asset);
+            roleSelectMenuScript = roleSelectMenu.GetComponent<RoleSelectMenu>();
+            Validate(roleSelectMenuScript, "RoleSelectMenu component is missing on entity!", ValidationLevel.ERROR, true);
+            roleSelectMenuScript.Initialize(this);
         }
         else if (asset.CompareTag("LevelSelectMenu")) {
             if (debugging)
