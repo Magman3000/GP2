@@ -6,11 +6,11 @@ using static MyUtility.Utility;
 
 public class RoleSelectMenu : Entity {
 
-    public bool player1Ready = false;
-    public bool player2Ready = false;
+    public bool client1Ready = false;
+    public bool client2Ready = false;
 
-    public Player.PlayerIdentity player1Identity = Player.PlayerIdentity.NONE;
-    public Player.PlayerIdentity player2Identity = Player.PlayerIdentity.NONE;
+    public Player.PlayerIdentity client1Identity = Player.PlayerIdentity.NONE;
+    public Player.PlayerIdentity client2Identity = Player.PlayerIdentity.NONE;
 
 
 
@@ -53,14 +53,16 @@ public class RoleSelectMenu : Entity {
         client2ReadyCheck = client2Transform.GetComponent<Image>();
         Validate(client2ReadyCheck, "Failed to get Image2 component", ValidationLevel.ERROR, true);
 
+        client1ReadyCheck.gameObject.SetActive(false);
+        client2ReadyCheck.gameObject.SetActive(false);
 
     }
     public void SetupMenuStartState() {
-        player1Ready = false;
-        player2Ready = false;
+        client1Ready = false;
+        client2Ready = false;
 
-        player1Identity = Player.PlayerIdentity.NONE;
-        player2Identity = Player.PlayerIdentity.NONE;
+        client1Identity = Player.PlayerIdentity.NONE;
+        client2Identity = Player.PlayerIdentity.NONE;
 
         //Update GUI
         UpdateGUI();
@@ -71,6 +73,17 @@ public class RoleSelectMenu : Entity {
 
 
     public void ReceiveReadyCheckRPC(ulong senderID, bool value) {
+        //Setup mirrorring
+
+        if (senderID == 0) {
+            client1Ready = value;
+            client1ReadyCheck.gameObject.SetActive(value);
+        }
+        else if (senderID == 1) {
+            client2Ready = value;
+            client2ReadyCheck.gameObject.SetActive(value);
+        }
+
 
     }
 
@@ -79,12 +92,12 @@ public class RoleSelectMenu : Entity {
         //Check if both ready and check if both are different roles
         long clientID = Netcode.GetClientID();
 
-        if (player1Ready)
-            player1Ready = false;
-        else if (!player1Ready)
-            player1Ready = true;
+        if (client1Ready)
+            client1Ready = false;
+        else if (!client1Ready)
+            client1Ready = true;
 
-        gameInstanceRef.GetRPCManagment().UpdateReadyCheckServerRpc((ulong)clientID, player1Ready);
+        gameInstanceRef.GetRPCManagment().UpdateReadyCheckServerRpc((ulong)clientID, client1Ready);
 
         //if (clientID == 0)
         //    Log("Client 0 is ready!");
