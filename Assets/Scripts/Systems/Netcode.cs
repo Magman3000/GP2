@@ -281,7 +281,7 @@ public class Netcode : Entity {
     }
     private void OnClientDisconnectCallback(ulong ID) {
         if (enableNetworkLog)
-            Log("Disconnection request received from " + ID);
+            Log("Disconnection request received from " + ID + "\nReason: " + networkManagerRef.DisconnectReason);
 
         connectedClients--;
 
