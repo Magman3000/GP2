@@ -4,12 +4,12 @@ using System.Net.Sockets;
 using System.Text;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
-using Unity.VisualScripting;
 using UnityEngine;
 using static MyUtility.Utility;
+
 public class Netcode : Entity {
 
-    public static ulong INVALID_CLIENT_ID = 0;
+    public static long INVALID_CLIENT_ID = -1;
     public const uint DEFAULT_SERVER_PORT = 6312;
 
     public enum NetworkingState {
@@ -29,7 +29,7 @@ public class Netcode : Entity {
 
     private const uint clientsLimit = 2;
     private uint connectedClients = 0;
-    public ulong clientID = INVALID_CLIENT_ID;
+    public long clientID = INVALID_CLIENT_ID;
     public bool running = false;
 
     private IPAddress localIPAddress = null;
@@ -106,7 +106,7 @@ public class Netcode : Entity {
 
     private void DisconnectAllClients() {
         foreach(var client in networkManagerRef.ConnectedClients) {
-            if (client.Value.ClientId != clientID)
+            if (client.Value.ClientId != (ulong)clientID)
                 networkManagerRef.DisconnectClient(client.Value.ClientId, "Server Shutdown");
         }
     }
@@ -190,15 +190,18 @@ public class Netcode : Entity {
     public uint GetConnectedClientsCount() {
         return connectedClients;
     }
-    public ulong GetClientID() {
-        return clientID;
+    public long GetClientID() {
+        return (long)networkManagerRef.LocalClientId;
     }
 
 
     public UnityTransport GetUnityTransport() { return unityTransportRef; }
     public RelayManager GetRelayManager() { return relayManager; }
 
+    private void OnConnectedToServer() {
+        Log("I have connected to a server! " + clientID);
 
+    }
 
     //Break it into host code and client code!½
     //Callbacks
@@ -206,9 +209,14 @@ public class Netcode : Entity {
         if (enableNetworkLog)
             Log("Client " + ID + " has connected!");
 
-        if (IsHost() && networkManagerRef.ConnectedClients.Count == 1)
-            clientID = ID;
+        //if (IsHost() && networkManagerRef.ConnectedClients.Count == 1)
+        //    clientID = ID;
+        //else
+        //    clientID = 1;
+        if (clientID == INVALID_CLIENT_ID)
+            clientID = (long)ID;
 
+        Log("Client ID is " + clientID);
         connectedClients++; //Disconnecting doesnt trigger this on relay for some reason
 
         //Need to do stuff with the client ID - Server Auth
@@ -218,7 +226,7 @@ public class Netcode : Entity {
 
         if (IsHost()) {
             if (GetConnectedClientsCount() == 2)
-                gameInstanceRef.ConfirmAllClientsConnected();
+                gameInstanceRef.GetRPCManagment().ConfirmConnectionServerRpc();
         }
 
         //if (GetConnectedClientsCount() == 1)
