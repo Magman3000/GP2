@@ -1,15 +1,17 @@
 using System;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using static MyUtility.Utility;
 
 public class Netcode : Entity {
 
-    public static long INVALID_CLIENT_ID = -1;
+
     public const uint DEFAULT_SERVER_PORT = 6312;
 
     public enum NetworkingState {
@@ -29,7 +31,6 @@ public class Netcode : Entity {
 
     private const uint clientsLimit = 2;
     private uint connectedClients = 0;
-    public long clientID = INVALID_CLIENT_ID;
     public bool running = false;
 
     private IPAddress localIPAddress = null;
@@ -55,8 +56,10 @@ public class Netcode : Entity {
 
         //transportLayer.ConnectionData.Address = "192.0.0.1";
 
+
         encryptor = new Encryptor();
         QueuryOwnIPAddress();
+        //QueryIPAddresses(); //For testing ethernet connections
         SetupCallbacks();
         gameInstanceRef = game;
         initialized = true;
@@ -82,9 +85,55 @@ public class Netcode : Entity {
         foreach (var address in host.AddressList) {
             if (address.AddressFamily == AddressFamily.InterNetwork) {
                 localIPAddress = address;
+                if (enableNetworkLog)
+                    Log("LocalHost: " + address);
                 return;
             }
         }
+    }
+    private void QueryIPAddresses() {
+
+        localIPAddress = null;
+        foreach (NetworkInterface item in NetworkInterface.GetAllNetworkInterfaces()) {
+            NetworkInterfaceType wifi = NetworkInterfaceType.Wireless80211;
+            NetworkInterfaceType ethernet = NetworkInterfaceType.Ethernet;
+
+            if (item.NetworkInterfaceType == wifi && item.OperationalStatus == OperationalStatus.Up) {
+                Log("WI_FI Connections detected of type " + item.NetworkInterfaceType + " name: " + item.Id);
+                foreach (var ip in item.GetIPProperties().UnicastAddresses) {
+                    if (ip.Address.AddressFamily == AddressFamily.InterNetwork) {
+                        Log("IPV4 Address : " + ip.Address.ToString());
+                        localIPAddress = ip.Address;
+                    }
+                    //else if (ip.Address.AddressFamily == AddressFamily.InterNetworkV6)
+                    //    Log("IPV6 Address : " + ip.Address.ToString() + "\nName: " + ip.Address.);
+                    
+                }
+
+            }
+
+
+
+            if (item.NetworkInterfaceType == ethernet && item.OperationalStatus == OperationalStatus.Up) {
+                Log("Ethernet Connections detected of type " + item.NetworkInterfaceType + " name: " + item.Id);
+                foreach (var ip in item.GetIPProperties().UnicastAddresses) {
+                    if (ip.Address.AddressFamily == AddressFamily.InterNetwork) {
+                        Log("IPV4 Address : " + ip.Address.ToString());
+                        localIPAddress = ip.Address;
+                    }
+                    //else if (ip.Address.AddressFamily == AddressFamily.InterNetworkV6)
+                    //    Log("IPV6 Address : " + ip.Address.ToString() + "\nName: " + ip.Address.);
+
+                }
+            }
+
+
+
+
+
+        }
+
+        Log("IP ADDRESS IS " + localIPAddress);
     }
 
 
@@ -106,7 +155,7 @@ public class Netcode : Entity {
 
     private void DisconnectAllClients() {
         foreach(var client in networkManagerRef.ConnectedClients) {
-            if (client.Value.ClientId != (ulong)clientID)
+            if (client.Value.ClientId != (ulong)GetClientID())
                 networkManagerRef.DisconnectClient(client.Value.ClientId, "Server Shutdown");
         }
     }
@@ -119,7 +168,6 @@ public class Netcode : Entity {
             Log("Networking has stopped!");
 
         connectedClients = 0; //This kinda does it. 
-        clientID = INVALID_CLIENT_ID;
         currentState = NetworkingState.NONE;
         if (IsHost())
             DisconnectAllClients();
@@ -190,8 +238,16 @@ public class Netcode : Entity {
     public uint GetConnectedClientsCount() {
         return connectedClients;
     }
-    public long GetClientID() {
-        return (long)networkManagerRef.LocalClientId;
+    public static long GetClientID() {
+        return (long)NetworkManager.Singleton.LocalClientId;
+    }
+
+    public ulong GetOtherClient(ulong id) {
+        foreach(var client in networkManagerRef.ConnectedClientsIds) {
+            if(id != client)
+                return client;
+        }
+        return id;
     }
 
 
@@ -199,7 +255,7 @@ public class Netcode : Entity {
     public RelayManager GetRelayManager() { return relayManager; }
 
     private void OnConnectedToServer() {
-        Log("I have connected to a server! " + clientID);
+        Log("I have connected to a server! " + GetClientID());
 
     }
 
@@ -209,30 +265,18 @@ public class Netcode : Entity {
         if (enableNetworkLog)
             Log("Client " + ID + " has connected!");
 
-        //if (IsHost() && networkManagerRef.ConnectedClients.Count == 1)
-        //    clientID = ID;
-        //else
-        //    clientID = 1;
-        if (clientID == INVALID_CLIENT_ID)
-            clientID = (long)ID;
 
-        Log("Client ID is " + clientID);
+
+
+        Log("Client ID is " + ID);
         connectedClients++; //Disconnecting doesnt trigger this on relay for some reason
 
         //Need to do stuff with the client ID - Server Auth
-
-        //Assign index instead.
-        //Identity is decided in RoleSelectionMenu
 
         if (IsHost()) {
             if (GetConnectedClientsCount() == 2)
                 gameInstanceRef.GetRPCManagment().ConfirmConnectionServerRpc();
         }
-
-        //if (GetConnectedClientsCount() == 1)
-        //    gameInstanceRef.CreatePlayerEntity(Player.PlayerIdentity.PLAYER_1);
-        //else if (GetConnectedClientsCount() == 2)
-        //    gameInstanceRef.CreatePlayerEntity(Player.PlayerIdentity.PLAYER_2);
     }
     private void OnClientDisconnectCallback(ulong ID) {
         if (enableNetworkLog)
