@@ -3,14 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WinTrigger : MonoBehaviour
+public class WinTrigger : Entity
 {
-    private bool initialized = false;
-
-    GameInstance gameInstanceRef;
     Level levelRef;
-
-    public void Initialize(GameInstance game, Level level)
+    public override void Initialize(GameInstance game)
     {
         if (initialized)
             return;
@@ -18,7 +14,6 @@ public class WinTrigger : MonoBehaviour
 
 
         gameInstanceRef = game;
-        levelRef = level;
         initialized = true;
     }
 
@@ -26,7 +21,8 @@ public class WinTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            //notify x in levelRef
+            //TODO notify x in levelRef
+
         }
 
     }
