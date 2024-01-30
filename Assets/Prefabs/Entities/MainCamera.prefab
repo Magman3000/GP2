@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 399588324764978629}
   m_Layer: 0
   m_Name: MainCamera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -159,5 +159,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71740f92ac3c0ea4985c861cff8e6a64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  crashingCameraShake:
+    intensity: 0
+    frequency: 0
   cameraStats: {fileID: 11400000, guid: 0f2871a463e18474891cc341add91c1b, type: 2}
   cameraAnimator: {fileID: 3254174660742939855}
