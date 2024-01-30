@@ -62,8 +62,21 @@ public class Daredevil {
         speedBoostBool = playerRef.GetBoostCheck();
     }
 
-    private void IncreaseCurrentSpeed() {
+    private void Breaking()
+    {
+        if (currentSpeed >= -stats.GetMaxReverseSpeed()/10.0f && currentSpeed <= stats.GetMaxSpeed()/10.0f)
+        {
+            playerRigidbody.velocity = Vector3.zero;
+            currentSpeed = 0.0f;
+            return;
+        }
 
+        currentSpeed = Mathf.Lerp(currentSpeed, 0, stats.GetBreakSpeed() * Time.deltaTime);
+
+    }
+
+    private void IncreaseCurrentSpeed()
+    {
         currentSpeed += stats.GetAccelerationSpeed() * Time.deltaTime;
         if (currentSpeed > stats.GetMaxSpeed() && !speedBoostBool)
             currentSpeed = stats.GetMaxSpeed();
@@ -71,10 +84,11 @@ public class Daredevil {
         if (speedBoostBool && currentSpeed > stats.GetMaxBoostSpeed())
             currentSpeed = stats.GetMaxBoostSpeed();
     }
-    private void DecreaseCurrentSpeed() {
+
+    private void ReverseCurrentSpeed() {
         currentSpeed -= stats.GetDeccelerationSpeed() * Time.deltaTime;
-        if (currentSpeed < 0.0f)
-            currentSpeed = 0.0f;
+        if (currentSpeed < -stats.GetMaxReverseSpeed())
+            currentSpeed = -stats.GetMaxReverseSpeed();
     }
 
 

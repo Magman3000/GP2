@@ -4,8 +4,7 @@ using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "CoordinatorStats", menuName = "Player/CoordinatorStats", order = 0)]
-public class CoordinatorStats : ScriptableObject
-{
+public class CoordinatorStats : ScriptableObject {
     [Range(0.1f, 500.0f)][SerializeField] private float boostDuration = 1.0f;
     [Range(0.1f, 500.0f)][SerializeField] private float boostCooldown = 1.0f;
     [Tooltip("The amount of boost charges")]
