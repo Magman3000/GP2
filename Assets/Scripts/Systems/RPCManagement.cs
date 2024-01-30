@@ -6,7 +6,7 @@ using UnityEngine;
 using static MyUtility.Utility;
 using static UnityEngine.GraphicsBuffer;
 
-public class RPCManagment : NetworkedEntity {
+public class RPCManagement : NetworkedEntity {
 
 
     public override void Initialize(GameInstance game) {
@@ -62,20 +62,47 @@ public class RPCManagment : NetworkedEntity {
         var clientParams = CreateClientRpcParams(targetID);
         RelayReadyCheckClientRpc(senderID, value, clientParams);
     }
-
     [ClientRpc]
     public void RelayReadyCheckClientRpc(ulong senderID, bool value, ClientRpcParams paramsPack) {
-        //if (senderID == (ulong)Netcode.GetClientID())
-        //    return;
-
-        Log("I received rpc from " + senderID + "\nValue : " + value);
-        gameInstanceRef.GetRoleSelectMenu().ReceiveReadyCheckRPC(senderID, value);
+        gameInstanceRef.GetRoleSelectMenu().ReceiveReadyCheckRPC(value);
     }
 
 
+    [ServerRpc (RequireOwnership = false)]
+    public void UpdateRoleSelectionServerRpc(ulong senderID, Player.PlayerIdentity identity) {
+        Netcode netcodeRef = gameInstanceRef.GetNetcode();
+        var targetID = netcodeRef.GetOtherClient(senderID); //Do more elegant solution
+        if (targetID == senderID) {
+            Log("Other client look up failed!");
+            return;
+        }
+
+        var clientParams = CreateClientRpcParams(targetID);
+        RelayRoleSelectionClientRpc(senderID, identity, clientParams);
+    }
+    [ClientRpc]
+    public void RelayRoleSelectionClientRpc(ulong senderID, Player.PlayerIdentity identity, ClientRpcParams paramsPack) {
+        gameInstanceRef.GetRoleSelectMenu().ReceiveRoleSelectionRPC(identity);
+    }
 
 
+    [ServerRpc (RequireOwnership = true)]
+    public void ConfirmRoleSelectionServerRpc(ulong senderID) {
+        Netcode netcodeRef = gameInstanceRef.GetNetcode();
+        var targetID = netcodeRef.GetOtherClient(senderID); //Do more elegant solution
+        if (targetID == senderID) {
+            Log("Other client look up failed!");
+            return;
+        }
 
+        var clientParams = CreateClientRpcParams(targetID);
+        RelayRoleSelectionConfirmationClientRpc(senderID, clientParams);
+    }
+    [ClientRpc]
+    public void RelayRoleSelectionConfirmationClientRpc(ulong senderID, ClientRpcParams paramsPack) {
+        gameInstanceRef.GetLevelManagement().QueueLevelLoadKey("DebugLevel"); //Temporary
+        gameInstanceRef.StartGame();
+    }
 
 
 

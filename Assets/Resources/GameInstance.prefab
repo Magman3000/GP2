@@ -45,6 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initializeOnStartup: 1
-  debugging: 0
+  debugging: 1
   currentApplicationStatus: 0
   currentGameState: 0
