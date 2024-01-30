@@ -40,4 +40,39 @@ public class RPCManagment : NetworkedEntity {
 
 
 
+    [ServerRpc (RequireOwnership = true)]
+    public void UpdateReadyCheckServerRpc(ulong senderID, bool value) {
+        ClientRpcParams clientRpcParams = new ClientRpcParams();
+        clientRpcParams.Send = new ClientRpcSendParams();
+
+        Netcode netcodeRef = gameInstanceRef.GetNetcode();
+        var targetID = netcodeRef.GetOtherClient(senderID);
+        if (targetID == senderID) {
+            Log("Other client look up failed!");
+            return;
+        }
+
+        clientRpcParams.Send.TargetClientIds = new ulong[] { targetID };
+
+
+
+        RelayReadyCheckClientRpc(senderID, value, clientRpcParams);
+    }
+
+    [ClientRpc]
+    public void RelayReadyCheckClientRpc(ulong senderID, bool value, ClientRpcParams paramsPack) {
+        //if (senderID == (ulong)Netcode.GetClientID())
+        //    return;
+
+        Log("I received rpc " + Netcode.GetClientID() + "\nValue : " + value);
+
+    }
+
+
+
+
+
+
+
+
 }
