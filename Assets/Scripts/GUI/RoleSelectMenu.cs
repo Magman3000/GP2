@@ -75,14 +75,18 @@ public class RoleSelectMenu : Entity {
     public void ReceiveReadyCheckRPC(ulong senderID, bool value) {
         //Setup mirrorring
 
-        if (senderID == 0) {
-            client1Ready = value;
-            client1ReadyCheck.gameObject.SetActive(value);
-        }
-        else if (senderID == 1) {
-            client2Ready = value;
-            client2ReadyCheck.gameObject.SetActive(value);
-        }
+        client2Ready = value;
+        client2ReadyCheck.gameObject.SetActive(value);
+        
+
+        //if (senderID == 0) {
+        //    client1Ready = value;
+        //    client1ReadyCheck.gameObject.SetActive(value);
+        //}
+        //else if (senderID == 1) {
+        //    client2Ready = value;
+        //    client2ReadyCheck.gameObject.SetActive(value);
+        //}
 
 
     }
@@ -91,12 +95,12 @@ public class RoleSelectMenu : Entity {
     public void ReadyButton() {
         //Check if both ready and check if both are different roles
         long clientID = Netcode.GetClientID();
-
         if (client1Ready)
             client1Ready = false;
         else if (!client1Ready)
             client1Ready = true;
 
+        client1ReadyCheck.gameObject.SetActive(client1Ready);
         gameInstanceRef.GetRPCManagment().UpdateReadyCheckServerRpc((ulong)clientID, client1Ready);
 
         //if (clientID == 0)
