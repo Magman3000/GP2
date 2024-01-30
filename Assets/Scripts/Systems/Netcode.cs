@@ -12,6 +12,8 @@ public class Netcode : Entity {
 
 
     public const uint DEFAULT_SERVER_PORT = 6312;
+    public const uint HOST_ID = 0;
+    public const uint CLIENT_ID = 1;
 
     public enum NetworkingState {
         NONE = 0,
