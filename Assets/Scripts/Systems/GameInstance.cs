@@ -674,11 +674,12 @@ public class GameInstance : MonoBehaviour {
     //Getters
     public Netcode GetNetcode() { return netcodeScript; }
     public RPCManagment GetRPCManagment() { return rpcManagementScript; }
+    public RoleSelectMenu GetRoleSelectMenu() { return roleSelectMenuScript; }
     public LevelsBundle GetLevelsBundle() { return (LevelsBundle)levelsBundleHandle.Result; }
 
 
     public void ConfirmAllClientsConnected() {
-        Transition(GameState.LEVEL_SELECT_MENU);
+        Transition(GameState.ROLE_SELECT_MENU);
     }
 
 
