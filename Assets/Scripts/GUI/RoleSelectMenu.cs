@@ -79,15 +79,6 @@ public class RoleSelectMenu : Entity {
         client2ReadyCheck.gameObject.SetActive(value);
         
 
-        //if (senderID == 0) {
-        //    client1Ready = value;
-        //    client1ReadyCheck.gameObject.SetActive(value);
-        //}
-        //else if (senderID == 1) {
-        //    client2Ready = value;
-        //    client2ReadyCheck.gameObject.SetActive(value);
-        //}
-
 
     }
 
@@ -103,10 +94,14 @@ public class RoleSelectMenu : Entity {
         client1ReadyCheck.gameObject.SetActive(client1Ready);
         gameInstanceRef.GetRPCManagment().UpdateReadyCheckServerRpc((ulong)clientID, client1Ready);
 
-        //if (clientID == 0)
-        //    Log("Client 0 is ready!");
-        //else if (clientID == 1)
-        //    Log("Client 1 is ready!");
+        if (client1Ready && client2Ready && client1Identity != client2Identity) {
+            
+            //Move to next menu
+            //Assign identities
+            //Send rpc for client to 
+        }
+
+        //If host then check all requirements before continuing and confirming selection to game instance and sending rpc
     }
     public void CoordinatorButton() {
         long clientID = Netcode.GetClientID();
