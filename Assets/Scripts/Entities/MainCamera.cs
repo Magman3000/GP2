@@ -1,31 +1,28 @@
-using System;
-using Unity.VisualScripting;
 using UnityEngine;
-
-
-
-
-[Serializable]
-public struct CameraShake {
-    public float intensity;
-    public float frequency;
-
-}
 
 public class MainCamera : Entity
 {
-
-    [SerializeField] private CameraShake crashingCameraShake;
+    public class CameraShakeType
+    {
+        public float Intensity;
+        public float Duration;
+        public Vector3 Direction;
+    }
 
     //SerializeFields
     [SerializeField] private CameraStats cameraStats;
-    [SerializeField] private Animator cameraAnimator; //Should I do it without hard referencing it?
-    
-    private static readonly int shakeCameraTrigger = Animator.StringToHash("ShakeCamera");
-    
+    [SerializeField] private Transform _cameraTransform; //Should I do it without hard referencing it?
+
     //Refs
     private Player playerRef;
     private Daredevil daredevilData;
+
+    //Private
+    private CameraShakeType _cameraShakeType;
+    private Quaternion _originalRotation;
+    private bool _shakeCamera = false;
+    private float _shakeDuration = 0f;
+
 
     public override void Initialize(GameInstance game)
     {
@@ -40,6 +37,7 @@ public class MainCamera : Entity
     {
         if (!initialized)
             return;
+        ShakeCamera();
     }
 
     public override void FixedTick()
@@ -58,25 +56,59 @@ public class MainCamera : Entity
             transform1.position + offset,
             cameraStats.GetCameraFollowSpeed() * Time.deltaTime
         );
-
         transform.LookAt(transform1);
     }
 
     private Vector3 CalculateOffset(out Transform transform1)
     {
         var cameraValuesYOffSet = cameraStats.GetYOffset();
-        var zOffset = (cameraStats.GetMaxCameraZOffset() - cameraStats.GetMinCameraZOffset()) *
-                      daredevilData.GetCurrentSpeedPercentage();
+        var zOffset = Mathf.Lerp(cameraStats.GetMinCameraZOffset(), cameraStats.GetMaxCameraZOffset(),
+            daredevilData.GetCurrentSpeedPercentage());
         var offset = new Vector3(0f, cameraValuesYOffSet, zOffset);
         transform1 = playerRef.transform;
         return offset;
     }
 
-    public void ShakeCamera(CameraShake shake)
+    public void TriggerShake(CameraShakeType cameraShakeType)
     {
-        cameraAnimator.SetTrigger(shakeCameraTrigger);
+        _shakeCamera = true;
+        _shakeDuration = cameraShakeType.Duration;
+        _cameraShakeType = cameraShakeType;
+        _originalRotation = _cameraTransform.localRotation;
     }
-    
+
+    private void ShakeCamera()
+    {
+        if (!_shakeCamera)
+            return;
+
+        Quaternion randomDisplacement;
+        var direction = _cameraShakeType.Direction;
+        var shakeIntensity = _cameraShakeType.Intensity;
+        if (direction == Vector3.up || direction == Vector3.down)
+        {
+            randomDisplacement = Quaternion.Euler(Random.Range(-shakeIntensity, shakeIntensity), 0f, 0f);
+        }
+        else if (direction == Vector3.left || direction == Vector3.right)
+        {
+            randomDisplacement = Quaternion.Euler(0f, Random.Range(-shakeIntensity, shakeIntensity), 0f);
+        }
+        else
+        {
+            randomDisplacement = Quaternion.Euler(Random.insideUnitSphere * shakeIntensity);
+        }
+
+        _cameraTransform.localRotation = _originalRotation * randomDisplacement;
+
+        _shakeDuration -= Time.deltaTime;
+
+        if (!(_shakeDuration <= 0))
+            return;
+
+        _shakeCamera = false;
+        _cameraTransform.localRotation = _originalRotation;
+    }
+
     public void SetPlayerReference(Player player)
     {
         playerRef = player;
