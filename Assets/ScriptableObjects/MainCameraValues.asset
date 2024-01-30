@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _yOffset: 5
   _cameraFollowSpeed: 1.18
-  _minCameraZOffset: 1.84
+  _minCameraZOffset: 5
   _maxCameraZOffset: 16.5
