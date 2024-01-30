@@ -18,7 +18,7 @@ public class MainMenu : Entity {
 
 
     public void PlayButton() {
-        gameInstanceRef.SetGameState(GameInstance.GameState.CONNECTION_MENU);
+        gameInstanceRef.Transition(GameInstance.GameState.CONNECTION_MENU);
     }
 
     public void OptionsButton()
@@ -28,7 +28,7 @@ public class MainMenu : Entity {
     
     public void CreditsButton()
     {
-        gameInstanceRef.SetGameState(GameInstance.GameState.CREDITS_MENU);
+        gameInstanceRef.Transition(GameInstance.GameState.CREDITS_MENU);
     }
 
     public void QuitButton()

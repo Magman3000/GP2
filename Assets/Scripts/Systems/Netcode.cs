@@ -239,8 +239,8 @@ public class Netcode : Entity {
     public uint GetConnectedClientsCount() {
         return connectedClients;
     }
-    public static long GetClientID() {
-        return (long)NetworkManager.Singleton.LocalClientId;
+    public static ulong GetClientID() {
+        return NetworkManager.Singleton.LocalClientId;
     }
 
     public ulong GetOtherClient(ulong id) {
@@ -276,7 +276,7 @@ public class Netcode : Entity {
 
         if (IsHost()) {
             if (GetConnectedClientsCount() == 2)
-                gameInstanceRef.GetRPCManagment().ConfirmConnectionServerRpc();
+                gameInstanceRef.GetRPCManagement().ConfirmConnectionServerRpc();
         }
     }
     private void OnClientDisconnectCallback(ulong ID) {
