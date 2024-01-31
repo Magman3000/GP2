@@ -12,6 +12,8 @@ public class DaredevilStats : ScriptableObject {
     [Range(0.1f, 500.0f)][SerializeField] private float deccelerationSpeed = 1.0f;
     [Tooltip("Maximum amount of speed attainable")]
     [Range(0.1f, 500.0f)][SerializeField] private float maxSpeed = 1.0f;
+    [Range(0.1f, 500.0f)][SerializeField] private float maxReverseSpeed = 1.0f;
+    [Range(0.1f, 1.0f)][SerializeField] private float breakSpeed = 0.1f;
 
     [Tooltip("How much you turn left and right each turning action")]
     [Range(0.1f, 500.0f)][SerializeField] private float turnSpeed = 1.0f;
@@ -25,6 +27,9 @@ public class DaredevilStats : ScriptableObject {
     public float GetAccelerationSpeed() { return accelerationSpeed; }
     public float GetDeccelerationSpeed() { return deccelerationSpeed; }
     public float GetMaxSpeed() { return maxSpeed; }
+    public float GetMaxReverseSpeed() { return maxReverseSpeed; }
+
+    public float GetBreakSpeed() { return breakSpeed; }
     public float GetTurnSpeed() { return turnSpeed; }
     public float GetBoostAccelerationMultiplier() { return boostAccelerationMultiplier; }
     public float GetMaxBoostSpeed() { return maxBoostSpeed; }
