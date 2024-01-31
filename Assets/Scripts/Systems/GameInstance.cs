@@ -5,6 +5,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEditor;
 using Unity.Services.Authentication;
+using UnityEngine.EventSystems;
 
 public class GameInstance : MonoBehaviour {
 
@@ -33,7 +34,6 @@ public class GameInstance : MonoBehaviour {
 
     //Addressables Labels
     private const string essentialAssetsLabel       = "Essential";
-    private const string levelsBundleLabel          = "LevelsBundle";
     private const string loadingScreenLabel         = "LoadingScreen";
 
 
@@ -53,12 +53,7 @@ public class GameInstance : MonoBehaviour {
     private int gameplayFrameTarget = -1;
 
     private AsyncOperationHandle<IList<GameObject>> loadedAssetsHandle;
-    private AsyncOperationHandle<ScriptableObject> levelsBundleHandle;
     private AsyncOperationHandle<GameObject> loadingScreenHandle;
-
-    private AsyncOperationHandle<GameObject> currentLoadedLevelHandle;
-    private GameObject currentLoadedLevel = null;
-    private Level currentLoadedLevelScript = null;
 
     private Resolution deviceResolution;
 
@@ -88,8 +83,9 @@ public class GameInstance : MonoBehaviour {
 
     //Scripts
     private GameObject rpcManagement;
-    private RPCManagment rpcManagementScript;
+    private RPCManagement rpcManagementScript;
     private SoundSystem soundSystemScript;
+    private LevelManagement levelManagementScript = new LevelManagement();
     private Player playerScript;
 
     private DaredevilHUD daredevilHUDScript;
@@ -125,6 +121,7 @@ public class GameInstance : MonoBehaviour {
         //Look into other loading strategies and read sebastians notes
         SetupApplicationInitialSettings();
         initializationInProgress = true;
+        levelManagementScript.Initialize(this); //So it starts loading level bundle concurrently.
         LoadAssets();
     }
 
@@ -133,7 +130,6 @@ public class GameInstance : MonoBehaviour {
     private void LoadAssets() {
         LoadLoadingScreen();
         LoadEssentials();
-        LoadLevelsBundle();
         assetsLoadingInProgress = true;
         currentApplicationStatus = ApplicationStatus.LOADING_ASSETS;
     }
@@ -155,23 +151,9 @@ public class GameInstance : MonoBehaviour {
         loadedAssetsHandle = Addressables.LoadAssetsAsync<GameObject>(essentialAssetsLabel, AssetLoadedCallback);
         loadedAssetsHandle.Completed += FinishedLoadingAssetsCallback;
     }
-    private void LoadLevelsBundle() {
-        if (debugging)
-            Log("Started loading levels bundle!");
-        
-        levelsBundleHandle = Addressables.LoadAssetAsync<ScriptableObject>(levelsBundleLabel);
-        //TODO: Validate
-        levelsBundleHandle.Completed += FinishedLoadingLevelsBundleCallback;
-    }
     private bool CheckAssetsLoadingStatus() {
-
-        bool result = true;
-
-        result &= loadedAssetsHandle.IsDone;
-        result &= levelsBundleHandle.IsDone;
-
-        assetsLoadingInProgress = !result;
-        return result;
+        assetsLoadingInProgress = !loadedAssetsHandle.IsDone;
+        return loadedAssetsHandle.IsDone;
     }
 
 
@@ -221,25 +203,48 @@ public class GameInstance : MonoBehaviour {
         UnloadResources();
     }
     private void UnloadResources() {
+        if (!initializeOnStartup)
+            return;
+
         //Steps:
         //-Call CleanUp on all entities
         //-Destroy gameobjects
         //-Release resources
 
+
+        //ADD THE REST OF THE ENTITIES ! CLEAN UP
+
         //Needs reworking after networking solution
         if (playerScript) //Temp
-            playerScript.CleanUp("Player 1 cleaned up successfully!");
+            playerScript.CleanUp("Player cleaned up successfully!");
 
 
         mainCameraScript.CleanUp("MainCamera cleaned up successfully!");
         soundSystemScript.CleanUp("SoundSystem cleaned up successfully!");
+        levelManagementScript.CleanUp();
+
 
         //Needed to guarantee destruction of all entities before attempting to release resources.
         ValidateAndDestroy(player);
         ValidateAndDestroy(mainCamera);
         ValidateAndDestroy(soundSystem);
+        ValidateAndDestroy(eventSystem);
+        ValidateAndDestroy(daredevilHUD);
+        ValidateAndDestroy(coordinatorHUD);
+        ValidateAndDestroy(fadeTransition);
+        ValidateAndDestroy(loadingScreen);
 
-
+        ValidateAndDestroy(rpcManagement);
+        ValidateAndDestroy(netcode);
+        ValidateAndDestroy(mainMenu);
+        ValidateAndDestroy(optionsMenu);
+        ValidateAndDestroy(creditsMenu);
+        ValidateAndDestroy(connectionMenu);
+        ValidateAndDestroy(levelSelectMenu);
+        ValidateAndDestroy(roleSelectMenu);
+        ValidateAndDestroy(pauseMenu);
+        ValidateAndDestroy(winMenu);
+        ValidateAndDestroy(loseMenu);
 
         //ADD REST OF THE MENUS!
 
@@ -250,23 +255,9 @@ public class GameInstance : MonoBehaviour {
 
         //TODO: Add messages for each of these two
 
-        //TODO: TEST OUT THE STATE OF A HANDLE BEFORE LOADING AND AFTER UNLOADING! IMPORTANT!
-        //Note:
-        //-on unloading, it becomes invalid! the handle!
 
-        if (currentLoadedLevelHandle.IsValid()) {
-            currentLoadedLevelScript.CleanUp();
-            ValidateAndDestroy(currentLoadedLevel);
-            Addressables.Release(currentLoadedLevelHandle);
-            if (debugging)
-                Log("Level was destroyed and unloaded successfully!");
-        }
 
-        if (levelsBundleHandle.IsValid()) {
-            Addressables.Release(levelsBundleHandle);
-            if (debugging)
-                Log("Levels bundle was unloaded successfully!");
-        }
+
 
         if (loadedAssetsHandle.IsValid()) {
             Addressables.Release(loadedAssetsHandle);
@@ -287,6 +278,9 @@ public class GameInstance : MonoBehaviour {
 
     //Update/Tick
     void Update() {
+        if (!initializeOnStartup)
+            return;
+
         switch (currentApplicationStatus) {
             case ApplicationStatus.LOADING_ASSETS:
                 UpdateApplicationLoadingAssetsState();
@@ -404,7 +398,7 @@ public class GameInstance : MonoBehaviour {
                 SetupLoseMenuState();
                 break;
             case GameState.PLAYING:
-                SetupStartState();
+                Warning("Use StartGame instead of calling SetGameState(GameState.PLAYING)");
                 break;
             case GameState.PAUSED:
                 Warning("Use PauseGame/UnpauseGame instead of calling SetGameState(GameState.PAUSED)");
@@ -439,7 +433,7 @@ public class GameInstance : MonoBehaviour {
                 fadeTransitionScript.StartTransition(SetupLoseMenuState);
                 break;
             case GameState.PLAYING:
-                fadeTransitionScript.StartTransition(SetupStartState);
+                Warning("Use StartGame instead of calling Transition(GameState.PLAYING)");
                 break;
             case GameState.PAUSED:
                 Warning("Use PauseGame/UnpauseGame instead of calling Transition(GameState.PAUSED)");
@@ -451,12 +445,12 @@ public class GameInstance : MonoBehaviour {
 
     public void PauseGame() {
         gamePaused = true;
-        Time.timeScale = 0.0f;
+        //Time.timeScale = 0.0f; 
 
     }
     public void UnpauseGame() {
         gamePaused = false;
-        Time.timeScale = 1.0f;
+        //Time.timeScale = 1.0f; ITS A MULTIPLAYER GAME
 
     }
 
@@ -553,25 +547,35 @@ public class GameInstance : MonoBehaviour {
 
 
 
+    public bool StartGame() {
+        if (!levelManagementScript.LoadQueuedLevelKey())
+            return false;
 
-    public void StartGame(string levelName) {
-        if (!LoadLevel(levelName))
-            return;
-
-        fadeTransitionScript.StartTransition(SetupStartState);
+        fadeTransitionScript.StartTransition(SetupStartState); //Will probably be swtiched or combines with loading screen
         gameStarted = true;
+        return true;
+    }
+    public bool StartGame(string levelName) {
+        if (!levelManagementScript.LoadLevel(levelName))
+            return false;
+
+        fadeTransitionScript.StartTransition(SetupStartState); //Will probably be swtiched or combines with loading screen
+        gameStarted = true;
+        return true;
     }
     public void InterruptGame() {
         //In case of player disconnection!
-        if (currentLoadedLevel)
-            UnloadLevel();
+        if (levelManagementScript.IsLevelLoaded())
+            levelManagementScript.UnloadLevel();
 
         gameStarted = false;
         player.SetActive(false);
 
-
         if (gamePaused)
             UnpauseGame();
+
+        //Should also do some clean ups that i forgot where.
+        //-I put a comment regarding it there tho.
 
         Transition(GameState.MAIN_MENU);
     }
@@ -579,78 +583,6 @@ public class GameInstance : MonoBehaviour {
 
 
     //Level Loading - TODO: Move into LevelManagement class along with related vars
-    public bool LoadLevel(string levelName) {
-        if (currentLoadedLevel) {
-            Error("Failed to load level!\nUnload current level first before loading a new one!");
-            return false;
-        }
-        if (!levelsBundleHandle.IsValid()) {
-            Error("Failed to load level!\nLevels bundle was not loaded!");
-            return false;
-        }
-
-        LevelEntry requestedLevel = new LevelEntry();
-        bool levelFound = false;
-        foreach (LevelEntry level in ((LevelsBundle)levelsBundleHandle.Result).Entries) {
-            if (level.key == levelName) {
-                requestedLevel = level;
-                levelFound = true;
-            }
-        }
-
-        if (!levelFound) {
-            Error("Failed to load level!\nRequested level was not found in the levels bundle!");
-            return false;
-        }
-
-        currentLoadedLevelHandle = Addressables.LoadAssetAsync<GameObject>(requestedLevel.asset);
-        if (currentLoadedLevelHandle.IsDone) {
-            Error("Failed to load level!\nRequested level was not found in the addressables!");
-            return false;
-        }
-        currentLoadedLevelHandle.Completed += FinishedLoadingLevelCallback;
-
-        if (debugging)
-            Log("Started loading level associated with key [" + levelName + "]");
-
-        return true;
-    }
-    public bool UnloadLevel() {
-        if (!currentLoadedLevel) {
-            Warning("Unable to unload level!\nNo levels are currently loaded!");
-            return false;
-        }
-
-        currentLoadedLevelScript.CleanUp();
-        ValidateAndDestroy(currentLoadedLevel);
-        Addressables.Release(currentLoadedLevelHandle);
-
-        if (debugging)
-            Log("Started unloading current level!");
-
-        return true;
-    }
-    private bool CreateLevel(GameObject asset) {
-        if (currentLoadedLevel) {
-            Error("Failed to create level\nThere is currently a level loaded already!");
-            return false;
-        }
-
-        currentLoadedLevel = Instantiate(asset);
-        if (!currentLoadedLevel) {
-            Error("Failed to create level\nInstantiation failed!");
-            return false;
-        }
-
-        currentLoadedLevelScript = currentLoadedLevel.GetComponent<Level>();
-        if (!currentLoadedLevelScript) {
-            Error("Failed to create level\nLevel is missing essential component!");
-            return false;
-        }
-
-        currentLoadedLevelScript.Initialize(this);
-        return true;
-    }
 
 
     private void HideAllMenus() {
@@ -673,13 +605,19 @@ public class GameInstance : MonoBehaviour {
 
     //Getters
     public Netcode GetNetcode() { return netcodeScript; }
-    public RPCManagment GetRPCManagment() { return rpcManagementScript; }
-    public LevelsBundle GetLevelsBundle() { return (LevelsBundle)levelsBundleHandle.Result; }
+    public RPCManagement GetRPCManagement() { return rpcManagementScript; }
+    public LevelManagement GetLevelManagement() { return levelManagementScript; }
+
+    public RoleSelectMenu GetRoleSelectMenu() { return roleSelectMenuScript; }
+    public Player GetPlayer() { return playerScript; }
 
 
+    //RPC related
     public void ConfirmAllClientsConnected() {
-        Transition(GameState.LEVEL_SELECT_MENU);
+        Transition(GameState.ROLE_SELECT_MENU);
     }
+
+
 
 
     //Callbacks
@@ -722,7 +660,7 @@ public class GameInstance : MonoBehaviour {
             if (debugging)
                 Log("Started creating " + asset.name + " entity");
             rpcManagement = Instantiate(asset);
-            rpcManagementScript = rpcManagement.GetComponent<RPCManagment>();
+            rpcManagementScript = rpcManagement.GetComponent<RPCManagement>();
             rpcManagementScript.Initialize(this);
             Validate(rpcManagementScript, "RpcManagement component is missing on entity!", ValidationLevel.ERROR, true);
         }
@@ -831,9 +769,6 @@ public class GameInstance : MonoBehaviour {
 
 
 
-
-
-
     private void FinishedLoadingLoadingScreenCallback(AsyncOperationHandle<GameObject> handle) {
         if (handle.Status == AsyncOperationStatus.Succeeded) {
             if (debugging)
@@ -854,10 +789,6 @@ public class GameInstance : MonoBehaviour {
             QuitApplication("Failed to load LoadingScreen!\nCheck if label is correct.");
         }
     }
-
-
-
-
     private void FinishedLoadingAssetsCallback(AsyncOperationHandle<IList<GameObject>> handle) {
         if (handle.Status == AsyncOperationStatus.Succeeded) {
             if (debugging)
@@ -868,31 +799,5 @@ public class GameInstance : MonoBehaviour {
             QuitApplication("Failed to load assets!\nCheck if label is correct.");
         }
     }
-    private void FinishedLoadingLevelsBundleCallback(AsyncOperationHandle<ScriptableObject> handle) {
-        //NOTE: Could ditch even assinging the callbacks depending on showSystemMessages if its only debugging code in them
-        if (handle.Status == AsyncOperationStatus.Succeeded) {
-            if (debugging)
-                Log("Finished loading levels bundle successfully!");
-        }
-        else if (handle.Status == AsyncOperationStatus.Failed) {
-            QuitApplication("Failed to load levels bundle!\nCheck if label is correct.");
-        }
-    }
-    private void FinishedLoadingLevelCallback(AsyncOperationHandle<GameObject> handle) {
-        if (handle.Status == AsyncOperationStatus.Succeeded) {
-            if (debugging)
-                Log("Finished loading level successfully!");
 
-            bool result = CreateLevel(handle.Result);
-            if (!result)
-                Error("Failed to create level!\nCheck asset for any errors!");
-            //Other script stuff!
-
-            //Start game or any registered callback for level loading
-        }
-        else if (handle.Status == AsyncOperationStatus.Failed) {
-            Error("Failed to load level!"); //going back to main menu. message
-            //Go back to some other state
-        }
-    }
 }

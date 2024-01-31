@@ -131,6 +131,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Essential
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: db654b0119727414f8386d614817d500
+    m_Address: Assets/Prefabs/Entities/MainCamera.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Essential
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: da51f17292af1bf42a5a2d71c923b64c, type: 2}
   m_SchemaSet:

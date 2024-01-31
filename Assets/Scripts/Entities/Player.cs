@@ -7,8 +7,8 @@ public class Player : NetworkedEntity
     public enum PlayerIdentity
     {
         NONE = 0,
-        DAREDEVIL, //Daredevil
-        COORDINATOR //Coordinator
+        DAREDEVIL = 1, //Daredevil
+        COORDINATOR = 2 //Coordinator
     }
 
     [SerializeField] private DaredevilStats daredevilStats;
