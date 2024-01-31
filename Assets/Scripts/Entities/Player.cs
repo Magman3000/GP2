@@ -94,7 +94,15 @@ public class Player : NetworkedEntity
         Validate(rigidbodyComp, "Failed to get reference to Rigidbody component!", ValidationLevel.ERROR, true);
     }
 
+    public struct HitstopData
+    {
+        private float hitstop;
 
+        public HitstopData(float cameraShakeIntensity, float cameraShakeDuration)
+        {
+            hitstop = cameraShakeIntensity / cameraShakeDuration;
+        }
+    }
 
     public DaredevilStats GetDaredevilStats() { return daredevilStats; }
     public CoordinatorStats GetCoordinatorStats() { return coordinatorStats; }
