@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f801d3f99de33b74aa6803e2c9f6c5fc, type: 3}
   m_Name: DaredevilStats
   m_EditorClassIdentifier: 
-  accelerationSpeed: 274
+  accelerationSpeed: 343
   decelerationSpeed: 150
   maxSpeed: 500
   maxReverseSpeed: 1

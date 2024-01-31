@@ -1,41 +1,49 @@
+using System.Xml.Serialization;
 using UnityEngine;
+//using UnityEngine.UIElements;
+using UnityEngine.UI;
+using static MyUtility.Utility;
 
-public class CoordinatorHUD : Entity
-{
-    public enum CoordinatorKeyCode
-    {
-        ButtonOne = 0,
-        ButtonTwo = 1,
-        ButtonThree = 2,
-        ButtonFour = 3,
-        ButtonFive = 4,
-        ButtonSix = 5,
-        ButtonSeven = 6,
-        ButtonEight = 7,
-        ButtonNine = 8,
-    }
+public class CoordinatorHUD : Entity {
+
     
     private Player playerRef;
     private Coordinator coordinatorRef;
-    public override void Initialize(GameInstance game)
-    {
+
+    private Slider boostCrankSlider;
+
+    public override void Initialize(GameInstance game) {
         if (initialized)
             return;
 
+
+        SetupReferences();
         gameInstanceRef = game;
         initialized = true;
     }
+    private void SetupReferences() {
+        Transform boostCrankTransform = transform.Find("BoostCrank");
+        Validate(boostCrankTransform, "BoostCrank transform not found!", ValidationLevel.ERROR, true);
+        boostCrankSlider = boostCrankTransform.GetComponent<Slider>();
+        Validate(boostCrankSlider, "BoostCrank slider component not found!", ValidationLevel.ERROR, true);
+    }
     
-    public void SetPlayerReference(Player player)
-    {
+    public void SetPlayerReference(Player player) {
         playerRef = player;
         if (playerRef)
             coordinatorRef = playerRef.GetCoordinatorData();
     }
 
-    public void OnButtonPress(int code)
-    {
-        var keyCode = (CoordinatorKeyCode)code;
-        //coordinatorRef.HandleInput(keyCode);
+
+
+
+    public void BoostCrankSlider() {
+        float value = boostCrankSlider.value;
+        if (value == boostCrankSlider.maxValue) { //If boost is not activated
+            Log("ON!");
+        }
+        else if (value == boostCrankSlider.minValue) { //If boost is activated
+            Log("OFF!");
+        }
     }
 }

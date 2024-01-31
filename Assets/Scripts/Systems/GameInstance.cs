@@ -354,6 +354,7 @@ public class GameInstance : MonoBehaviour {
         if (currentApplicationStatus != ApplicationStatus.RUNNING)
             return;
 
+        mainCameraScript.FixedTick();
         if (currentGameState == GameState.ERROR) {
             Warning("Unable to call fixed-update \nCurrent game state is set to ERROR!");
             return;

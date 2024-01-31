@@ -14,7 +14,7 @@ public class DaredevilStats : ScriptableObject {
     [Range(0.1f, 500.0f)][SerializeField] private float decelerationSpeed = 150.0f;
 
     [Tooltip("Maximum amount of speed attainable")]
-    [Range(0.1f, 500.0f)][SerializeField] private float maxSpeed = 1.0f;
+    [Range(0.1f, 1000.0f)][SerializeField] private float maxSpeed = 1.0f;
 
 
 
