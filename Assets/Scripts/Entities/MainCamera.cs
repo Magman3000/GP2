@@ -18,14 +18,13 @@ public class MainCamera : Entity
     private Daredevil daredevilData;
 
     //Private
-    private CameraShakeType _cameraShakeType;
-    private Quaternion _originalRotation;
+    private CameraShakeType cameraShakeType;
+    private Quaternion originalRotation;
     private bool _shakeCamera = false;
     private float _shakeDuration = 0f;
 
 
-    public override void Initialize(GameInstance game)
-    {
+    public override void Initialize(GameInstance game) {
         if (initialized)
             return;
 
@@ -33,21 +32,28 @@ public class MainCamera : Entity
         initialized = true;
     }
 
-    public override void Tick()
-    {
+    public override void Tick() {
         if (!initialized)
             return;
+
         ShakeCamera();
     }
 
-    public override void FixedTick()
-    {
+    public override void FixedTick() {
         if (!initialized)
             return;
 
         var offset = CalculateOffset(out var transform1);
         UpdatePositionAndRotation(transform1, offset);
     }
+
+
+
+
+
+
+
+
 
     private void UpdatePositionAndRotation(Transform transform1, Vector3 offset)
     {
@@ -58,7 +64,6 @@ public class MainCamera : Entity
         );
         transform.LookAt(transform1);
     }
-
     private Vector3 CalculateOffset(out Transform transform1)
     {
         var cameraValuesYOffSet = cameraStats.GetYOffset();
@@ -68,23 +73,21 @@ public class MainCamera : Entity
         transform1 = playerRef.transform;
         return offset;
     }
-
     public void TriggerShake(CameraShakeType cameraShakeType)
     {
         _shakeCamera = true;
         _shakeDuration = cameraShakeType.Duration;
-        _cameraShakeType = cameraShakeType;
-        _originalRotation = _cameraTransform.localRotation;
+        this.cameraShakeType = cameraShakeType;
+        originalRotation = _cameraTransform.localRotation;
     }
-
     private void ShakeCamera()
     {
         if (!_shakeCamera)
             return;
 
         Quaternion randomDisplacement;
-        var direction = _cameraShakeType.Direction;
-        var shakeIntensity = _cameraShakeType.Intensity;
+        var direction = cameraShakeType.Direction;
+        var shakeIntensity = cameraShakeType.Intensity;
         if (direction == Vector3.up || direction == Vector3.down)
         {
             randomDisplacement = Quaternion.Euler(Random.Range(-shakeIntensity, shakeIntensity), 0f, 0f);
@@ -98,7 +101,7 @@ public class MainCamera : Entity
             randomDisplacement = Quaternion.Euler(Random.insideUnitSphere * shakeIntensity);
         }
 
-        _cameraTransform.localRotation = _originalRotation * randomDisplacement;
+        _cameraTransform.localRotation = originalRotation * randomDisplacement;
 
         _shakeDuration -= Time.deltaTime;
 
@@ -106,8 +109,14 @@ public class MainCamera : Entity
             return;
 
         _shakeCamera = false;
-        _cameraTransform.localRotation = _originalRotation;
+        _cameraTransform.localRotation = originalRotation;
     }
+
+
+
+
+
+
 
     public void SetPlayerReference(Player player)
     {

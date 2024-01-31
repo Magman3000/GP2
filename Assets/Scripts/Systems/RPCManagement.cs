@@ -69,7 +69,7 @@ public class RPCManagement : NetworkedEntity {
 
 
     [ServerRpc (RequireOwnership = false)]
-    public void UpdateRoleSelectionServerRpc(ulong senderID, Player.PlayerIdentity identity) {
+    public void UpdateRoleSelectionServerRpc(ulong senderID, Player.Identity identity) {
         Netcode netcodeRef = gameInstanceRef.GetNetcode();
         var targetID = netcodeRef.GetOtherClient(senderID); //Do more elegant solution
         if (targetID == senderID) {
@@ -81,7 +81,7 @@ public class RPCManagement : NetworkedEntity {
         RelayRoleSelectionClientRpc(senderID, identity, clientParams);
     }
     [ClientRpc]
-    public void RelayRoleSelectionClientRpc(ulong senderID, Player.PlayerIdentity identity, ClientRpcParams paramsPack) {
+    public void RelayRoleSelectionClientRpc(ulong senderID, Player.Identity identity, ClientRpcParams paramsPack) {
         gameInstanceRef.GetRoleSelectMenu().ReceiveRoleSelectionRPC(identity);
     }
 

@@ -29,11 +29,11 @@ public class DaredevilHUD : Entity {
 
 
 
-    public void AccelerateButton() {
-        daredevilRef.Accelerate();
+    public void GasOnEvent() {
+        daredevilRef.SetGasState(true);
     }
-    public void DecelerateButton() {
-        daredevilRef.Deccelerate();
+    public void GasOffEvent() {
+        daredevilRef.SetGasState(false);
     }
 
 

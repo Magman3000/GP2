@@ -10,8 +10,8 @@ public class RoleSelectMenu : Entity {
     public bool client1Ready = false;
     public bool client2Ready = false;
 
-    public Player.PlayerIdentity client1Identity = Player.PlayerIdentity.NONE;
-    public Player.PlayerIdentity client2Identity = Player.PlayerIdentity.NONE;
+    public Player.Identity client1Identity = Player.Identity.NONE;
+    public Player.Identity client2Identity = Player.Identity.NONE;
 
 
     private Image daredevilClient1Checkmark = null;
@@ -100,8 +100,8 @@ public class RoleSelectMenu : Entity {
         client1Ready = false;
         client2Ready = false;
 
-        client1Identity = Player.PlayerIdentity.NONE;
-        client2Identity = Player.PlayerIdentity.NONE;
+        client1Identity = Player.Identity.NONE;
+        client2Identity = Player.Identity.NONE;
 
         daredevilClient1Checkmark.gameObject.SetActive(false);
         daredevilClient2Checkmark.gameObject.SetActive(false);
@@ -120,8 +120,8 @@ public class RoleSelectMenu : Entity {
     }
     private void UpdateGUI() {
 
-        if (client1Identity == Player.PlayerIdentity.NONE) {
-            if (client2Identity == Player.PlayerIdentity.DAREDEVIL) {
+        if (client1Identity == Player.Identity.NONE) {
+            if (client2Identity == Player.Identity.DAREDEVIL) {
 
                 daredevilClient2Checkmark.gameObject.SetActive(true);
                 daredevilClient2Checkmark.rectTransform.localPosition = Vector3.zero;
@@ -129,7 +129,7 @@ public class RoleSelectMenu : Entity {
                 coordinatorClient2Checkmark.gameObject.SetActive(false);
                 coordinatorClient2Checkmark.rectTransform.localPosition = Vector3.zero;
             }
-            else if (client2Identity == Player.PlayerIdentity.COORDINATOR) {
+            else if (client2Identity == Player.Identity.COORDINATOR) {
 
                 coordinatorClient2Checkmark.gameObject.SetActive(true);
                 coordinatorClient2Checkmark.rectTransform.localPosition = Vector3.zero;
@@ -140,7 +140,7 @@ public class RoleSelectMenu : Entity {
             return;
         }
 
-        if (client1Identity == Player.PlayerIdentity.DAREDEVIL) {
+        if (client1Identity == Player.Identity.DAREDEVIL) {
             if (client1Identity == client2Identity) {
                 daredevilClient1Checkmark.gameObject.SetActive(true);
                 daredevilClient2Checkmark.gameObject.SetActive(true);
@@ -159,13 +159,13 @@ public class RoleSelectMenu : Entity {
                 coordinatorClient2Checkmark.rectTransform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
 
                 coordinatorClient1Checkmark.gameObject.SetActive(false);
-                if (client2Identity == Player.PlayerIdentity.COORDINATOR)
+                if (client2Identity == Player.Identity.COORDINATOR)
                     coordinatorClient2Checkmark.gameObject.SetActive(true);
                 else
                     coordinatorClient2Checkmark.gameObject.SetActive(false);
             }
         }
-        else if (client1Identity == Player.PlayerIdentity.COORDINATOR) {
+        else if (client1Identity == Player.Identity.COORDINATOR) {
             if (client1Identity == client2Identity) {
                 coordinatorClient1Checkmark.gameObject.SetActive(true);
                 coordinatorClient2Checkmark.gameObject.SetActive(true);
@@ -184,7 +184,7 @@ public class RoleSelectMenu : Entity {
                 daredevilClient2Checkmark.rectTransform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
 
                 daredevilClient1Checkmark.gameObject.SetActive(false);
-                if (client2Identity == Player.PlayerIdentity.DAREDEVIL)
+                if (client2Identity == Player.Identity.DAREDEVIL)
                     daredevilClient2Checkmark.gameObject.SetActive(true);
                 else
                     daredevilClient2Checkmark.gameObject.SetActive(false);
@@ -209,7 +209,7 @@ public class RoleSelectMenu : Entity {
         client2ReadyCheck.gameObject.SetActive(value);
         CheckReadyStatus(); //TEST THIS OUT TO FIX A BUG WHERE THE CLIENT DOES IT AFTERWARDS AFTER THE PC
     }
-    public void ReceiveRoleSelectionRPC(Player.PlayerIdentity value) {
+    public void ReceiveRoleSelectionRPC(Player.Identity value) {
         client2Identity = value;
         UpdateGUI();
     }
@@ -228,19 +228,19 @@ public class RoleSelectMenu : Entity {
     }
     public void CoordinatorButton() {
         ulong clientID = Netcode.GetClientID();
-        if (client1Identity == Player.PlayerIdentity.COORDINATOR)
+        if (client1Identity == Player.Identity.COORDINATOR)
             return;
 
-        client1Identity = Player.PlayerIdentity.COORDINATOR;
+        client1Identity = Player.Identity.COORDINATOR;
         UpdateGUI();
         gameInstanceRef.GetRPCManagement().UpdateRoleSelectionServerRpc((ulong)clientID, client1Identity);
     }
     public void DaredevilButton() {
         ulong clientID = Netcode.GetClientID();
-        if (client1Identity == Player.PlayerIdentity.DAREDEVIL)
+        if (client1Identity == Player.Identity.DAREDEVIL)
             return;
 
-        client1Identity = Player.PlayerIdentity.DAREDEVIL;
+        client1Identity = Player.Identity.DAREDEVIL;
         UpdateGUI();
         gameInstanceRef.GetRPCManagement().UpdateRoleSelectionServerRpc((ulong)clientID, client1Identity);
     }

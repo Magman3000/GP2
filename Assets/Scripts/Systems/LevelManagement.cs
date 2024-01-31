@@ -25,6 +25,10 @@ public class LevelManagement : ImplementationEntity {
         gameInstanceRef = game;
         LoadLevelsBundle();
     }
+    public override void Tick() {
+        if (currentLoadedLevelScript)
+            currentLoadedLevelScript.Tick();
+    }
     public override void CleanUp(string message = "LevelManagment cleaned up successfully!") {
         UnloadResources();
         if (gameInstanceRef.IsDebuggingEnabled())
@@ -168,6 +172,7 @@ public class LevelManagement : ImplementationEntity {
 
     public LevelsBundle GetLevelsBundle() { return (LevelsBundle)levelsBundleHandle.Result; }
     public bool IsLevelLoaded() { return currentLoadedLevel != null; }
+    public Level GetCurrentLoadedLevel() { return currentLoadedLevelScript; }
 
 
     //Callbacks
