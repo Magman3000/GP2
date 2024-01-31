@@ -27,9 +27,16 @@ public class DaredevilHUD : Entity {
             daredevilRef = playerRef.GetDaredevilData();
     }
 
-    public void OnButtonPress(int code)
-    {
-        var keyCode = (DaredevilKeyCode)code;
-        //daredevilRef.HandleInput(keyCode);
+
+
+    public void AccelerateButton() {
+        daredevilRef.Accelerate();
     }
+    public void DecelerateButton() {
+        daredevilRef.Deccelerate();
+    }
+
+
+
+
 }

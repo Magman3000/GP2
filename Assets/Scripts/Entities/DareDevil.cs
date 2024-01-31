@@ -9,9 +9,7 @@ using static MyUtility.Utility;
 public class Daredevil {
 
     bool initialized = false;
-    
-    private enum turnDirections
-    {
+    public enum TurnDirection {
         NONE = 0,
         LEFT,
         RIGHT
@@ -41,7 +39,7 @@ public class Daredevil {
             return;
         }
 
-
+        UpdateVelocity();
     }
     public void FixedTick() {
         if (!initialized) {
@@ -75,7 +73,7 @@ public class Daredevil {
 
     }
 
-    private void IncreaseCurrentSpeed()
+    public void Accelerate()
     {
         currentSpeed += stats.GetAccelerationSpeed() * Time.deltaTime;
         if (currentSpeed > stats.GetMaxSpeed() && !speedBoostBool)
@@ -85,30 +83,24 @@ public class Daredevil {
             currentSpeed = stats.GetMaxBoostSpeed();
     }
 
-    private void ReverseCurrentSpeed() {
+    public void Deccelerate() {
         currentSpeed -= stats.GetDeccelerationSpeed() * Time.deltaTime;
         if (currentSpeed < -stats.GetMaxReverseSpeed())
             currentSpeed = -stats.GetMaxReverseSpeed();
     }
 
 
-    private void Turning(Enum turn) {
-        if (turn.Equals(0))
-        {
-            Warning("No turning direction is inputted");
+    public void Turn(TurnDirection turn) {
+        if (turn == TurnDirection.NONE)
             return;
-        }
 
+        float turnResult = stats.GetTurnSpeed() * Time.deltaTime;
+        Vector3 turnVector = new Vector3(0.0f, turnResult, 0.0f);
 
-        if (turn.Equals(1))
-        {
-            playerRef.transform.eulerAngles += new Vector3(0, stats.GetTurnSpeed(), 0) * Time.deltaTime;
-        } else
-        {
-            playerRef.transform.eulerAngles -= new Vector3(0, stats.GetTurnSpeed(), 0) * Time.deltaTime;
-        }
-
-
+        if (turn == TurnDirection.LEFT)
+            playerRef.transform.eulerAngles += turnVector;
+        else if (turn == TurnDirection.RIGHT)
+            playerRef.transform.eulerAngles -= turnVector;
     }
 
 
