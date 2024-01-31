@@ -14,7 +14,7 @@ public class Player : NetworkedEntity
     [SerializeField] private DaredevilStats daredevilStats;
     [SerializeField] private CoordinatorStats coordinatorStats;
 
-    private PlayerIdentity assignedPlayerIdentity = PlayerIdentity.NONE;
+    public PlayerIdentity assignedPlayerIdentity = PlayerIdentity.NONE;
 
     private Daredevil daredevilData = new Daredevil();
     private Coordinator coordinatorData = new Coordinator(); //Director
@@ -48,6 +48,7 @@ public class Player : NetworkedEntity
             Warning("Attempted to tick player before it was initialized!");
             return;
         }
+
 
         if (assignedPlayerIdentity == PlayerIdentity.DAREDEVIL)
         {
@@ -84,6 +85,7 @@ public class Player : NetworkedEntity
     public void AssignPlayerIdentity(PlayerIdentity playerIdentity)
     {
         assignedPlayerIdentity = playerIdentity;
+        Log("My identity is " + playerIdentity);
     }
     public void SetDaredevilHUD(DaredevilHUD hud) { daredevilHUD = hud; }
     public void SetCoordinatorHUD(CoordinatorHUD hud) { coordinatorHUD = hud; }
