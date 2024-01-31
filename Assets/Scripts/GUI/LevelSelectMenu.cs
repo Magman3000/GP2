@@ -12,9 +12,6 @@ public class LevelSelectMenu : Entity
     public bool player1Ready = false;
     public bool player2Ready = false;
 
-    public Player.PlayerIdentity player1Identity = Player.PlayerIdentity.NONE;
-    public Player.PlayerIdentity player2Identity = Player.PlayerIdentity.NONE;
-
     public override void Initialize(GameInstance game)
     {
         if (initialized)
@@ -51,8 +48,6 @@ public class LevelSelectMenu : Entity
     {
         player1Ready = false;
         player2Ready = false;
-        player1Identity = Player.PlayerIdentity.NONE;
-        player2Identity = Player.PlayerIdentity.NONE;
     }
 
 
