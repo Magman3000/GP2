@@ -18,6 +18,8 @@ TagManager:
   - FadeTransition
   - DaredevilHUD
   - CoordinatorHUD
+  - RPCManagement
+  - RoleSelectMenu
   layers:
   - Default
   - TransparentFX

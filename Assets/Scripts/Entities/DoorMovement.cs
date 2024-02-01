@@ -11,7 +11,7 @@ public class DoorMovement : MonoBehaviour {
     [SerializeField] Vector3 openedPosition;
     [SerializeField] Vector3 openedRotation;
 
-    [SerializeField] float interpolationRatio;
+    [Range(0.1f, 200f)][SerializeField] float interpolationRatio;
     [SerializeField] float interpolationLimit;
 
 
@@ -31,7 +31,7 @@ public class DoorMovement : MonoBehaviour {
         initialPosition = gameObject.transform.position;
 
     }
-    private void Update()
+    private void Tick()
     {
         if (doorState == ObstacleState.ACTIVE && moving)
         {

@@ -23,12 +23,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - Essential
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 25c4e532b2cc4d443a033d3d54e9997d
-    m_Address: Assets/Prefabs/MainCamera.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Essential
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3e571a14ac05f7b4d8976483d7f7335f
     m_Address: Assets/Prefabs/Player.prefab
     m_ReadOnly: 0
@@ -115,6 +109,30 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 458a053b5f2aa3a4eb23d0b48c9bd0e3
     m_Address: Assets/Prefabs/GUI/HUD_Coordinator.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Essential
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2351cfb60c7d7ba499a5bea49de3bfde
+    m_Address: Assets/Prefabs/GUI/LoadingScreen.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LoadingScreen
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9c4071b883b200e45a829668b3d45371
+    m_Address: Assets/Prefabs/Systems/RPCManagement.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Essential
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 02f79d80252b40b4bb55bea42a24c25f
+    m_Address: Assets/Prefabs/GUI/RoleSelectionMenu.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Essential
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: db654b0119727414f8386d614817d500
+    m_Address: Assets/Prefabs/Entities/MainCamera.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
     - Essential

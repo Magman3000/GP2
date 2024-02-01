@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee82d7b320fa4fd5849b7057dc7fd87f, type: 3}
   m_Name: MainCameraValues
   m_EditorClassIdentifier: 
-  _offset: {x: 0, y: 5, z: 0}
-  _cameraFollowSpeed: 1
-  _minCameraZOffset: 0
-  _maxCameraZOffset: 0
+  _yOffset: 5
+  _cameraFollowSpeed: 1.18
+  _minCameraZOffset: 5
+  _maxCameraZOffset: 16.5

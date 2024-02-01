@@ -17,8 +17,8 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 9cc15bca858120a4bb08ad9fa890e7a5
   m_SerializeEntries:
-  - m_GUID: 88ac0122e9e772e489f54cfbc5094994
-    m_Address: Assets/Levels/TestLevel.prefab
+  - m_GUID: 900054c90c6d3294288c7e1fcb04258a
+    m_Address: Assets/Levels/DebugLevel.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

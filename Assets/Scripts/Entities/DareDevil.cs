@@ -1,79 +1,110 @@
 using Initialization;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
+using static MyUtility.Utility;
 
-public class DareDevil
-{
+public class Daredevil {
 
     bool initialized = false;
+    public enum TurnDirection {
+        NONE = 0,
+        LEFT,
+        RIGHT
+    }
+
     GameInstance gameInstanceRef;
     Player playerRef;
-    
-    public bool boosting = false;
-    
+    DaredevilStats stats;
+    Rigidbody playerRigidbody;
+
     private float currentSpeed;
+    private bool speedBoostBool = false;
 
-
-    public void Initialize(GameInstance game, Player player)
-    {
+    public void Initialize(GameInstance game, Player player) {
         if (initialized)
             return;
 
         playerRef = player;
+        stats = playerRef.GetDaredevilStats();
+        playerRigidbody = playerRef.GetRigidbody();
         gameInstanceRef = game;
         initialized = true;
     }
-    public void Tick()
-    {
+    public void Tick() {
+        if (!initialized) {
+            Warning("Player attempted to tick daredevil while it was not initialized");
+            return;
+        }
 
-
-
+        UpdateVelocity();
     }
-    public void FixedTick()
-    {
+    public void FixedTick() {
+        if (!initialized) {
+            Warning("Player attempted to fixed tick daredevil while it was not initialized");
+            return;
+        }
+
 
     }
 
     private void UpdateVelocity()
     {
-        playerRef.rigidbody.velocity = playerRef.transform.forward * currentSpeed;
+        playerRigidbody.velocity = playerRef.transform.forward * currentSpeed;
     }
 
-    private void IncreaseCurrentSpeed()
+    private void UpdateBoostBool()
     {
-
-        currentSpeed += playerRef.playerOneStats.GetAccelerationSpeed() * Time.deltaTime;
-        if (currentSpeed > playerRef.playerOneStats.GetMaxSpeed() && !boosting)
-        {
-            currentSpeed = playerRef.playerOneStats.GetMaxSpeed();
-        }
-        if (boosting && currentSpeed > playerRef.playerOneStats.GetMaxBoostSpeed())
-        {
-            currentSpeed = playerRef.playerOneStats.GetMaxBoostSpeed();
-        }
-
+        speedBoostBool = playerRef.GetBoostCheck();
     }
-    private void DecreaseCurrentSpeed()
+
+    private void Breaking()
     {
-        currentSpeed -= playerRef.playerOneStats.GetDeccelerationSpeed() * Time.deltaTime;
-        if (currentSpeed < 0.0f)
+        if (currentSpeed >= -stats.GetMaxReverseSpeed()/10.0f && currentSpeed <= stats.GetMaxSpeed()/10.0f)
         {
+            playerRigidbody.velocity = Vector3.zero;
             currentSpeed = 0.0f;
+            return;
         }
+
+        currentSpeed = Mathf.Lerp(currentSpeed, 0, stats.GetBreakSpeed() * Time.deltaTime);
+
     }
 
-
-    private void TurnRight()
+    public void Accelerate()
     {
-        playerRef.transform.eulerAngles += new Vector3(0, playerRef.playerOneStats.GetTurnSpeed(), 0) * Time.deltaTime;
+        currentSpeed += stats.GetAccelerationSpeed() * Time.deltaTime;
+        if (currentSpeed > stats.GetMaxSpeed() && !speedBoostBool)
+            currentSpeed = stats.GetMaxSpeed();
+
+        if (speedBoostBool && currentSpeed > stats.GetMaxBoostSpeed())
+            currentSpeed = stats.GetMaxBoostSpeed();
     }
-    private void TurnLeft()
-    {
-        playerRef.transform.eulerAngles -= new Vector3(0, playerRef.playerOneStats.GetTurnSpeed(), 0) * Time.deltaTime;
+
+    public void Deccelerate() {
+        currentSpeed -= stats.GetDeccelerationSpeed() * Time.deltaTime;
+        if (currentSpeed < -stats.GetMaxReverseSpeed())
+            currentSpeed = -stats.GetMaxReverseSpeed();
     }
 
 
+    public void Turn(TurnDirection turn) {
+        if (turn == TurnDirection.NONE)
+            return;
+
+        float turnResult = stats.GetTurnSpeed() * Time.deltaTime;
+        Vector3 turnVector = new Vector3(0.0f, turnResult, 0.0f);
+
+        if (turn == TurnDirection.LEFT)
+            playerRef.transform.eulerAngles += turnVector;
+        else if (turn == TurnDirection.RIGHT)
+            playerRef.transform.eulerAngles -= turnVector;
+    }
+
+
+    
     public float GetCurrentSpeed() { return currentSpeed; }
-    public float GetCurrentSpeedPercentage() { return currentSpeed / playerRef.playerOneStats.GetMaxSpeed(); }
+    public float GetCurrentSpeedPercentage() { return currentSpeed / stats.GetMaxSpeed(); }
 }

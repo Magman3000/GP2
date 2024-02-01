@@ -4,14 +4,14 @@ using UnityEngine.Serialization;
 [CreateAssetMenu(fileName = "CameraValuesSO", menuName = "CameraValues/CameraValuesSO", order = 0)]
 public class CameraValuesSO : ScriptableObject
 {
-    [SerializeField] private float _yOffset;
+    [SerializeField] private Vector3 _offset;
     [SerializeField] private float _cameraFollowSpeed;
     [SerializeField] private float _minCameraZOffset = 0f;
     [SerializeField] private float _maxCameraZOffset = 10f;
 
-    public float GetYOffset()
+    public Vector3 GetOffset()
     {
-        return _yOffset;
+        return _offset;
     }
 
     public float GetCameraFollowSpeed()
@@ -19,12 +19,12 @@ public class CameraValuesSO : ScriptableObject
         return _cameraFollowSpeed;
     }
 
-    public float GetMinCameraZOffset()
+    public float GetMinCameraZOffsetDependingOnSpeed()
     {
         return _minCameraZOffset;
     }
 
-    public float GetMaxCameraZOffset()
+    public float GetMaxCameraZOffsetDependingOnSpeed()
     {
         return _maxCameraZOffset;
     }

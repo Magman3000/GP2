@@ -1,10 +1,19 @@
 using UnityEngine;
 
-public class DaredevilHUD : Entity
-{
-    private Player _player;
-    public override void Initialize(GameInstance game)
+public class DaredevilHUD : Entity {
+
+    public enum DaredevilKeyCode
     {
+        MoveLeft = 0,
+        MoveRight = 1,
+        Accelerate = 2,
+        Decelerate = 3
+    }
+    
+    private Player playerRef;
+    private Daredevil daredevilRef;
+
+    public override void Initialize(GameInstance game) {
         if (initialized)
             return;
 
@@ -12,14 +21,22 @@ public class DaredevilHUD : Entity
         initialized = true;
     }   
     
-    public void SetPlayerReference(Player player)
-    {
-        _player = player;
+    public void SetPlayerReference(Player player) {
+        playerRef = player;
+        if (playerRef)
+            daredevilRef = playerRef.GetDaredevilData();
     }
-    
-    //TODO: Implement methods for the buttons
-    private void Move()
-    {
-        //Calls a function on the daredevil
+
+
+
+    public void AccelerateButton() {
+        daredevilRef.Accelerate();
     }
+    public void DecelerateButton() {
+        daredevilRef.Deccelerate();
+    }
+
+
+
+
 }
