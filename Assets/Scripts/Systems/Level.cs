@@ -53,6 +53,7 @@ public class Level : Entity {
     }
 
     private void CheckTree(Transform parent) {
+
         foreach (Transform child in parent) {
             Log(child.name + " was checked!");
             Obstacle component = child.GetComponent<Obstacle>();

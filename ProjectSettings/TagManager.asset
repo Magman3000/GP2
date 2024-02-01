@@ -20,6 +20,7 @@ TagManager:
   - CoordinatorHUD
   - RPCManagement
   - RoleSelectMenu
+  - ScoreSystem
   layers:
   - Default
   - TransparentFX
