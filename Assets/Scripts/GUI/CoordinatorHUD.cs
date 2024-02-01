@@ -55,15 +55,30 @@ public class CoordinatorHUD : Entity {
         Log("Boost : " + state);
         gameInstanceRef.GetRPCManagement().SetBoostStateServerRpc(Netcode.GetClientID(), state);
     }
-    public void UpdatePowerBar(float value) {
-        batteryBar.fillAmount = value;
+    public void UpdatePowerBar(float percentage) {
+        batteryBar.fillAmount = percentage;
     }
 
 
 
 
 
-   
+   public void ObstacleActivationStateButton(int index) {
+        if (index < 0) {
+            Warning("Invalid index received at ObstacleActivationStateButton: " + index);
+            return;
+        }
+
+        var currentLevel = gameInstanceRef.GetLevelManagement().GetCurrentLoadedLevel();
+        if (!currentLevel) {
+            Warning("ObstacleActivationStateButton was called while no level was loaded!");
+            return;
+        }
+        if (currentLevel.currentObstacleState == (Obstacle.ObstacleActivationState)index)
+            return;
+
+        gameInstanceRef.GetRPCManagement().SetObstacleActivationStateServerRpc(Netcode.GetClientID(), (Obstacle.ObstacleActivationState)index);
+   }
 
     public void BoostCrankSlider() {
         float value = boostCrankSlider.value;

@@ -94,6 +94,9 @@ public class Daredevil {
     //
     //}
 
+
+
+
     public void Accelerate() {
 
         if (isBoosting) {
@@ -122,7 +125,6 @@ public class Daredevil {
             }
         }
     }
-
     public void Decelerate() {
         if (currentSpeed <= 0.0f)
             return;
@@ -136,6 +138,9 @@ public class Daredevil {
     }
 
 
+    public void ApplyRampBoost(float value) {
+        currentSpeed *= value; //Temp
+    }
 
     
     public float GetCurrentSpeed() { return currentSpeed; }

@@ -2,6 +2,18 @@ using Unity.VisualScripting;
 using UnityEngine;
 using static MyUtility.Utility;
 
+
+
+
+public struct HitstopData {
+    private float hitstop; //?
+
+    public HitstopData(float cameraShakeIntensity, float cameraShakeDuration) { //?
+        hitstop = cameraShakeIntensity / cameraShakeDuration;
+    }
+}
+
+
 public class Player : NetworkedEntity {
     public enum Identity {
         NONE = 0,
@@ -45,7 +57,6 @@ public class Player : NetworkedEntity {
             return;
         }
 
-
         if (assignedPlayerIdentity == Identity.DAREDEVIL)
         {
             daredevilData.Tick();
@@ -72,6 +83,11 @@ public class Player : NetworkedEntity {
             coordinatorHUD.FixedTick();
         }
     }
+    private void SetupReference()
+    {
+        rigidbodyComp = GetComponent<Rigidbody>();
+        Validate(rigidbodyComp, "Failed to get reference to Rigidbody component!", ValidationLevel.ERROR, true);
+    }
     public void SetupStartState() {
         if (assignedPlayerIdentity == Identity.DAREDEVIL) { //Order matters due to stats being reset in data then HUD using those stats.
             daredevilData.SetupStartState();
@@ -91,26 +107,12 @@ public class Player : NetworkedEntity {
     public void SetCoordinatorHUD(CoordinatorHUD hud) { coordinatorHUD = hud; }
 
 
+   
+
+
+
+
     public Identity GetPlayerIdentity() { return assignedPlayerIdentity; }
-
-
-    private void SetupReference()
-    {
-        rigidbodyComp = GetComponent<Rigidbody>();
-        Validate(rigidbodyComp, "Failed to get reference to Rigidbody component!", ValidationLevel.ERROR, true);
-    }
-
-    public struct HitstopData
-    {
-        private float hitstop;
-
-        public HitstopData(float cameraShakeIntensity, float cameraShakeDuration)
-        {
-            hitstop = cameraShakeIntensity / cameraShakeDuration;
-        }
-    }
-
-
 
     public DaredevilStats GetDaredevilStats() { return daredevilStats; }
     public CoordinatorStats GetCoordinatorStats() { return coordinatorStats; }
@@ -121,8 +123,7 @@ public class Player : NetworkedEntity {
 
     public Rigidbody GetRigidbody() { return rigidbodyComp; }
 
-
+    //?
     public bool GetBoostCheck() { return speedBoostBool; }
     public void SetBoostCheck(bool boostCheck) {  speedBoostBool = boostCheck; }
-
 }
