@@ -1,23 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using static MyUtility.Utility;
 
 public class LevelSelectMenu : Entity
 {
-    //Temp
-    [SerializeField] private GameObject levelPrefab; 
-    
     //SerializeFields
     [SerializeField] private LevelsBundle levelsBundle;
-    
+    [SerializeField] private ScrollRect scrollRect;
+    [SerializeField] private RectTransform contentRectTransform;
+    [SerializeField] private TextMeshProUGUI levelNameText;
+
+
     //Ref
-    private Slider timeBar;         
-    
+    private Slider timeBar;
+
+    //Ready checks
     public bool player1Ready = false;
     public bool player2Ready = false;
 
@@ -26,8 +25,13 @@ public class LevelSelectMenu : Entity
     public string player2LevelVote = "";
 
     //Scrolling
+    private RectTransform canvasRectTransform;
     private RectTransform[] guiElements;
     private float scrollSpeed = 200f;
+    private float canvasCenterX = 0.0f;
+    private float guiElementWidth = 0.0f;
+    private float spacing = 0.0f;
+    private bool isSnapped = false;
 
     //Holding button
     private bool isButtonHeld = false;
@@ -46,10 +50,10 @@ public class LevelSelectMenu : Entity
         initialized = true;
 
         SetupReferences();
-        SetUpGUIElements();
+        SetupGUIElements();
     }
 
-    public override void Tick()
+    private void Update()
     {
         if (!initialized)
         {
@@ -58,9 +62,31 @@ public class LevelSelectMenu : Entity
         }
 
         ButtonTimer();
+        UpdateTimerBar();
+        StopScrollAtEdges();
+        var currentItem = CalculateCurrentItem();
+        Snap(currentItem);
+        UpdateLevelName(currentItem);
     }
 
-    
+
+    /*public override void Tick()
+    {
+        if (!initialized)
+        {
+            Error("");
+            return;
+        }
+
+        ButtonTimer();
+        UpdateTimerBar();
+        StopScrollAtEdges();
+        var currentItem = CalculateCurrentItem();
+        Snap(currentItem);
+        UpdateLevelName(currentItem);
+    }*/
+
+
     public void SetupMenuStartingState()
     {
         player1Ready = false;
@@ -74,51 +100,40 @@ public class LevelSelectMenu : Entity
         Validate(timerBarTransform, "Failed to find TimerBar transform", ValidationLevel.ERROR, true);
         timeBar = timerBarTransform.GetComponent<Slider>();
         Validate(timeBar, "Failed to find TimerBar component", ValidationLevel.ERROR, true);
+
         timeBar.gameObject.SetActive(false);
+
+        //Canvas
+        canvasRectTransform = GetComponent<RectTransform>();
+        Validate(canvasRectTransform, "Failed to find Canvas RectTransform", ValidationLevel.ERROR, true);
+        canvasCenterX = canvasRectTransform.rect.width / 2f;
     }
-    
-    private void SetUpGUIElements()
+
+    private void SetupGUIElements()
     {
+        guiElements = new RectTransform[levelsBundle.Entries.Length];
+        var index = 0;
         foreach (var level in levelsBundle.Entries)
         {
-            var levelUITransform = Instantiate(levelPrefab, transform).transform;
+            var levelUIObject = new GameObject();
 
-            //Set name and preview
-            var levelNameTransform = levelUITransform.Find("LevelName");
-            Validate(levelNameTransform, "Failed to find LevelName transform", ValidationLevel.ERROR, true);
-            var levelNameText = levelNameTransform.GetComponent<TextMeshProUGUI>();
-            Validate(levelNameText, "Failed to find LevelName component", ValidationLevel.ERROR, true);
-            levelNameText.text = level.name;
+            var levelUIRectTransform = levelUIObject.AddComponent<RectTransform>();
+            levelUIRectTransform.SetParent(contentRectTransform);
+            levelUIRectTransform.anchoredPosition = new Vector2(300 * index, 0);
+            levelUIRectTransform.sizeDelta = new Vector2(200, 400);
+            guiElements[index] = levelUIRectTransform;
+            index++;
 
-            var levelPreviewTransform = levelUITransform.Find("LevelPreview");
-            Validate(levelPreviewTransform, "Failed to find LevelPreview transform", ValidationLevel.ERROR, true);
-            var levelPreviewImage = levelPreviewTransform.GetComponent<Image>();
-            Validate(levelPreviewImage, "Failed to find LevelPreview component", ValidationLevel.ERROR, true);
-            levelPreviewImage.sprite = level.preview;
-
-            //Set up button listeners
-            var voteButtonTransform = levelUITransform.Find("VoteButton");
-            Validate(voteButtonTransform, "Failed to find VoteButton transform", ValidationLevel.ERROR, true);
-            var eventTrigger = voteButtonTransform.GetComponent<EventTrigger>();
-            Validate(eventTrigger, "Failed to find EventTrigger component", ValidationLevel.ERROR, true);
-
-            var pointerDownEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerDown };
-            pointerDownEntry.callback.AddListener((data) => { OnPointerDownDelegate((PointerEventData)data); });
-            eventTrigger.triggers.Add(pointerDownEntry);
-
-            var pointerUpEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerUp };
-            pointerUpEntry.callback.AddListener((data) => { OnPointerUpDelegate((PointerEventData)data, level.key); });
-            eventTrigger.triggers.Add(pointerUpEntry);
+            var levelUIButton = levelUIObject.AddComponent<Button>();
+            var levelUIImage = levelUIObject.AddComponent<Image>();
+            levelUIImage.sprite = level.preview;
         }
+
+        guiElementWidth = guiElements[0].sizeDelta.x;
+        spacing = contentRectTransform.GetComponent<HorizontalLayoutGroup>().spacing;
     }
 
-    private void UpdateTimerBar()
-    {
-        if (!isButtonHeld)
-            return;
-        timeBar.value = timer / timeToHold;
-    }
-
+    //Button holding
     private void ButtonTimer()
     {
         if (!isButtonHeld)
@@ -133,39 +148,70 @@ public class LevelSelectMenu : Entity
         isButtonHeld = false;
     }
 
-    private void OnPointerUpDelegate(PointerEventData arg0, string levelKey)
+    public void OnPointerUpDelegate()
     {
         isButtonHeld = false;
         timer = 0.0f;
         timeBar.gameObject.SetActive(false);
     }
 
-    private void OnPointerDownDelegate(PointerEventData arg0)
+    public void OnPointerDownDelegate()
     {
         isButtonHeld = true;
         timeBar.gameObject.SetActive(true);
     }
 
-
-    private void ProcessTouchInput()
+    //Scrollling
+    private void StopScrollAtEdges()
     {
-        var touchDelta = Pointer.current.delta.ReadValue();
-        if (guiElements[^1].anchoredPosition.x <= 0 && touchDelta.x < 0)
-            return;
-        if (guiElements[0].anchoredPosition.x >= 0 && touchDelta.x > 0)
-            return;
-        var delta = touchDelta.x * Time.deltaTime * scrollSpeed;
-        Scroll(delta);
+        if (guiElements[0].position.x >= canvasCenterX)
+            scrollRect.velocity = Vector2.zero;
+        if (guiElements[^1].position.x <= canvasCenterX)
+            scrollRect.velocity = Vector2.zero;
     }
 
-    private void Scroll(float delta)
+    private int CalculateCurrentItem()
     {
-        foreach (var child in guiElements)
+        var currentItem = Mathf.RoundToInt(-(contentRectTransform.localPosition.x / (guiElementWidth + spacing)));
+        if (currentItem < 0)
+            currentItem = 0;
+        if (currentItem > guiElements.Length - 1)
+            currentItem = guiElements.Length - 1;
+        return currentItem;
+    }
+
+    private void Snap(int currentItem)
+    {
+        if (scrollRect.velocity.magnitude < 30f && !isSnapped)
         {
-            child.anchoredPosition += new Vector2(delta, 0);
+            var localPosition = contentRectTransform.localPosition;
+            var x = currentItem * (guiElementWidth + spacing) + 50;
+            var updatedPosition = new Vector3(-x, localPosition.y, localPosition.z);
+
+            localPosition = Vector3.Lerp(localPosition, updatedPosition, 10f * Time.deltaTime);
+            contentRectTransform.localPosition = localPosition;
+
+            if (Math.Abs(contentRectTransform.localPosition.x - (-x)) < 0.1f)
+                isSnapped = true;
+        }
+        else
+        {
+            isSnapped = false;
         }
     }
 
+    //
+    private void UpdateTimerBar()
+    {
+        if (!isButtonHeld)
+            return;
+        timeBar.value = timer / timeToHold;
+    }
+
+    private void UpdateLevelName(int currentItem)
+    {
+        levelNameText.text = guiElements[currentItem].name;
+    }
 
     public void DebugLevelButton()
     {
