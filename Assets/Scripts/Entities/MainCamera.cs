@@ -1,7 +1,7 @@
 using UnityEngine;
 
-public class MainCamera : Entity {
-
+public class MainCamera : Entity
+{
     [SerializeField] private CameraValuesSO _cameraValuesSo;
     private Player _player;
 
@@ -19,20 +19,21 @@ public class MainCamera : Entity {
         if (!initialized)
             return;
 
-        var cameraValuesOffSet = _cameraValuesSo.GetOffset();
+        var cameraValuesYOffSet = _cameraValuesSo.GetYOffset();      
 
-        var offset = new Vector3(cameraValuesOffSet.x, cameraValuesOffSet.y,
-            -Mathf.Lerp(_cameraValuesSo.GetMinCameraZOffsetDependingOnSpeed(),
-                _cameraValuesSo.GetMaxCameraZOffsetDependingOnSpeed(), _player.GetCurrentSpeedPercentage()));
+        var zOffset = (_cameraValuesSo.GetMaxCameraZOffset() - _cameraValuesSo.GetMinCameraZOffset()) *
+                      _player._dareDevil.GetCurrentSpeedPercentage();
+        var offset = new Vector3(0f, cameraValuesYOffSet, zOffset);
 
-        transform.position = Vector3.Lerp(transform.position,
-            _player.transform.position + offset + _player.transform.forward,
+        var transform1 = _player.transform;
+        transform.position = Vector3.Lerp(transform.position, transform1.position + offset,
             _cameraValuesSo.GetCameraFollowSpeed() * Time.deltaTime);
-        
-        transform.LookAt(_player.transform);
+
+        transform.LookAt(transform1);
     }
 
-    public void SetPlayerReference(Player player) {
+    public void SetPlayerReference(Player player)
+    {
         _player = player;
     }
 
