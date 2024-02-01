@@ -723,7 +723,7 @@ public class GameInstance : MonoBehaviour {
             levelSelectMenu = Instantiate(asset);
             levelSelectMenuScript = levelSelectMenu.GetComponent<LevelSelectMenu>();
             Validate(levelSelectMenuScript, "LevelSelectMenu component is missing on entity!", ValidationLevel.ERROR, true);
-            levelSelectMenuScript.Initialize(this);
+            //levelSelectMenuScript.Initialize(this); //Disabled cause broken
         }
         else if (asset.CompareTag("LoseMenu")) {
             if (debugging)
