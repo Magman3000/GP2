@@ -49,9 +49,23 @@ public class Level : Entity {
             InitializeObstacles();
         }
         //Initial state? Either decided by entity or applied here! InitialObstaclesState [SerializeField]
-
+        CheckTree(transform);
     }
 
+    private void CheckTree(Transform parent) {
+
+        foreach (Transform child in parent) {
+            Log(child.name + " was checked!");
+            Obstacle component = child.GetComponent<Obstacle>();
+            if (component) {
+                registeredObstacles.Add(component);
+                Log(component + " was added to the list!");
+            }
+            
+            if (child.childCount > 0)
+                CheckTree(child);
+        }
+    }
 
 
     public void SetCurrentObstacleState(Obstacle.ObstacleActivationState state) {
