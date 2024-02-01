@@ -106,4 +106,31 @@ public class RPCManagement : NetworkedEntity {
 
 
 
+
+
+
+
+    //Coordinator
+    [ServerRpc(RequireOwnership = false)]
+    public void SetBoostStateServerRpc(ulong senderID, bool state) {
+        Netcode netcodeRef = gameInstanceRef.GetNetcode();
+        var targetID = netcodeRef.GetOtherClient(senderID); //Do more elegant solution
+        if (targetID == senderID) {
+            Log("Other client look up failed!");
+            return;
+        }
+
+        var clientParams = CreateClientRpcParams(targetID);
+        RelayBoostStateClientRpc(senderID, state, clientParams);
+    }
+    [ClientRpc]
+    public void RelayBoostStateClientRpc(ulong senderID, bool state, ClientRpcParams paramsPack) {
+
+        gameInstanceRef.GetPlayer().GetDaredevilData().SetBoostState(state);
+    }
+
+
+
+
+
 }

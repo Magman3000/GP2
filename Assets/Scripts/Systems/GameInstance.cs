@@ -508,6 +508,7 @@ public class GameInstance : MonoBehaviour {
         SetApplicationTargetFrameRate(gameplayFrameTarget); //Make sure to call this the moment the gameplay state is ready!
 
 
+        playerScript.SetupStartState();
         player.SetActive(true);
         player.transform.position = levelManagementScript.GetCurrentLoadedLevel().GetSpawnPoint();
 

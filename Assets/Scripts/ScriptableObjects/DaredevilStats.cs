@@ -8,42 +8,32 @@ public class DaredevilStats : ScriptableObject {
     [Header("Speed Settings")]
 
     [Tooltip("Speed of acceleration")]
-    [Range(0.1f, 500.0f)][SerializeField] private float accelerationSpeed = 200.0f;
+    [Range(0.1f, 500.0f)][SerializeField] public float accelerationRate = 200.0f;
 
     [Tooltip("Speed of deceleration")]
-    [Range(0.1f, 500.0f)][SerializeField] private float decelerationSpeed = 150.0f;
+    [Range(0.1f, 500.0f)][SerializeField] public float decelerationRate = 150.0f;
 
     [Tooltip("Maximum amount of speed attainable")]
-    [Range(0.1f, 1000.0f)][SerializeField] private float maxSpeed = 1.0f;
+    [Range(0.1f, 1000.0f)][SerializeField] public float maxSpeed = 150.0f;
 
 
 
-    [Range(0.1f, 500.0f)][SerializeField] private float maxReverseSpeed = 1.0f;
-    [Range(0.1f, 1.0f)][SerializeField] private float breakSpeed = 0.1f;
+    //[Range(0.1f, 500.0f)][SerializeField] private float maxReverseSpeed = 1.0f;
+    //[Range(0.1f, 1.0f)][SerializeField] private float breakSpeed = 0.1f;
 
 
 
     [Tooltip("How much you turn left and right each turning action")]
-    [Range(0.1f, 500.0f)][SerializeField] private float turnRate = 1.0f;
+    [Range(0.1f, 5000.0f)][SerializeField] public float turnRate = 500.0f;
 
 
 
     [Header("Speed Boost Settings")]
     [Tooltip("The multiplied increase acceleration")]
-    [Range(0.1f, 500.0f)][SerializeField] private float boostAccelerationMultiplier = 1.0f;
-    [Range(0.1f, 500.0f)][SerializeField] private float maxBoostSpeed = 1.0f;
-    
-
-    public float GetAccelerationRate() { return accelerationSpeed; }
-    public float GetDecelerationRate() { return decelerationSpeed; }
-    public float GetMaxSpeed() { return maxSpeed; }
-
-    public float GetTurnRate() { return turnRate; }
+    [Range(0.1f, 500.0f)][SerializeField] public float maxBoostSpeed = 300.0f;
+    [Range(0.1f, 500.0f)][SerializeField] public float boostAccelerationRate = 300.0f;
+    [Range(0.1f, 500.0f)][SerializeField] public float boostDecelerationRate = 400.0f;
 
 
-    public float GetMaxReverseSpeed() { return maxReverseSpeed; }
 
-    public float GetBreakSpeed() { return breakSpeed; }
-    public float GetBoostAccelerationMultiplier() { return boostAccelerationMultiplier; }
-    public float GetMaxBoostSpeed() { return maxBoostSpeed; }
 }

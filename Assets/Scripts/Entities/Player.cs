@@ -57,25 +57,33 @@ public class Player : NetworkedEntity {
             coordinatorHUD.Tick();
         }
     }
-    public override void FixedTick()
-    {
-        if (!initialized)
-        {
+    public override void FixedTick() {
+        if (!initialized) {
             Warning("Attempted to fixed tick player before it was initialized!");
             return;
         }
 
-        if (assignedPlayerIdentity == Identity.DAREDEVIL)
-        {
+        if (assignedPlayerIdentity == Identity.DAREDEVIL) {
             daredevilData.FixedTick();
             daredevilHUD.FixedTick();
         }
-        else if (assignedPlayerIdentity == Identity.COORDINATOR)
-        {
+        else if (assignedPlayerIdentity == Identity.COORDINATOR) {
             coordinatorData.FixedTick();
             coordinatorHUD.FixedTick();
         }
     }
+    public void SetupStartState() {
+        if (assignedPlayerIdentity == Identity.DAREDEVIL) { //Order matters due to stats being reset in data then HUD using those stats.
+            daredevilData.SetupStartState();
+            daredevilHUD.SetupStartState();
+        }
+        else if (assignedPlayerIdentity == Identity.COORDINATOR) {
+            coordinatorData.SetupStartState();
+            coordinatorHUD.SetupStartState();
+        }
+    }
+
+
 
 
     public void AssignPlayerIdentity(Identity playerIdentity) { assignedPlayerIdentity = playerIdentity; }
@@ -102,8 +110,12 @@ public class Player : NetworkedEntity {
         }
     }
 
+
+
     public DaredevilStats GetDaredevilStats() { return daredevilStats; }
     public CoordinatorStats GetCoordinatorStats() { return coordinatorStats; }
+    public DaredevilHUD GetDaredevilHUD() { return daredevilHUD; }
+    public CoordinatorHUD GetCoordinatorHUD() { return coordinatorHUD; }
     public Daredevil GetDaredevilData() { return daredevilData; }
     public Coordinator GetCoordinatorData() { return coordinatorData; }
 

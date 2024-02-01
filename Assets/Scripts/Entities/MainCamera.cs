@@ -12,9 +12,9 @@ public class MainCamera : Entity {
 
     [SerializeField] private CameraStats cameraStats;
 
-    public Player playerRef;
+    private Player playerRef;
     private Daredevil daredevilData;
-
+    
 
 
 
@@ -38,6 +38,8 @@ public class MainCamera : Entity {
     public override void FixedTick() {
         if (!initialized)
             return;
+
+
 
         UpdatePostion();
         UpdateRotation();
