@@ -19,8 +19,12 @@ public class DaredevilHUD : Entity {
 
         gameInstanceRef = game;
         initialized = true;
-    }   
-    
+    }
+    public void SetupStartState() {
+
+    }
+
+
     public void SetPlayerReference(Player player) {
         playerRef = player;
         if (playerRef)
@@ -29,14 +33,10 @@ public class DaredevilHUD : Entity {
 
 
 
-    public void AccelerateButton() {
-        daredevilRef.Accelerate();
+    public void GasOnEvent() {
+        daredevilRef.SetMovementState(true);
     }
-    public void DecelerateButton() {
-        daredevilRef.Deccelerate();
+    public void GasOffEvent() {
+        daredevilRef.SetMovementState(false);
     }
-
-
-
-
 }

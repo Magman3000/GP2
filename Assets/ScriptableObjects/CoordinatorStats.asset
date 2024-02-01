@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a67100f062a72a740b83cff7068ab890, type: 3}
   m_Name: CoordinatorStats
   m_EditorClassIdentifier: 
-  boostDuration: 1
-  boostCharges: 1
+  batteryLimit: 100
+  boostPowerCost: 1
+  doorOpeningPowerCost: 1
