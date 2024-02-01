@@ -19,17 +19,24 @@ public class DaredevilHUD : Entity {
 
         gameInstanceRef = game;
         initialized = true;
-    }   
-    
+    }
+    public void SetupStartState() {
+
+    }
+
+
     public void SetPlayerReference(Player player) {
         playerRef = player;
         if (playerRef)
             daredevilRef = playerRef.GetDaredevilData();
     }
 
-    public void OnButtonPress(int code)
-    {
-        var keyCode = (DaredevilKeyCode)code;
-        //daredevilRef.HandleInput(keyCode);
+
+
+    public void GasOnEvent() {
+        daredevilRef.SetMovementState(true);
+    }
+    public void GasOffEvent() {
+        daredevilRef.SetMovementState(false);
     }
 }

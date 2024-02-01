@@ -1,41 +1,79 @@
+using System.Xml.Serialization;
 using UnityEngine;
+//using UnityEngine.UIElements;
+using UnityEngine.UI;
+using static MyUtility.Utility;
 
-public class CoordinatorHUD : Entity
-{
-    public enum CoordinatorKeyCode
-    {
-        ButtonOne = 0,
-        ButtonTwo = 1,
-        ButtonThree = 2,
-        ButtonFour = 3,
-        ButtonFive = 4,
-        ButtonSix = 5,
-        ButtonSeven = 6,
-        ButtonEight = 7,
-        ButtonNine = 8,
-    }
+public class CoordinatorHUD : Entity {
+
     
     private Player playerRef;
     private Coordinator coordinatorRef;
-    public override void Initialize(GameInstance game)
-    {
+
+    private Slider boostCrankSlider;
+    private Image batteryBar;
+
+    public override void Initialize(GameInstance game) {
         if (initialized)
             return;
 
+
+        SetupReferences();
         gameInstanceRef = game;
         initialized = true;
     }
-    
-    public void SetPlayerReference(Player player)
-    {
+    private void SetupReferences() {
+
+        //BoostCrank
+        Transform boostCrankTransform = transform.Find("BoostCrank");
+        Validate(boostCrankTransform, "BoostCrank transform not found!", ValidationLevel.ERROR, true);
+        boostCrankSlider = boostCrankTransform.GetComponent<Slider>();
+        Validate(boostCrankSlider, "BoostCrank slider component not found!", ValidationLevel.ERROR, true);
+
+
+        //BatteryBar batteryBar
+        Transform batteryBarTransform = transform.Find("BatteryBar");
+        Validate(batteryBarTransform, "BatteryBar transform not found!", ValidationLevel.ERROR, true);
+        Transform batteryBarFillTransform = batteryBarTransform.Find("BatteryBarFill");
+        Validate(batteryBarFillTransform, "BatteryBarFill transform not found!", ValidationLevel.ERROR, true);
+        batteryBar = batteryBarFillTransform.GetComponent<Image>();
+        Validate(batteryBar, "batteryBar component not found!", ValidationLevel.ERROR, true);
+
+        
+    }
+    public void SetupStartState() {
+        batteryBar.fillAmount = coordinatorRef.GetStats().batteryLimit; //Could be changed to starting battery limit later!
+    }
+
+    public void SetPlayerReference(Player player) {
         playerRef = player;
         if (playerRef)
             coordinatorRef = playerRef.GetCoordinatorData();
     }
 
-    public void OnButtonPress(int code)
-    {
-        var keyCode = (CoordinatorKeyCode)code;
-        //coordinatorRef.HandleInput(keyCode);
+    public void RelayBoostState(bool state) {
+        Log("Boost : " + state);
+        gameInstanceRef.GetRPCManagement().SetBoostStateServerRpc(Netcode.GetClientID(), state);
+    }
+    public void UpdatePowerBar(float value) {
+        batteryBar.fillAmount = value;
+    }
+
+
+
+
+
+   
+
+    public void BoostCrankSlider() {
+        float value = boostCrankSlider.value;
+        if (value == boostCrankSlider.maxValue) { //If boost is not activated
+            RelayBoostState(true);
+            coordinatorRef.SetBoostState(true);
+        }
+        else if (value == boostCrankSlider.minValue) { //If boost is activated
+            RelayBoostState(false);
+            coordinatorRef.SetBoostState(false);
+        }
     }
 }
