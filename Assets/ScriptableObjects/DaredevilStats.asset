@@ -18,4 +18,4 @@ MonoBehaviour:
   turnRate: 3000
   maxBoostSpeed: 500
   boostAccelerationRate: 300
-  boostDecelerationRate: 19
+  boostDecelerationRate: 234

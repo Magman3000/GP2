@@ -110,6 +110,8 @@ public class RPCManagement : NetworkedEntity {
 
 
 
+
+
     //Coordinator
     [ServerRpc(RequireOwnership = false)]
     public void SetBoostStateServerRpc(ulong senderID, bool state) {
@@ -129,8 +131,29 @@ public class RPCManagement : NetworkedEntity {
         gameInstanceRef.GetPlayer().GetDaredevilData().SetBoostState(state);
     }
 
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void SetObstacleActivationStateServerRpc(ulong senderID, Obstacle.ObstacleActivationState state) {
+        Netcode netcodeRef = gameInstanceRef.GetNetcode();
+        var targetID = netcodeRef.GetOtherClient(senderID); //Do more elegant solution
+        if (targetID == senderID) {
+            Log("Other client look up failed!");
+            return;
+        }
 
+        var clientParams = CreateClientRpcParams(targetID);
+        RelayObstacleActivationStateClientRpc(senderID, state, clientParams);
+    }
+    [ClientRpc]
+    public void RelayObstacleActivationStateClientRpc(ulong senderID, Obstacle.ObstacleActivationState state, ClientRpcParams paramsPack) {
+        LevelManagement levelManagement = gameInstanceRef.GetLevelManagement();
+        if (!levelManagement.IsLevelLoaded()) {
+            Warning("Received obstacle activation state rpc while level was not loaded!");
+            return;
+        }
 
+        levelManagement.GetCurrentLoadedLevel().SetCurrentObstacleState(state);
+    }
 
 
 }
