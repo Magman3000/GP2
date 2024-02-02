@@ -137,6 +137,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Essential
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 03eedcf87c65886409fb1279ef99948d
+    m_Address: Assets/Prefabs/Systems/ScoreSystem.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Essential
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: da51f17292af1bf42a5a2d71c923b64c, type: 2}
   m_SchemaSet:

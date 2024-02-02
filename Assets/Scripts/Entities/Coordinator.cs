@@ -69,7 +69,8 @@ public class Coordinator
     private void CheckBoostState() {
         if (!usingBoost)
             return;
-        Log("Current Battery: " + currentBattery);
+
+        Log("Current Battery: " + currentBattery / stats.batteryLimit);
         currentBattery -= stats.boostPowerCost * Time.deltaTime;
         if (currentBattery <= 0.0f) {
             currentBattery = 0.0f;
@@ -77,7 +78,7 @@ public class Coordinator
             playerRef.GetCoordinatorHUD().RelayBoostState(usingBoost);
         }
 
-        playerRef.GetCoordinatorHUD().UpdatePowerBar(currentBattery);
+        playerRef.GetCoordinatorHUD().UpdatePowerBar(currentBattery / stats.batteryLimit);
     }
 
 
