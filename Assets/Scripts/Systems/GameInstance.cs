@@ -49,8 +49,10 @@ public class GameInstance : MonoBehaviour {
     private bool gameStarted = false;
     private bool gamePaused = false;
 
-    private int powerSavingFrameTarget = 20;
-    private int gameplayFrameTarget = -1;
+    private bool powerSavingMode = false;
+    private int menusFrameTarget = 20;
+    private int powerSavingFrameTarget = 30;
+    private int gameplayFrameTarget = -1; //RefreshRate
 
     private AsyncOperationHandle<IList<GameObject>> loadedAssetsHandle;
     private AsyncOperationHandle<GameObject> loadingScreenHandle;
@@ -60,6 +62,7 @@ public class GameInstance : MonoBehaviour {
 
     //Entities
     private GameObject soundSystem;
+    private GameObject scoreSystem;
     private GameObject eventSystem;
     private GameObject netcode;
 
@@ -85,6 +88,7 @@ public class GameInstance : MonoBehaviour {
     private GameObject rpcManagement;
     private RPCManagement rpcManagementScript;
     private SoundSystem soundSystemScript;
+    private ScoreSystem scoreSystemScript;
     private LevelManagement levelManagementScript = new LevelManagement();
     private Player playerScript;
 
@@ -167,8 +171,7 @@ public class GameInstance : MonoBehaviour {
                 + deviceResolution.refreshRateRatio + "]");
         }
 
-        //Framerate
-
+        gameplayFrameTarget = (int)deviceResolution.refreshRateRatio.value;
     }
     private void SetApplicationTargetFrameRate(int target) {
         Application.targetFrameRate = target;
@@ -354,7 +357,6 @@ public class GameInstance : MonoBehaviour {
         if (currentApplicationStatus != ApplicationStatus.RUNNING)
             return;
 
-        mainCameraScript.FixedTick();
         if (currentGameState == GameState.ERROR) {
             Warning("Unable to call fixed-update \nCurrent game state is set to ERROR!");
             return;
@@ -461,21 +463,21 @@ public class GameInstance : MonoBehaviour {
         currentGameState = GameState.MAIN_MENU;
         HideAllMenus();
         mainMenu.SetActive(true);
-        SetApplicationTargetFrameRate(powerSavingFrameTarget);
+        SetApplicationTargetFrameRate(menusFrameTarget);
 
     }
     private void SetupOptionsMenuState() {
         currentGameState = GameState.OPTIONS_MENU;
         HideAllMenus();
         optionsMenu.SetActive(true);
-        SetApplicationTargetFrameRate(powerSavingFrameTarget);
+        SetApplicationTargetFrameRate(menusFrameTarget);
 
     }
     private void SetupCreditsMenuState() {
         currentGameState = GameState.CREDITS_MENU;
         HideAllMenus();
         creditsMenu.SetActive(true);
-        SetApplicationTargetFrameRate(powerSavingFrameTarget);
+        SetApplicationTargetFrameRate(menusFrameTarget);
 
     }
     private void SetupConnectionMenuState() {
@@ -483,7 +485,7 @@ public class GameInstance : MonoBehaviour {
         HideAllMenus();
         connectionMenuScript.SetupStartState();
         connectionMenu.SetActive(true);
-        SetApplicationTargetFrameRate(powerSavingFrameTarget);
+        SetApplicationTargetFrameRate(menusFrameTarget);
 
     }
     private void SetupRoleSelectMenuState() {
@@ -491,7 +493,7 @@ public class GameInstance : MonoBehaviour {
         HideAllMenus();
         roleSelectMenuScript.SetupMenuStartState();
         roleSelectMenu.SetActive(true);
-        SetApplicationTargetFrameRate(powerSavingFrameTarget);
+        SetApplicationTargetFrameRate(menusFrameTarget);
 
     }
     private void SetupLevelSelectMenuState() {
@@ -499,15 +501,20 @@ public class GameInstance : MonoBehaviour {
         HideAllMenus();
         levelSelectMenuScript.SetupMenuStartingState();
         levelSelectMenu.SetActive(true);
-        SetApplicationTargetFrameRate(powerSavingFrameTarget);
+        SetApplicationTargetFrameRate(menusFrameTarget);
 
     }
     private void SetupStartState() {
         currentGameState = GameState.PLAYING;
         HideAllMenus();
-        SetApplicationTargetFrameRate(gameplayFrameTarget); //Make sure to call this the moment the gameplay state is ready!
 
+        if (powerSavingMode)
+            SetApplicationTargetFrameRate(powerSavingFrameTarget); //Make sure to call this the moment the gameplay state is ready!
+        else
+            SetApplicationTargetFrameRate(gameplayFrameTarget);
 
+        scoreSystem.SetActive(true);
+        scoreSystemScript.SetupStartState();
         playerScript.SetupStartState();
         player.SetActive(true);
         player.transform.position = levelManagementScript.GetCurrentLoadedLevel().GetSpawnPoint();
@@ -524,14 +531,14 @@ public class GameInstance : MonoBehaviour {
         currentGameState = GameState.WIN_MENU;
         HideAllMenus();
         winMenu.SetActive(true);
-        SetApplicationTargetFrameRate(powerSavingFrameTarget);
+        SetApplicationTargetFrameRate(menusFrameTarget);
 
     }
     private void SetupLoseMenuState() {
         currentGameState = GameState.LOSE_MENU;
         HideAllMenus();
         loseMenu.SetActive(true);
-        SetApplicationTargetFrameRate(powerSavingFrameTarget);
+        SetApplicationTargetFrameRate(menusFrameTarget);
 
     }
 
@@ -548,8 +555,10 @@ public class GameInstance : MonoBehaviour {
         mainCameraScript.Tick();
         playerScript.Tick();
         levelManagementScript.Tick();
+        scoreSystemScript.Tick();
     }
     private void UpdateFixedPlayingState() {
+        mainCameraScript.FixedTick();
         playerScript.FixedTick();
     }
 
@@ -576,7 +585,9 @@ public class GameInstance : MonoBehaviour {
         if (levelManagementScript.IsLevelLoaded())
             levelManagementScript.UnloadLevel();
 
+
         gameStarted = false;
+        scoreSystem.SetActive(false);
         player.SetActive(false);
         daredevilHUD.SetActive(false);
         coordinatorHUD.SetActive(false);
@@ -611,21 +622,18 @@ public class GameInstance : MonoBehaviour {
 
 
     public bool IsDebuggingEnabled() { return debugging; }
+    public void SetPowerSavingMode(bool state) { powerSavingMode = state; }
 
 
     //Getters
     public Netcode GetNetcode() { return netcodeScript; }
     public RPCManagement GetRPCManagement() { return rpcManagementScript; }
     public LevelManagement GetLevelManagement() { return levelManagementScript; }
+    public ScoreSystem GetScoreSystem() { return scoreSystemScript; }
 
     public RoleSelectMenu GetRoleSelectMenu() { return roleSelectMenuScript; }
     public Player GetPlayer() { return playerScript; }
 
-
-    //RPC related
-    public void ConfirmAllClientsConnected() {
-        Transition(GameState.ROLE_SELECT_MENU);
-    }
 
 
 
@@ -727,13 +735,22 @@ public class GameInstance : MonoBehaviour {
             Validate(roleSelectMenuScript, "RoleSelectMenu component is missing on entity!", ValidationLevel.ERROR, true);
             roleSelectMenuScript.Initialize(this);
         }
+        else if (asset.CompareTag("ScoreSystem")) {
+            if (debugging)
+                Log("Started creating " + asset.name + " entity");
+            scoreSystem = Instantiate(asset);
+            scoreSystem.SetActive(false);
+            scoreSystemScript = scoreSystem.GetComponent<ScoreSystem>();
+            Validate(scoreSystemScript, "ScoreSystem component is missing on entity!", ValidationLevel.ERROR, true);
+            scoreSystemScript.Initialize(this);
+        }
         else if (asset.CompareTag("LevelSelectMenu")) {
             if (debugging)
                 Log("Started creating " + asset.name + " entity");
             levelSelectMenu = Instantiate(asset);
             levelSelectMenuScript = levelSelectMenu.GetComponent<LevelSelectMenu>();
             Validate(levelSelectMenuScript, "LevelSelectMenu component is missing on entity!", ValidationLevel.ERROR, true);
-            //levelSelectMenuScript.Initialize(this); //Disabled cause broken
+            //levelSelectMenuScript.Initialize(this);
         }
         else if (asset.CompareTag("LoseMenu")) {
             if (debugging)
