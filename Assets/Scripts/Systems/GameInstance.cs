@@ -354,6 +354,7 @@ public class GameInstance : MonoBehaviour {
         if (currentApplicationStatus != ApplicationStatus.RUNNING)
             return;
 
+        mainCameraScript.FixedTick();
         if (currentGameState == GameState.ERROR) {
             Warning("Unable to call fixed-update \nCurrent game state is set to ERROR!");
             return;
@@ -507,11 +508,17 @@ public class GameInstance : MonoBehaviour {
         SetApplicationTargetFrameRate(gameplayFrameTarget); //Make sure to call this the moment the gameplay state is ready!
 
 
-
+        playerScript.SetupStartState();
         player.SetActive(true);
+        player.transform.position = levelManagementScript.GetCurrentLoadedLevel().GetSpawnPoint();
+
+        Player.Identity assignedIdentity = playerScript.GetPlayerIdentity();
+        if (assignedIdentity == Player.Identity.DAREDEVIL)
+            daredevilHUD.SetActive(true);
+        else if (assignedIdentity == Player.Identity.COORDINATOR)
+            coordinatorHUD.SetActive(true);
+
         //Enable controls! turn on and enable huds for each (SetActive(true) pretty much)
-
-
     }
     private void SetupWinMenuState() {
         currentGameState = GameState.WIN_MENU;
@@ -540,6 +547,7 @@ public class GameInstance : MonoBehaviour {
     private void UpdatePlayingState() {
         mainCameraScript.Tick();
         playerScript.Tick();
+        levelManagementScript.Tick();
     }
     private void UpdateFixedPlayingState() {
         playerScript.FixedTick();
@@ -570,6 +578,8 @@ public class GameInstance : MonoBehaviour {
 
         gameStarted = false;
         player.SetActive(false);
+        daredevilHUD.SetActive(false);
+        coordinatorHUD.SetActive(false);
 
         if (gamePaused)
             UnpauseGame();
@@ -739,6 +749,7 @@ public class GameInstance : MonoBehaviour {
             if (debugging)
                 Log("Started creating " + asset.name + " entity");
             daredevilHUD = Instantiate(asset);
+            daredevilHUD.SetActive(false);
             daredevilHUDScript = daredevilHUD.GetComponent<DaredevilHUD>();
             Validate(daredevilHUDScript, "DaredevilHUD component is missing on entity!", ValidationLevel.ERROR, true);
             daredevilHUDScript.Initialize(this);
@@ -747,6 +758,7 @@ public class GameInstance : MonoBehaviour {
             if (debugging)
                 Log("Started creating " + asset.name + " entity");
             coordinatorHUD = Instantiate(asset);
+            coordinatorHUD.SetActive(false);
             coordinatorHUDScript = coordinatorHUD.GetComponent<CoordinatorHUD>();
             Validate(coordinatorHUDScript, "CoordinatorHUD component is missing on entity!", ValidationLevel.ERROR, true);
             coordinatorHUDScript.Initialize(this);
