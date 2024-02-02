@@ -19,6 +19,8 @@ public class Daredevil {
 
     private float currentSpeed = 0.0f;
 
+
+    private bool movingForward = false;
     private bool isMoving = false;
     private bool isBoosting = false;
 
@@ -83,16 +85,43 @@ public class Daredevil {
 
 
     //Brake
-    //private void Breaking() {
-    //    if (currentSpeed >= -stats.GetMaxReverseSpeed()/10.0f && currentSpeed <= stats.GetMaxSpeed()/10.0f) {
-    //        playerRigidbody.velocity = Vector3.zero;
-    //        currentSpeed = 0.0f;
-    //        return;
-    //    }
-    //
-    //    currentSpeed = Mathf.Lerp(currentSpeed, 0, stats.GetBreakSpeed() * Time.deltaTime);
-    //
-    //}
+    private void Brake()
+    {
+        if (currentSpeed == 0.0f)
+        {
+            return;
+        }
+
+        //setting a float to help calculate the needed speed to remove no matter which direction you are going
+        if (currentSpeed > 0) {
+            movingForward = true;
+        } else {
+            movingForward = false;
+        }
+
+        //removing the needed speed depending on if you are moving forwards or not
+        if (movingForward == true){
+            currentSpeed -= stats.decelerationRate * Time.deltaTime;
+            if (currentSpeed <= 0.0f){
+                currentSpeed = 0.0f;
+            }
+        } else {
+            currentSpeed += stats.accelerationRate * Time.deltaTime;
+            if (currentSpeed >= 0.0f) {
+                currentSpeed = 0.0f;
+            }
+        }
+    }
+
+
+    private void Reversing()
+    {
+        currentSpeed -= stats.decelerationRate * Time.deltaTime;
+        if (currentSpeed >= stats.maxReverseSpeed)
+        {
+            currentSpeed = stats.maxReverseSpeed;
+        }
+    }
 
     public void Accelerate() {
 
