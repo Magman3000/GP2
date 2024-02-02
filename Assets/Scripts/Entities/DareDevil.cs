@@ -73,10 +73,12 @@ public class Daredevil {
     private void UpdateRotation() {
         //float value = Input.gyro.rotationRate.z * stats.GetTurnRate() * Time.deltaTime;
         float value2 = Input.gyro.attitude.z * stats.turnRate * Time.deltaTime;
+        Log("Z " + Input.gyro.attitude.z);
+        Log("X " + Input.gyro.attitude.x);
+        Log("Y " + Input.gyro.attitude.y);
 
         playerRef.transform.localEulerAngles = new Vector3(playerRef.transform.localEulerAngles.x, value2, playerRef.transform.localEulerAngles.z);
         //playerRef.transform.localEulerAngles += new Vector3(0.0f, value2, 0.0f); //Gyro is offset and off on phone
-        //Log(value2);
     }
 
 

@@ -5,6 +5,7 @@
     "com.unity.feature.development": "1.0.1",
     "com.unity.inputsystem": "1.6.3",
     "com.unity.netcode.gameobjects": "file:../NGO",
+    "com.unity.postprocessing": "3.2.2",
     "com.unity.profiling.core": "1.0.2",
     "com.unity.services.relay": "1.0.5",
     "com.unity.textmeshpro": "3.0.6",
