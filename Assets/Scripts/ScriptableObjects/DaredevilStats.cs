@@ -15,18 +15,13 @@ public class DaredevilStats : ScriptableObject {
 
     [Tooltip("Maximum amount of speed attainable")]
     [Range(0.1f, 1000.0f)][SerializeField] public float maxSpeed = 150.0f;
-
-
-
-    //[Range(0.1f, 500.0f)][SerializeField] private float maxReverseSpeed = 1.0f;
-    //[Range(0.1f, 1.0f)][SerializeField] private float breakSpeed = 0.1f;
-
+    [Range(0.1f, 5000.0f)][SerializeField] public float maxReverseSpeed = 100.0f;
+    [Range(0.1f, 1000.0f)][SerializeField] public float reverseRate = 200.0f;
+    [Range(0.1f, 1000.0f)][SerializeField] public float brakeRate = 200.0f;
 
 
     [Tooltip("How much you turn left and right each turning action")]
     [Range(0.1f, 5000.0f)][SerializeField] public float turnRate = 500.0f;
-
-
 
     [Header("Speed Boost Settings")]
     [Tooltip("The multiplied increase acceleration")]

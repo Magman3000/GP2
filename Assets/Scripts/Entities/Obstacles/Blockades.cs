@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Blockades : MonoBehaviour
+public class Blockades : Obstacle
 {
     enum ColiderType
     {
@@ -16,7 +16,7 @@ public class Blockades : MonoBehaviour
     private BoxCollider box;
     private SphereCollider sphere;
     private CapsuleCollider capsule;
-    private void Init()
+    public override void Initialize(GameInstance game)
     {
         timer = timerCount;
         switch (coliderType)
@@ -38,7 +38,7 @@ public class Blockades : MonoBehaviour
             }
         }
     }
-    private void Tick()
+    public override void Tick()
     {
         if(timer < timerCount)
         {
@@ -68,7 +68,7 @@ public class Blockades : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if(!other.CompareTag("Player")) return;
+        if(!other.CompareTag("Player") || !activated) return;
 
         //Player interaction here.
 
