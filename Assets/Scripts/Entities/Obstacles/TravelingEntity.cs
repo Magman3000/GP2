@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TravelingEntity : MonoBehaviour
+public class TravelingEntity : Obstacle
 {
     [SerializeField] private Vector3 endLocation;
     [SerializeField] private float movementSpeed = 1.0f;
@@ -10,7 +10,7 @@ public class TravelingEntity : MonoBehaviour
     private Vector3 startingLocation = Vector3.zero;
     private float timer = 0.0f;
     
-    void Init()
+    public override void Initialize(GameInstance game)
     {
         startingLocation = transform.position;
     }

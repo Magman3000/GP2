@@ -1,7 +1,8 @@
 using System;
 using UnityEngine;
 
-public class DoorMovement : MonoBehaviour {
+public class DoorMovement : Obstacle 
+{
 
 
 
@@ -29,11 +30,9 @@ public class DoorMovement : MonoBehaviour {
 
 
 
-    private void Start() {
-        
-    }
+   
 
-    void init()
+    public override void Initialize(GameInstance game)
     {
         //TODO: To func! - Negative rotation requires testing
         doorState = ObstacleState.INACTIVE;
@@ -41,7 +40,7 @@ public class DoorMovement : MonoBehaviour {
         initialPosition = gameObject.transform.position;
 
     }
-    private void Tick() {
+    public override void Tick() {
         if (doorState == ObstacleState.ACTIVE && moving)
         {
             DoorMove(openedPosition, openedRotation);
