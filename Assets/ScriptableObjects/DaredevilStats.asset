@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   accelerationRate: 200
   decelerationRate: 150
-  maxSpeed: 150
+  maxSpeed: 300
+  maxReverseSpeed: 150
+  reverseRate: 20
+  brakeRate: 200
   turnRate: 3000
   maxBoostSpeed: 500
   boostAccelerationRate: 300
