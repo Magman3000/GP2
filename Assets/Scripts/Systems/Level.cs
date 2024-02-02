@@ -46,10 +46,10 @@ public class Level : Entity {
         Transform obstacleParentTransform = transform.Find("Obstacles");
         if (Validate(obstacleParentTransform, "No obstacles parent was found!\nObstacles activation state will be unused!", ValidationLevel.WARNING)) {
             obstaclesParent = obstacleParentTransform.gameObject;
-            InitializeObstacles();
+            ScanForObstacles();
         }
         //Initial state? Either decided by entity or applied here! InitialObstaclesState [SerializeField]
-        CheckTree(transform);
+        //CheckTree(transform);
     }
 
     private void CheckTree(Transform parent) {
@@ -76,12 +76,14 @@ public class Level : Entity {
         currentObstacleState = state;
         UpdateObstacles();
     }
-    private void InitializeObstacles() {
+    private void ScanForObstacles() {
         if (!obstaclesParent) //Ditch this to instead registering all of them since now its just obstacle class
             return;
 
-        foreach (var child in obstaclesParent.GetComponentsInChildren<Obstacle>()) //SET THE ACTIVATION THING TOO!
+        foreach (var child in obstaclesParent.GetComponentsInChildren<Obstacle>()) { //SET THE ACTIVATION THING TOO!
+            registeredObstacles.Add(child);
             child.Initialize(gameInstanceRef);
+        }
     }
     private void UpdateObstacles() {
         if (!obstaclesParent)
