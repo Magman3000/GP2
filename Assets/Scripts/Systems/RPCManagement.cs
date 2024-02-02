@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using Unity.Netcode;
 using UnityEngine;
+using static GameInstance;
 using static MyUtility.Utility;
-using static UnityEngine.GraphicsBuffer;
+
 
 public class RPCManagement : NetworkedEntity {
 
@@ -24,7 +25,14 @@ public class RPCManagement : NetworkedEntity {
 
 
     }
-    private ClientRpcParams CreateClientRpcParams(ulong targetID) {
+    private ClientRpcParams? CreateClientRpcParams(ulong senderID) {
+        Netcode netcodeRef = gameInstanceRef.GetNetcode();
+        var targetID = netcodeRef.GetOtherClient(senderID); //Do more elegant solution
+        if (targetID == senderID) {
+            Log("Other client look up failed!");
+            return null;
+        }
+
         ClientRpcParams clientRpcParams = new ClientRpcParams();
         clientRpcParams.Send = new ClientRpcSendParams();
         clientRpcParams.Send.TargetClientIds = new ulong[] { targetID };
@@ -33,16 +41,13 @@ public class RPCManagement : NetworkedEntity {
 
 
 
-
     [ServerRpc (RequireOwnership = true)]
     public void ConfirmConnectionServerRpc() {
-        Log("Server rpc ConfirmConnectionServerRpc called!");
         RelayConnectionConfirmationClientRpc();
     }
     [ClientRpc]
     public void RelayConnectionConfirmationClientRpc() {
-        Log("Client rpc RelayConnectionConfirmationClientRpc called!");
-        gameInstanceRef.ConfirmAllClientsConnected();
+        gameInstanceRef.Transition(GameState.ROLE_SELECT_MENU);
     }
 
 
@@ -52,15 +57,13 @@ public class RPCManagement : NetworkedEntity {
 
     [ServerRpc (RequireOwnership = false)]
     public void UpdateReadyCheckServerRpc(ulong senderID, bool value) {
-        Netcode netcodeRef = gameInstanceRef.GetNetcode();
-        var targetID = netcodeRef.GetOtherClient(senderID); //Do more elegant solution
-        if (targetID == senderID) {
-            Log("Other client look up failed!");
+        ClientRpcParams? clientParams = CreateClientRpcParams(senderID);
+        if (clientParams == null) {
+            Warning("Invalid client rpc params returned at UpdateReadyCheckServerRpc");
             return;
         }
 
-        var clientParams = CreateClientRpcParams(targetID);
-        RelayReadyCheckClientRpc(senderID, value, clientParams);
+        RelayReadyCheckClientRpc(senderID, value, clientParams.Value);
     }
     [ClientRpc]
     public void RelayReadyCheckClientRpc(ulong senderID, bool value, ClientRpcParams paramsPack) {
@@ -70,15 +73,13 @@ public class RPCManagement : NetworkedEntity {
 
     [ServerRpc (RequireOwnership = false)]
     public void UpdateRoleSelectionServerRpc(ulong senderID, Player.Identity identity) {
-        Netcode netcodeRef = gameInstanceRef.GetNetcode();
-        var targetID = netcodeRef.GetOtherClient(senderID); //Do more elegant solution
-        if (targetID == senderID) {
-            Log("Other client look up failed!");
+        ClientRpcParams? clientParams = CreateClientRpcParams(senderID);
+        if (clientParams == null) {
+            Warning("Invalid client rpc params returned at UpdateReadyCheckServerRpc");
             return;
         }
 
-        var clientParams = CreateClientRpcParams(targetID);
-        RelayRoleSelectionClientRpc(senderID, identity, clientParams);
+        RelayRoleSelectionClientRpc(senderID, identity, clientParams.Value);
     }
     [ClientRpc]
     public void RelayRoleSelectionClientRpc(ulong senderID, Player.Identity identity, ClientRpcParams paramsPack) {
@@ -88,15 +89,13 @@ public class RPCManagement : NetworkedEntity {
 
     [ServerRpc (RequireOwnership = true)]
     public void ConfirmRoleSelectionServerRpc(ulong senderID) {
-        Netcode netcodeRef = gameInstanceRef.GetNetcode();
-        var targetID = netcodeRef.GetOtherClient(senderID); //Do more elegant solution
-        if (targetID == senderID) {
-            Log("Other client look up failed!");
+        ClientRpcParams? clientParams = CreateClientRpcParams(senderID);
+        if (clientParams == null) {
+            Warning("Invalid client rpc params returned at UpdateReadyCheckServerRpc");
             return;
         }
 
-        var clientParams = CreateClientRpcParams(targetID);
-        RelayRoleSelectionConfirmationClientRpc(senderID, clientParams);
+        RelayRoleSelectionConfirmationClientRpc(senderID, clientParams.Value);
     }
     [ClientRpc]
     public void RelayRoleSelectionConfirmationClientRpc(ulong senderID, ClientRpcParams paramsPack) {
@@ -110,27 +109,45 @@ public class RPCManagement : NetworkedEntity {
 
 
 
+
+
     //Coordinator
     [ServerRpc(RequireOwnership = false)]
     public void SetBoostStateServerRpc(ulong senderID, bool state) {
-        Netcode netcodeRef = gameInstanceRef.GetNetcode();
-        var targetID = netcodeRef.GetOtherClient(senderID); //Do more elegant solution
-        if (targetID == senderID) {
-            Log("Other client look up failed!");
+        ClientRpcParams? clientParams = CreateClientRpcParams(senderID);
+        if (clientParams == null) {
+            Warning("Invalid client rpc params returned at UpdateReadyCheckServerRpc");
             return;
         }
 
-        var clientParams = CreateClientRpcParams(targetID);
-        RelayBoostStateClientRpc(senderID, state, clientParams);
+        RelayBoostStateClientRpc(senderID, state, clientParams.Value);
     }
     [ClientRpc]
     public void RelayBoostStateClientRpc(ulong senderID, bool state, ClientRpcParams paramsPack) {
-
         gameInstanceRef.GetPlayer().GetDaredevilData().SetBoostState(state);
     }
 
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void SetObstacleActivationStateServerRpc(ulong senderID, Obstacle.ObstacleActivationState state) {
+        ClientRpcParams? clientParams = CreateClientRpcParams(senderID);
+        if (clientParams == null) {
+            Warning("Invalid client rpc params returned at UpdateReadyCheckServerRpc");
+            return;
+        }
 
+        RelayObstacleActivationStateClientRpc(senderID, state, clientParams.Value);
+    }
+    [ClientRpc]
+    public void RelayObstacleActivationStateClientRpc(ulong senderID, Obstacle.ObstacleActivationState state, ClientRpcParams paramsPack) {
+        LevelManagement levelManagement = gameInstanceRef.GetLevelManagement();
+        if (!levelManagement.IsLevelLoaded()) {
+            Warning("Received obstacle activation state rpc while level was not loaded!");
+            return;
+        }
 
+        levelManagement.GetCurrentLoadedLevel().SetCurrentObstacleState(state);
+    }
 
 
 }

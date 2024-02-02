@@ -2,6 +2,12 @@ using System;
 using UnityEngine;
 
 public class DoorMovement : MonoBehaviour {
+
+
+
+
+
+
     public enum ObstacleState { ERROR = 0, 
         ACTIVE, 
         INACTIVE 
@@ -11,8 +17,8 @@ public class DoorMovement : MonoBehaviour {
     [SerializeField] Vector3 openedPosition;
     [SerializeField] Vector3 openedRotation;
 
-    [Range(0.1f, 200f)][SerializeField] float interpolationRatio;
-    [SerializeField] float interpolationLimit;
+    [Range(0.1f, 200f)][SerializeField] float openingSpeed;
+    [SerializeField] float correctionThreshold;
 
 
     public bool moving = false;
@@ -23,6 +29,10 @@ public class DoorMovement : MonoBehaviour {
 
 
 
+    private void Start() {
+        
+    }
+
     void init()
     {
         //TODO: To func! - Negative rotation requires testing
@@ -31,8 +41,7 @@ public class DoorMovement : MonoBehaviour {
         initialPosition = gameObject.transform.position;
 
     }
-    private void Tick()
-    {
+    private void Tick() {
         if (doorState == ObstacleState.ACTIVE && moving)
         {
             DoorMove(openedPosition, openedRotation);
@@ -55,13 +64,13 @@ public class DoorMovement : MonoBehaviour {
     }
     private void DoorMove(Vector3 destination, Vector3 toRotation)
     {
-        Vector3 postionCalculation = Vector3.Lerp(transform.position, destination, interpolationRatio * Time.deltaTime);
+        Vector3 postionCalculation = Vector3.Lerp(transform.position, destination, openingSpeed * Time.deltaTime);
         transform.position = postionCalculation;
-        Vector3 rotationCalculation = Vector3.Lerp(transform.eulerAngles, toRotation, interpolationRatio * Time.deltaTime);
+        Vector3 rotationCalculation = Vector3.Lerp(transform.eulerAngles, toRotation, openingSpeed * Time.deltaTime);
         transform.eulerAngles = rotationCalculation;
         float positionDistance = Vector3.Distance(postionCalculation, destination);
         float rotationDistance = Vector3.Distance(rotationCalculation, toRotation);
-        if (positionDistance < interpolationLimit && rotationDistance < interpolationLimit)
+        if (positionDistance < correctionThreshold && rotationDistance < correctionThreshold)
         {
             transform.position = destination;
             transform.eulerAngles = toRotation;
