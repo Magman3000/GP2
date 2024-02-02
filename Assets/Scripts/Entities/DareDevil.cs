@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using static MyUtility.Utility;
 
@@ -23,7 +24,7 @@ public class Daredevil {
     private bool movingForward = false;
     private bool isMoving = false;
     private bool isBoosting = false;
-    private bool isBraking = false;
+    private bool isReversingAndBraking = false;
 
 
     public void Initialize(GameInstance game, Player player) {
@@ -43,7 +44,7 @@ public class Daredevil {
         }
 
 
-        UpdateSpeed();
+        UpdateMovement();
         //Break
         //Reverse
         UpdateRotation();
@@ -63,14 +64,24 @@ public class Daredevil {
 
     public void SetBoostState(bool state) { isBoosting = state; }
     public void SetMovementState(bool state) { isMoving = state; }
-    public void SetBrakeState(bool state) { isBraking = state; }
+    public void SetBrakeState(bool state) { isReversingAndBraking = state; }
 
 
-    private void UpdateSpeed() {
-        if (isMoving)
-            Accelerate();
-        else if (!isMoving)
-            Decelerate();
+    private void UpdateMovement() {
+        if (isReversingAndBraking) {
+            if (currentSpeed > 0.0f)
+                Brake();
+            else if (currentSpeed <= 0.0f)
+                Reverse();
+        }
+        else {
+            if (isMoving)
+                Accelerate();
+            else if (!isMoving)
+                Decelerate();
+        }
+
+        Log(currentSpeed);
     }
     private void UpdateVelocity() {
         playerRigidbody.velocity = playerRef.transform.forward * (currentSpeed * Time.deltaTime);
@@ -87,23 +98,36 @@ public class Daredevil {
     }
 
 
+    private void UpdateSpeed(float rate, float limit, Action callback, bool additive = true) {
+        if (additive) {
+            currentSpeed += rate * Time.deltaTime;
+            if (currentSpeed >= limit) {
+                currentSpeed = limit;
+                if (callback != null)
+                    callback.Invoke();
+            }
+        }
+        else if (!additive) {
+            currentSpeed -= rate * Time.deltaTime;
+            if (currentSpeed <= limit) {
+                currentSpeed = limit;
+                if (callback != null)
+                    callback.Invoke();
+            }
+        }
+    }
+
 
 
     //Brake
     private void Brake() {
-        if (currentSpeed <= 0.0f || !isBraking)
-            return;
-
         currentSpeed -= stats.brakeRate * Time.deltaTime;
         if (currentSpeed <= 0.0f) {
             currentSpeed = 0.0f;
             
         }
     }
-    private void Reversing() {
-        if (currentSpeed <= 0.0f)
-            return;
-
+    private void Reverse() {
         currentSpeed -= stats.reverseRate * Time.deltaTime;
         if (currentSpeed <= -stats.maxReverseSpeed) {
             currentSpeed = -stats.maxReverseSpeed;
