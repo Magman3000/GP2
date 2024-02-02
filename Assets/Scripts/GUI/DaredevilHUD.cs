@@ -34,6 +34,13 @@ public class DaredevilHUD : Entity {
 
   
 
+
+    public void BrakeOnEvent() {
+        daredevilRef.SetBrakeState(true);
+    }
+    public void BrakeOffEvent() {
+        daredevilRef.SetBrakeState(false);
+    }
     public void GasOnEvent() {
         daredevilRef.SetMovementState(true);
     }
