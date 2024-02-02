@@ -202,6 +202,8 @@ MonoBehaviour:
   scrollRect: {fileID: 2899784393128130697}
   contentRectTransform: {fileID: 8721436632981862606}
   levelNameText: {fileID: 2336588783625576827}
+  xCenterOffset: 100
+  defaultGuiElementSize: {x: 200, y: 400}
   player1Ready: 0
   player2Ready: 0
   player1LevelVote: 
@@ -661,13 +663,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Delegates:
-  - eventID: 2
+  - eventID: 0
     callback:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 5900123783049585126}
           m_TargetAssemblyTypeName: LevelSelectMenu, Assembly-CSharp
-          m_MethodName: OnPointerDownDelegate
+          m_MethodName: OnPointerEnter
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -677,13 +679,13 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-  - eventID: 3
+  - eventID: 1
     callback:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 5900123783049585126}
           m_TargetAssemblyTypeName: LevelSelectMenu, Assembly-CSharp
-          m_MethodName: OnPointerUpDelegate
+          m_MethodName: OnPointerExit
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
