@@ -21,9 +21,9 @@ public class Daredevil {
     private float currentSpeed = 0.0f;
 
 
-    public bool isMoving = false;
-    public bool isReversingAndBraking = false;
-    public bool isBoosting = false;
+    private bool isMoving = false;
+    private bool isReversingAndBraking = false;
+    private bool isBoosting = false;
 
 
     public void Initialize(GameInstance game, Player player) {
@@ -131,16 +131,16 @@ public class Daredevil {
     //Brake
     private void Brake() {
         currentSpeed -= stats.brakeRate * Time.deltaTime;
+        Log("Brake");
         if (currentSpeed <= 0.0f) {
             currentSpeed = 0.0f;
-            Log("Brake");
         }
     }
     private void Reverse() {
         currentSpeed -= stats.reverseRate * Time.deltaTime;
+        Log("Reverse");
         if (currentSpeed <= -stats.maxReverseSpeed) {
             currentSpeed = -stats.maxReverseSpeed;
-            Log("Reverse");
         }
     }
 
@@ -151,25 +151,25 @@ public class Daredevil {
 
         if (isBoosting) {
             currentSpeed += stats.boostAccelerationRate * Time.deltaTime;
+            Log("Boost Accelerate");
             if (currentSpeed >= stats.maxBoostSpeed) {
                 currentSpeed = stats.maxBoostSpeed;
-                Log("Boost Accelerate");
             }
         }
         else if (!isBoosting) {
 
             if (currentSpeed > stats.maxSpeed) { //Boost recovery
                 currentSpeed -= stats.boostDecelerationRate * Time.deltaTime;
+                Log("Boost Recovery");
                 if (currentSpeed <= stats.maxSpeed) {
                     currentSpeed = stats.maxSpeed;
-                    Log("Boost Recovery");
                 }
             }
             else if (currentSpeed < stats.maxSpeed) {
                 currentSpeed += stats.accelerationRate * Time.deltaTime;
+                Log("Accelerate");
                 if (currentSpeed >= stats.maxSpeed) {
                     currentSpeed = stats.maxSpeed;
-                    Log("Accelerate");
                 }
             }
         }
@@ -181,17 +181,17 @@ public class Daredevil {
         //TODO: Add unique behavior for if was boosting
         if (currentSpeed > 0.0f) {
             currentSpeed -= stats.decelerationRate * Time.deltaTime;
+            Log("Normal Decelrate");
             if (currentSpeed <= 0.0f) {
                 currentSpeed = 0.0f;
-                Log("Normal Decelrate");
             }
         }
         else { 
             if (currentSpeed < 0.0f) {
                 currentSpeed += stats.decelerationRate * Time.deltaTime; //COuld be something else. Reverse deceleraton rate
+                Log("Reverse Decelrate");
                 if (currentSpeed > 0.0f) {
                     currentSpeed = 0.0f;
-                    Log("Reverse Decelrate");
                 }
             } 
         }
@@ -202,6 +202,9 @@ public class Daredevil {
 
     public void ApplyRampBoost(float value) {
         currentSpeed *= value; //Temp
+        //Do unconditional timed boost.
+        //Func takes time, max speed and rate, and maybe decelrate too so might as well be a struct of data.
+        //Bool is checked and special func is called
     }
 
     
