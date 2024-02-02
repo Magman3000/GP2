@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LaunchableProps : MonoBehaviour
+public class LaunchableProps : Obstacle
 {
     [Range(1.0f, 100.0f)][SerializeField] float launchMultiplier;
     Rigidbody rigidBody;
-    private void Initialize()
+    public override void Initialize(GameInstance game)
     {
         rigidBody = gameObject.GetComponent<Rigidbody>();
     }
