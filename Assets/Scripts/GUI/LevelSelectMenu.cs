@@ -53,7 +53,18 @@ public class LevelSelectMenu : Entity
         SetupGUIElements();
     }
 
-    private void Update()
+    //private void Update()
+    //{
+    //    ButtonTimer();
+    //    UpdateTimerBar();
+    //    StopScrollAtEdges();
+    //    var currentItem = CalculateCurrentItem();
+    //    Snap(currentItem);
+    //    UpdateLevelName(currentItem);
+    //}
+
+
+    public override void Tick()
     {
         if (!initialized)
         {
@@ -68,23 +79,6 @@ public class LevelSelectMenu : Entity
         Snap(currentItem);
         UpdateLevelName(currentItem);
     }
-
-
-    /*public override void Tick()
-    {
-        if (!initialized)
-        {
-            Error("");
-            return;
-        }
-
-        ButtonTimer();
-        UpdateTimerBar();
-        StopScrollAtEdges();
-        var currentItem = CalculateCurrentItem();
-        Snap(currentItem);
-        UpdateLevelName(currentItem);
-    }*/
 
 
     public void SetupMenuStartingState()
