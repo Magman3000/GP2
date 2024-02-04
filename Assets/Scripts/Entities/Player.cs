@@ -34,6 +34,8 @@ public class Player : NetworkedEntity {
 
     private Rigidbody rigidbodyComp;
 
+    private BoxCollider boxColliderComp;
+
     private bool speedBoostBool = false;
 
 
@@ -87,6 +89,9 @@ public class Player : NetworkedEntity {
     {
         rigidbodyComp = GetComponent<Rigidbody>();
         Validate(rigidbodyComp, "Failed to get reference to Rigidbody component!", ValidationLevel.ERROR, true);
+
+        boxColliderComp = GetComponent<BoxCollider>();
+        Validate(boxColliderComp, "Failed to get reference to BoxCollider component!", ValidationLevel.ERROR, true);
     }
     public void SetupStartState() {
         if (assignedPlayerIdentity == Identity.DAREDEVIL) { //Order matters due to stats being reset in data then HUD using those stats.
@@ -122,6 +127,7 @@ public class Player : NetworkedEntity {
     public Coordinator GetCoordinatorData() { return coordinatorData; }
 
     public Rigidbody GetRigidbody() { return rigidbodyComp; }
+    public BoxCollider GetBoxCollider() { return boxColliderComp; }
 
     //?
     public bool GetBoostCheck() { return speedBoostBool; }

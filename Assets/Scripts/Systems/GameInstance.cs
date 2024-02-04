@@ -58,7 +58,7 @@ public class GameInstance : MonoBehaviour {
     private AsyncOperationHandle<GameObject> loadingScreenHandle;
 
     private Resolution deviceResolution;
-
+    public static Quaternion gyroOriginRotation;
 
     //Entities
     private GameObject soundSystem;
@@ -164,6 +164,7 @@ public class GameInstance : MonoBehaviour {
     private void SetupApplicationInitialSettings() {
         Input.gyro.enabled = true;
         deviceResolution = Screen.currentResolution;
+        gyroOriginRotation = GyroToUnity(Input.gyro.attitude);
         if (debugging) {
             Log("Application started on device.");
             Log("Device information:\nScreen Width: [" + deviceResolution.width 
@@ -424,7 +425,8 @@ public class GameInstance : MonoBehaviour {
                 fadeTransitionScript.StartTransition(SetupLevelSelectMenuState);
                 break;
             case GameState.CONNECTION_MENU:
-                fadeTransitionScript.StartTransition(SetupConnectionMenuState);
+                EnterDebugMode(); //Temp
+                //fadeTransitionScript.StartTransition(SetupConnectionMenuState);
                 break;
             case GameState.ROLE_SELECT_MENU:
                 fadeTransitionScript.StartTransition(SetupRoleSelectMenuState);
@@ -541,7 +543,32 @@ public class GameInstance : MonoBehaviour {
         SetApplicationTargetFrameRate(menusFrameTarget);
 
     }
+    private void SetupDebugModeState() {
+        currentGameState = GameState.PLAYING;
+        HideAllMenus();
 
+        if (powerSavingMode)
+            SetApplicationTargetFrameRate(powerSavingFrameTarget); //Make sure to call this the moment the gameplay state is ready!
+        else
+            SetApplicationTargetFrameRate(gameplayFrameTarget);
+
+        playerScript.AssignPlayerIdentity(Player.Identity.DAREDEVIL);
+        playerScript.gameObject.SetActive(true);
+        daredevilHUD.SetActive(true);
+
+        scoreSystem.SetActive(true);
+        scoreSystemScript.SetupStartState();
+        playerScript.SetupStartState();
+        player.SetActive(true);
+        player.transform.position = levelManagementScript.GetCurrentLoadedLevel().GetSpawnPoint();
+    }
+    public void EnterDebugMode() {
+        if (!levelManagementScript.LoadLevel("DebugLevel"))
+            return;
+
+        fadeTransitionScript.StartTransition(SetupDebugModeState); //Will probably be swtiched or combines with loading screen
+        gameStarted = true;
+    }
 
     //State Update
     private void UpdateStatelessSystems() {

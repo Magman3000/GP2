@@ -62,6 +62,10 @@ public class ConnectionMenu : Entity {
             return;
         }
 
+        //TEMPORARY FOR DEBUGGING
+        if (Input.GetKeyDown(KeyCode.L)) {
+            gameInstanceRef.EnterDebugMode();
+        }
 
         CheckConnectionStatus();
     }

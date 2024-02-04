@@ -6,7 +6,6 @@ using UnityEngine;
 public class DaredevilStats : ScriptableObject {
 
     [Header("Speed Settings")]
-
     [Tooltip("Speed of acceleration")]
     [Range(0.1f, 500.0f)][SerializeField] public float accelerationRate = 200.0f;
 
@@ -21,13 +20,26 @@ public class DaredevilStats : ScriptableObject {
 
 
     [Tooltip("How much you turn left and right each turning action")]
-    [Range(0.1f, 5000.0f)][SerializeField] public float turnRate = 500.0f;
+    //[Range(0.1f, 5000.0f)][SerializeField] public float turnRate = 500.0f;
+    [Range(0.1f, 1000.0f)][SerializeField] public float rotationCorrectionRate = 5.0f;
+
+    //Spectrum size
+    [Header("Gyroscope")]
+    [Range(0.1f, 10.0f)][SerializeField] public float gyroSensitivity = 1.0f;
+    [Range(0.01f, 500.0f)][SerializeField] public float gyroTiltRate = 50.0f;
+    [Range(0.01f, 2.0f)][SerializeField] public float gyroResetDuration = 0.5f;
+    [Range(0.01f, 1.0f)][SerializeField] public float driftRate = 0.1f;
+
 
     [Header("Speed Boost Settings")]
     [Tooltip("The multiplied increase acceleration")]
     [Range(0.1f, 500.0f)][SerializeField] public float maxBoostSpeed = 300.0f;
     [Range(0.1f, 500.0f)][SerializeField] public float boostAccelerationRate = 300.0f;
     [Range(0.1f, 500.0f)][SerializeField] public float boostDecelerationRate = 400.0f;
+
+
+    [Range(0.1f, 500.0f)][SerializeField] public float gravity = 400.0f;
+    [Range(0.1f, 90.0f)][SerializeField] public float terrainAdjustmentAngle = 45.0f;
 
 
 
