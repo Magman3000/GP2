@@ -377,19 +377,23 @@ public class Daredevil {
 
 
     //Brake
-    private void Brake() {
-        currentSpeed -= stats.brakeRate * Time.deltaTime;
+    private void Brake()
+    {
+        //currentSpeed -= stats.brakeRate * Time.deltaTime;
+        UpdateSpeed(stats.brakeRate, 0.0f, null, false);
         //Log("Brake");
-        if (currentSpeed <= 0.0f) {
-            currentSpeed = 0.0f;
-        }
+        //if (currentSpeed <= 0.0f) {
+            //currentSpeed = 0.0f;
+        //}
     }
-    private void Reverse() {
-        currentSpeed -= stats.reverseRate * Time.deltaTime;
+    private void Reverse()
+    {
+        //currentSpeed -= stats.reverseRate * Time.deltaTime;
+        UpdateSpeed(stats.reverseRate, -stats.maxReverseSpeed, null, false);
         //Log("Reverse");
-        if (currentSpeed <= -stats.maxReverseSpeed) {
-            currentSpeed = -stats.maxReverseSpeed;
-        }
+        //if (currentSpeed <= -stats.maxReverseSpeed) {
+            //currentSpeed = -stats.maxReverseSpeed;
+        //}
     }
 
 
@@ -398,27 +402,31 @@ public class Daredevil {
     public void Accelerate() {
 
         if (isBoosting) {
-            currentSpeed += stats.boostAccelerationRate * Time.deltaTime;
+            //currentSpeed += stats.boostAccelerationRate * Time.deltaTime;
+            UpdateSpeed(stats.boostAccelerationRate, stats.maxBoostSpeed, null, true);
             //Log("Boost Accelerate");
-            if (currentSpeed >= stats.maxBoostSpeed) {
-                currentSpeed = stats.maxBoostSpeed;
-            }
+            //if (currentSpeed >= stats.maxBoostSpeed) {
+                //currentSpeed = stats.maxBoostSpeed;
+            //}
         }
         else if (!isBoosting) {
 
-            if (currentSpeed > stats.maxSpeed) { //Boost recovery
-                currentSpeed -= stats.boostDecelerationRate * Time.deltaTime;
+            if (currentSpeed > stats.maxSpeed)
+            { //Boost recovery
+                //currentSpeed -= stats.boostDecelerationRate * Time.deltaTime;
+                UpdateSpeed(stats.boostDecelerationRate, stats.maxSpeed, null, false);
                 //Log("Boost Recovery");
-                if (currentSpeed <= stats.maxSpeed) {
-                    currentSpeed = stats.maxSpeed;
-                }
+                //if (currentSpeed <= stats.maxSpeed) {
+                    //currentSpeed = stats.maxSpeed;
+                //}
             }
             else if (currentSpeed < stats.maxSpeed) {
-                currentSpeed += stats.accelerationRate * Time.deltaTime;
+                //currentSpeed += stats.accelerationRate * Time.deltaTime;
+                UpdateSpeed(stats.accelerationRate, stats.maxSpeed, null, true);
                 //Log("Accelerate");
-                if (currentSpeed >= stats.maxSpeed) {
-                    currentSpeed = stats.maxSpeed;
-                }
+                //if (currentSpeed >= stats.maxSpeed) {
+                    //currentSpeed = stats.maxSpeed;
+                //}
             }
         }
     }
@@ -428,19 +436,21 @@ public class Daredevil {
 
         //TODO: Add unique behavior for if was boosting
         if (currentSpeed > 0.0f) {
-            currentSpeed -= stats.decelerationRate * Time.deltaTime;
+            //currentSpeed -= stats.decelerationRate * Time.deltaTime;
+            UpdateSpeed(stats.decelerationRate, 0.0f, null, false);
             //Log("Normal Decelrate");
-            if (currentSpeed <= 0.0f) {
-                currentSpeed = 0.0f;
-            }
+            //if (currentSpeed <= 0.0f) {
+                //currentSpeed = 0.0f;
+            //}
         }
         else { 
             if (currentSpeed < 0.0f) {
-                currentSpeed += stats.decelerationRate * Time.deltaTime; //COuld be something else. Reverse deceleraton rate
+                //currentSpeed += stats.decelerationRate * Time.deltaTime; //COuld be something else. Reverse deceleraton rate
+                UpdateSpeed(stats.decelerationRate, 0.0f, null, true);
                 //Log("Reverse Decelrate");
-                if (currentSpeed > 0.0f) {
-                    currentSpeed = 0.0f;
-                }
+                //if (currentSpeed > 0.0f) {
+                    //currentSpeed = 0.0f;
+                //}
             } 
         }
 
