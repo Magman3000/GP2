@@ -15,7 +15,7 @@ public class TravelingEntity : Obstacle
         startingLocation = transform.position;
     }
 
-    private void Tick()
+    public override void Tick()
     {
         float temp = Vector3.Distance(startingLocation, endLocation);
         PatrolMovement(endLocation, movementSpeed);
