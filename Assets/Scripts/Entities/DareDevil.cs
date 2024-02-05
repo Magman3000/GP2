@@ -197,10 +197,11 @@ public class Daredevil {
             return;
 
         if (rampBoostTimer > 0.0f) {
-            currentSpeed += currentRampBoost.accelerationRate * Time.deltaTime;
+            //currentSpeed += currentRampBoost.accelerationRate * Time.deltaTime;
+            UpdateSpeed(currentRampBoost.accelerationRate, currentRampBoost.maxSpeed, null, true);
             if (currentSpeed >= currentRampBoost.maxSpeed) {
-                currentSpeed = currentRampBoost.maxSpeed;
-                rampBoostTimer -= Time.deltaTime;
+                //currentSpeed = currentRampBoost.maxSpeed;
+                rampBoostTimer -= Time.deltaTime; //create function and add it as action callback
                 Log("Boost timer " + rampBoostTimer);
                 if (rampBoostTimer <= 0.0f) {
                     rampBoostTimer = 0.0f;
