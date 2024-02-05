@@ -262,7 +262,7 @@ public class Daredevil {
 
 
     private void UpdateTilt() {
-        tiltRate = Input.gyro.gravity.x;
+        tiltRate = Input.gyro.gravity.z;
     }
 
 
