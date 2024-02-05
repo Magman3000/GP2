@@ -4362,6 +4362,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d9f7e8e67c92fe42bc8dec5c833ac7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startingObstacleActivationState: 1
+  timeLimit: 100
   currentObstacleState: 0
   registeredObstacles: []
 --- !u!1 &1604772226303727202

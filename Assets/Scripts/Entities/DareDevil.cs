@@ -44,6 +44,7 @@ public class Daredevil {
     private int currentTiltIndex = 0;
     private float tiltSpectrum = 0.0f;
     private float gyroResetTimer = 0.0f;
+    private float tiltRate = 0.0f;
 
     private GameObject frontWheelMesh;
     private GameObject backWheelMesh;
@@ -98,21 +99,7 @@ public class Daredevil {
         }
 
         UpdateGroundedState();
-        playerRef.transform.eulerAngles = new Vector3(playerRef.transform.eulerAngles.x, playerRef.transform.eulerAngles.y, 0.0f);
-
-        //var currentRotation = playerRef.transform.eulerAngles;
-        //if (playerRef.transform.eulerAngles.x > 60.0f)
-        //    playerRef.transform.eulerAngles = new Vector3(60.0f, currentRotation.y, currentRotation.z);
-        //else if (playerRef.transform.eulerAngles.x < -60.0f)
-        //    playerRef.transform.eulerAngles = new Vector3(-60.0f, currentRotation.y, currentRotation.z);
-
-        //CheckTerrain();
-
-        //if (playerRef.transform.localEulerAngles.x != 0.0f) {
-        //    float rot = Mathf.LerpAngle(playerRef.transform.rotation.x, 0.0f, stats.rotationCorrectionRate * Time.deltaTime);
-        //    playerRef.transform.localEulerAngles = new Vector3(rot, playerRef.transform.localEulerAngles.y, playerRef.transform.localEulerAngles.z);
-        //    //Log("Adjusting rotation! " + rot);
-        //}
+        playerRef.transform.eulerAngles = new Vector3(playerRef.transform.eulerAngles.x, playerRef.transform.eulerAngles.y, 0.0f); //Kepp oit
 
         if (Input.GetKeyDown(KeyCode.A))
             currentTiltIndex = 1;
@@ -135,7 +122,7 @@ public class Daredevil {
 
         UpdateDirection();
         UpdateWheels();
-        //UpdateGravity();
+        UpdateGravity();
         UpdateVelocity();
     }
 
@@ -157,8 +144,8 @@ public class Daredevil {
 
     private void CheckTerrain() {
         //Check if object is infront by doing 
-        Vector3 position = playerRef.transform.position + playerRef.GetBoxCollider().center;
-        Vector3 size = playerRef.GetBoxCollider().size;
+        Vector3 position = playerRef.transform.position + playerRef.GetCapsuleCollider().center;
+        Vector3 size = new Vector3(10.0f, 10.0f, 10.0f);//playerRef.GetCapsuleCollider().size;
         float offset = 0.1f;
 
         position.y += offset;
@@ -171,7 +158,7 @@ public class Daredevil {
             //Log("Angle is " + Mathf.Cos(stats.terrainAdjustmentAngle * Mathf.Deg2Rad));
             if (dot <= Mathf.Cos(stats.terrainAdjustmentAngle * Mathf.Deg2Rad) || dot >= -Mathf.Cos(stats.terrainAdjustmentAngle * Mathf.Deg2Rad)) { //Not sure fully
 
-                if (IsInBounds(playerRef.GetBoxCollider().bounds, raycastHitData.collider.bounds)) {
+                if (IsInBounds(playerRef.GetCapsuleCollider().bounds, raycastHitData.collider.bounds)) {
                     Log("IS ÍN BOUNDS!");
                 }
 
@@ -191,10 +178,9 @@ public class Daredevil {
         //playerRef.GetBoxCollider().size = new Vector3(0.75f, 1, 2); // otherwise z is 2
     }
     private void UpdateGroundedState() {
-        Vector3 position = playerRef.transform.position + playerRef.GetBoxCollider().center;
-        Vector3 size = playerRef.GetBoxCollider().size;
-        float offset = 0.1f;
-
+        Vector3 position = playerRef.transform.position + playerRef.GetCapsuleCollider().center;
+        Vector3 size = new Vector3(10.0f, 10.0f, 10.0f); //playerRef.GetCapsuleCollider().size;
+        float offset = 0.6f;
         position.y += offset;
         bool results = Physics.BoxCast(position, size / 2, -playerRef.transform.up, playerRef.transform.rotation, offset * 2.0f);
         isGrounded = results; //Separted to player vfx on landing! if(!ground && results)
@@ -266,92 +252,16 @@ public class Daredevil {
             playerRef.transform.forward = direction;
     }
     private void UpdateDirection() {
-
-
-        //if (currentSpeed == 0.0f)
-        //    return;
-        //else if (isMoving) {
-        //
-        //}
-        //else if (isReversingAndBraking) {
-        //
-        //
-        //
-        //}
-
-        //Need something for when going backwards cause then currentspeed is <0.0f
-
-        if (currentTiltIndex == 0)
-            direction = playerRef.transform.forward;
-        else if (currentTiltIndex == 1) { //Right
-            direction = (playerRef.transform.forward - (playerRef.transform.right * stats.driftRate) * GetCurrentSpeedPercentage()).normalized;
-            //playerRef.transform.forward = direction;
-        }
-        else if (currentTiltIndex == -1) { //Left
-            direction = (playerRef.transform.forward + (playerRef.transform.right * stats.driftRate) * GetCurrentSpeedPercentage()).normalized;
-            //playerRef.transform.forward = direction;
-        }
+        if (isMoving)
+            direction = (playerRef.transform.forward + (playerRef.transform.right * stats.driftRate * tiltRate) * GetCurrentSpeedPercentage()).normalized;
+        else if (isReversingAndBraking)
+            direction = (playerRef.transform.forward + (playerRef.transform.right * stats.driftRate * -tiltRate) * GetCurrentSpeedPercentage()).normalized;
     }
+
+
+
     private void UpdateTilt() {
-
-
-        //Note: could add frames for each input to be held in before it changes to next step
-        //-Hold right for X frames (Its 0 tilt during that) before switching to -1 from +1
-
-        //Note: could take the rotation rate into account in how much i should drift my direction
-
-        //Note: Maybe keep adding the rate to a buffer and cap it at certain limits. 3 spectrums. 1 for each rotation state!
-
-         //rest to exact middle if you stay on middle for a little whilre causde user assums it is middle
-        float currentRotationRate = Input.gyro.rotationRateUnbiased.z; //Try the biased one too and see if the starting rotation of the phone has any effect.
-        if (Mathf.Abs(currentRotationRate) >= stats.gyroSensitivity) {
-
-            // -4 -> -2 = left
-            // 2 -> 4 = right
-            // -1 -> 1 = mid
-
-            //Just use 1 and -1 that im getting and use the gyroInputMultiplier to have full control on the tilt and not have it depending on how quick it was tilited!
-            //Last note before i slept, It seems like it goes offset a bit. hmmmmm.....
-            //Going from left to right seems to be the one that fucks up! Mathf.Abs(Input.gyro.userAcceleration.z * 2)
-            float value = stats.gyroTiltRate  * Time.deltaTime;
-            if (currentRotationRate > 0.0f) {
-                tiltSpectrum += value;
-
-                if (tiltSpectrum >= 2.0f) { //From Mid to Right
-                    currentTiltIndex = 1;
-                    if (tiltSpectrum > 4.0f)
-                        tiltSpectrum = 4.0f;
-                }
-                else if (tiltSpectrum > -2.0f) { //From Left to Mid
-                    currentTiltIndex = 0;
-                }
-
-            }
-            else if (currentRotationRate < 0.0f) { 
-                tiltSpectrum -= value;
-
-                if (tiltSpectrum <= -2.0f) { //From Mid to Left
-                    currentTiltIndex = -1;
-                    if (tiltSpectrum < -4.0f)
-                        tiltSpectrum = -4.0f;
-                }
-                else if (tiltSpectrum < 2.0f) { //From Right to Mid
-                    currentTiltIndex = 0;
-                }
-            }
-        }
-        else if (currentTiltIndex == 0 && gyroResetTimer != 0.0f) {
-            gyroResetTimer -= Time.deltaTime;
-            if (gyroResetTimer <= 0.0f) {
-                gyroResetTimer = stats.gyroResetDuration; 
-                tiltSpectrum = 0.0f; //Reset gyro tilt to mid
-                Log("RESET!");
-            }
-        }
-
-
-        Log("Timer _ " + gyroResetTimer);
-        Log("Current spectrum " + tiltSpectrum);
+        tiltRate = Input.gyro.gravity.x;
     }
 
 
@@ -423,8 +333,6 @@ public class Daredevil {
         }
     }
     public void Decelerate() {
-        //if (currentSpeed <= 0.0f)
-            //return;
 
         //TODO: Add unique behavior for if was boosting
         if (currentSpeed > 0.0f) {
@@ -451,7 +359,7 @@ public class Daredevil {
     public void ApplyRampBoost(RampBoost boost) {
         if (boost.duration == 0.0f || boost.maxSpeed == 0.0f)
             return;
-        return;
+
         isRampBoosted = true; //Mainly in case of anything else needing the data. Could still use Timer alone for that.
         currentRampBoost = boost;
         rampBoostTimer = boost.duration;

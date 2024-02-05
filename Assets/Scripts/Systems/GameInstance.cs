@@ -58,7 +58,6 @@ public class GameInstance : MonoBehaviour {
     private AsyncOperationHandle<GameObject> loadingScreenHandle;
 
     private Resolution deviceResolution;
-    public static Quaternion gyroOriginRotation;
 
     //Entities
     private GameObject soundSystem;
@@ -161,10 +160,13 @@ public class GameInstance : MonoBehaviour {
     }
 
 
+    public static Quaternion GetGyroRotation() {
+        return new Quaternion(0.5f, 0.5f, -0.5f, 0.5f) * Input.gyro.attitude * new Quaternion(0, 0, 1, 0);
+    }
     private void SetupApplicationInitialSettings() {
         Input.gyro.enabled = true;
         deviceResolution = Screen.currentResolution;
-        gyroOriginRotation = GyroToUnity(Input.gyro.attitude);
+        Input.gyro.updateInterval = 0.0167f; //60Hz
         if (debugging) {
             Log("Application started on device.");
             Log("Device information:\nScreen Width: [" + deviceResolution.width 
@@ -425,8 +427,7 @@ public class GameInstance : MonoBehaviour {
                 fadeTransitionScript.StartTransition(SetupLevelSelectMenuState);
                 break;
             case GameState.CONNECTION_MENU:
-                EnterDebugMode(); //Temp
-                //fadeTransitionScript.StartTransition(SetupConnectionMenuState);
+                fadeTransitionScript.StartTransition(SetupConnectionMenuState);
                 break;
             case GameState.ROLE_SELECT_MENU:
                 fadeTransitionScript.StartTransition(SetupRoleSelectMenuState);

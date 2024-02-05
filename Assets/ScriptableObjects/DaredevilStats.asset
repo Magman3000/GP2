@@ -18,14 +18,16 @@ MonoBehaviour:
   maxReverseSpeed: 250
   reverseRate: 60
   brakeRate: 200
-  turnRate: 1
   rotationCorrectionRate: 1
+  midSpectrumSize: 4
+  leftSpectrumSize: 2
+  rightSpectrumSize: 2
+  gyroSensitivity: 0.3
   gyroTiltRate: 10
-  gyroSensitivity: 0.6
   gyroResetDuration: 0.5
   driftRate: 0.05
   maxBoostSpeed: 500
   boostAccelerationRate: 300
   boostDecelerationRate: 234
-  gravity: 5
+  gravity: 1000
   terrainAdjustmentAngle: 45
