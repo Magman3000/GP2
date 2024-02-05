@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using static MyUtility.Utility;
 
@@ -23,7 +24,7 @@ public class Daredevil {
     private bool movingForward = false;
     private bool isMoving = false;
     private bool isBoosting = false;
-
+    private bool isReversingAndBraking = false;
 
 
     public void Initialize(GameInstance game, Player player) {
@@ -43,7 +44,9 @@ public class Daredevil {
         }
 
 
-        UpdateSpeed();
+        UpdateMovement();
+        //Break
+        //Reverse
         UpdateRotation();
     }
     public void FixedTick() {
@@ -61,13 +64,24 @@ public class Daredevil {
 
     public void SetBoostState(bool state) { isBoosting = state; }
     public void SetMovementState(bool state) { isMoving = state; }
+    public void SetBrakeState(bool state) { isReversingAndBraking = state; }
 
 
-    private void UpdateSpeed() {
-        if (isMoving)
-            Accelerate();
-        else if (!isMoving)
-            Decelerate();
+    private void UpdateMovement() {
+        if (isReversingAndBraking) {
+            if (currentSpeed > 0.0f)
+                Brake();
+            else if (currentSpeed <= 0.0f)
+                Reverse();
+        }
+        else {
+            if (isMoving)
+                Accelerate();
+            else if (!isMoving)
+                Decelerate();
+        }
+
+        Log(currentSpeed);
     }
     private void UpdateVelocity() {
         playerRigidbody.velocity = playerRef.transform.forward * (currentSpeed * Time.deltaTime);
@@ -75,51 +89,49 @@ public class Daredevil {
     private void UpdateRotation() {
         //float value = Input.gyro.rotationRate.z * stats.GetTurnRate() * Time.deltaTime;
         float value2 = Input.gyro.attitude.z * stats.turnRate * Time.deltaTime;
+        Log("Z " + Input.gyro.attitude.z);
+        Log("X " + Input.gyro.attitude.x);
+        Log("Y " + Input.gyro.attitude.y);
 
         playerRef.transform.localEulerAngles = new Vector3(playerRef.transform.localEulerAngles.x, value2, playerRef.transform.localEulerAngles.z);
         //playerRef.transform.localEulerAngles += new Vector3(0.0f, value2, 0.0f); //Gyro is offset and off on phone
-        //Log(value2);
     }
 
+
+    private void UpdateSpeed(float rate, float limit, Action callback, bool additive = true) {
+        if (additive) {
+            currentSpeed += rate * Time.deltaTime;
+            if (currentSpeed >= limit) {
+                currentSpeed = limit;
+                if (callback != null)
+                    callback.Invoke();
+            }
+        }
+        else if (!additive) {
+            currentSpeed -= rate * Time.deltaTime;
+            if (currentSpeed <= limit) {
+                currentSpeed = limit;
+                if (callback != null)
+                    callback.Invoke();
+            }
+        }
+    }
 
 
 
     //Brake
-    private void Brake()
-    {
-        if (currentSpeed == 0.0f)
-        {
-            return;
-        }
-
-        //setting a float to help calculate the needed speed to remove no matter which direction you are going
-        if (currentSpeed > 0) {
-            movingForward = true;
-        } else {
-            movingForward = false;
-        }
-
-        //removing the needed speed depending on if you are moving forwards or not
-        if (movingForward == true){
-            currentSpeed -= stats.decelerationRate * Time.deltaTime;
-            if (currentSpeed <= 0.0f){
-                currentSpeed = 0.0f;
-            }
-        } else {
-            currentSpeed += stats.accelerationRate * Time.deltaTime;
-            if (currentSpeed >= 0.0f) {
-                currentSpeed = 0.0f;
-            }
+    private void Brake() {
+        currentSpeed -= stats.brakeRate * Time.deltaTime;
+        if (currentSpeed <= 0.0f) {
+            currentSpeed = 0.0f;
+            
         }
     }
+    private void Reverse() {
+        currentSpeed -= stats.reverseRate * Time.deltaTime;
+        if (currentSpeed <= -stats.maxReverseSpeed) {
+            currentSpeed = -stats.maxReverseSpeed;
 
-
-    private void Reversing()
-    {
-        currentSpeed -= stats.decelerationRate * Time.deltaTime;
-        if (currentSpeed >= stats.maxReverseSpeed)
-        {
-            currentSpeed = stats.maxReverseSpeed;
         }
     }
 
