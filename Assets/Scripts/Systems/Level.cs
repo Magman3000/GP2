@@ -36,8 +36,8 @@ public class Level : Entity {
             return;
 
 
-
-
+        foreach (var entity in registeredObstacles)
+            entity.Tick();
     }
     public void SetupReferences() {
         //Spawn Point

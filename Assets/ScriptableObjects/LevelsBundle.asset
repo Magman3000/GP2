@@ -19,33 +19,42 @@ MonoBehaviour:
       m_SubObjectName: 
       m_SubObjectType: 
       m_EditorAssetChanged: 0
-    name: 
-    preview: {fileID: 0}
+    name: Debug
+    preview: {fileID: 21300000, guid: 1e28b46e6ea161646b2a9386d885bc12, type: 3}
     selectable: 1
-  - key: DebugLevel
+  - key: 2
     asset:
       m_AssetGUID: 900054c90c6d3294288c7e1fcb04258a
       m_SubObjectName: 
       m_SubObjectType: 
       m_EditorAssetChanged: 0
-    name: 
-    preview: {fileID: 0}
+    name: Debug 2
+    preview: {fileID: 21300000, guid: 0e0b7c50a186ee648bceb88792b7ec9d, type: 3}
     selectable: 1
-  - key: DebugLevel
+  - key: 3
     asset:
       m_AssetGUID: 900054c90c6d3294288c7e1fcb04258a
       m_SubObjectName: 
       m_SubObjectType: 
       m_EditorAssetChanged: 0
-    name: 
-    preview: {fileID: 0}
+    name: Debug 3
+    preview: {fileID: 21300000, guid: befb2aa4db41f354db3e71e33c3d57f8, type: 3}
     selectable: 1
-  - key: DebugLevel
+  - key: '4 '
     asset:
       m_AssetGUID: 900054c90c6d3294288c7e1fcb04258a
       m_SubObjectName: 
       m_SubObjectType: 
       m_EditorAssetChanged: 0
-    name: 
-    preview: {fileID: 0}
+    name: Debug 4
+    preview: {fileID: 21300000, guid: 8d3590f3bec4bd14bb37e7104b3078ff, type: 3}
+    selectable: 1
+  - key: 5
+    asset:
+      m_AssetGUID: 900054c90c6d3294288c7e1fcb04258a
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    name: Debug 5
+    preview: {fileID: 21300000, guid: 8d3590f3bec4bd14bb37e7104b3078ff, type: 3}
     selectable: 1
