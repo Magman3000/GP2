@@ -1,12 +1,25 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static MyUtility.Utility;
 
+[Serializable]
+public struct LevelOption {
+    public int index;
+    public Image progressBar;
+    public Image previewImage;
+    public Button button;
+}
+
+
 public class LevelSelectMenu : Entity {
-    //SerializeFields
-    [SerializeField] private LevelsBundle levelsBundle;
+
+
+    [SerializeField] private GameObject buttonPrefab;
+
+
     [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private RectTransform contentRectTransform;
     [SerializeField] private TextMeshProUGUI levelNameText;
@@ -14,6 +27,11 @@ public class LevelSelectMenu : Entity {
     [SerializeField] private Vector2 defaultGuiElementSize = new Vector2(200, 400);
 
     //Ref
+    public LevelOption[] levelOptions;
+
+    private LevelsBundle levelsBundle;
+    private ScrollRect scrollRectComp;
+
     private Slider timeBar;
 
     //Ready checks
@@ -39,62 +57,67 @@ public class LevelSelectMenu : Entity {
 
     private int middleElementIndex = 0;
 
-    //I am using these for testing, cuz the Initialize method is not being called
-    //private void Start() {
-    //    SetupReferences();
-    //    SetupGUIElements();
-    //}
 
-    //private void Update() {
-    //    ButtonTimer();
-    //    UpdateTimerBar();
-    //    StopScrollAtEdges();
-    //    var currentItem = CalculateCurrentItem();
-    //    middleElementIndex = currentItem;
-    //    Snap();
-    //    UpdateLevelName();
-    //}
+
+
+
+
 
     public override void Initialize(GameInstance game) {
         if (initialized)
             return;
+
+
         gameInstanceRef = game;
-        initialized = true;
         SetupReferences();
-        SetupGUIElements();
+        //SetupGUIElements();
+
+        initialized = true;
     }
+    public override void Tick()
+    {
+        if (!initialized) {
+            Error("");
+            return;
+        }
 
 
-    //public override void Tick()
-    //{
-    //    if (!initialized)
-    //    {
-    //        Error("");
-    //        return;
-    //    }
-    //    ButtonTimer();
-    //    UpdateTimerBar();
-    //    StopScrollAtEdges();
-    //    var currentItem = CalculateCurrentItem();
-    //    middleElementIndex = currentItem;
-    //    Snap();
-    //    UpdateLevelName();
-    //}
+        if (Input.GetKeyDown(KeyCode.W)) {
+            scrollRectComp.content.localPosition = Vector2.zero;
+        }
 
-
+        //ButtonTimer();
+        //UpdateTimerBar();
+        //StopScrollAtEdges();
+        //var currentItem = CalculateCurrentItem();
+        //middleElementIndex = currentItem;
+        //Snap();
+        //UpdateLevelName();
+    }
     public void SetupMenuStartingState() {
         player1Ready = false;
         player2Ready = false;
+        //Menu gets reconstructed on each opening of the menu
+        levelsBundle = gameInstanceRef.GetLevelManagement().GetLevelsBundle();
+        SetupGUIElements();
     }
 
     private void SetupReferences() {
         //Time bar
-        var timerBarTransform = transform.Find("TimerBar");
-        Validate(timerBarTransform, "Failed to find TimerBar transform", ValidationLevel.ERROR, true);
-        timeBar = timerBarTransform.GetComponent<Slider>();
-        Validate(timeBar, "Failed to find TimerBar component", ValidationLevel.ERROR, true);
+        //var timerBarTransform = transform.Find("TimerBar");
+        //Validate(timerBarTransform, "Failed to find TimerBar transform", ValidationLevel.ERROR, true);
+        //timeBar = timerBarTransform.GetComponent<Slider>();
+        //Validate(timeBar, "Failed to find TimerBar component", ValidationLevel.ERROR, true);
+        //
+        //timeBar.gameObject.SetActive(false);
 
-        timeBar.gameObject.SetActive(false);
+
+
+        Transform scrollViewTransform = transform.Find("ScrollView");
+        scrollRectComp = scrollViewTransform.GetComponent<ScrollRect>();
+
+        
+
 
         //Canvas
         canvasRectTransform = GetComponent<RectTransform>();
@@ -103,28 +126,69 @@ public class LevelSelectMenu : Entity {
     }
 
     private void SetupGUIElements() {
-        guiElements = new RectTransform[levelsBundle.Entries.Length];
-        var index = 0;
-        foreach (var level in levelsBundle.Entries) {
-            var levelUIObject = new GameObject();
-
-            var levelUIRectTransform = levelUIObject.AddComponent<RectTransform>();
-            levelUIRectTransform.SetParent(contentRectTransform);
-            levelUIRectTransform.gameObject.name =
-                "Button" + index; // Just for testing since all have the same name //level.name;
-            levelUIRectTransform.sizeDelta = defaultGuiElementSize;
-            guiElements[index] = levelUIRectTransform;
-            index++;
-
-            var levelUIButton = levelUIObject.AddComponent<Button>();
-            var levelUIImage = levelUIObject.AddComponent<Image>();
-            levelUIImage.sprite = level.preview;
+        if (!levelsBundle) {
+            Warning("Invalid levels bundle!\nUnable to construct GUI elements.");
+            return;
         }
 
-        guiElementWidth = guiElements[0].sizeDelta.x;
-        spacing = contentRectTransform.GetComponent<HorizontalLayoutGroup>().spacing;
-        contentRectTransform.GetComponent<ContentSizeFitter>().enabled = false;
+        levelOptions = new LevelOption[levelsBundle.Entries.Length];
+        for (int i = 0; i < levelsBundle.Entries.Length + 1; i++) {
+
+            GameObject newOption = Instantiate(buttonPrefab, scrollRectComp.content);
+            Transform levelButton = newOption.transform.Find("LevelButton");
+            if (i == levelsBundle.Entries.Length) {
+                newOption.GetComponent<Image>().enabled = false;
+                levelButton.GetComponent<Image>().enabled = false;
+                newOption.name = "EmptyOption";
+                continue;
+            }
+
+
+
+            LevelOption levelOption = new LevelOption();
+            levelOption.progressBar = newOption.GetComponent<Image>();
+            levelOption.previewImage = levelButton.GetComponent<Image>();
+            levelOption.button = levelButton.GetComponent<Button>();
+
+            levelOption.progressBar.fillAmount = 0.0f;
+            levelOption.previewImage.sprite = levelsBundle.Entries[i].preview;
+            levelOption.index = i;
+
+            EventTrigger eventTrigger = levelButton.GetComponent<EventTrigger>();
+
+            EventTrigger.Entry newEvent = new EventTrigger.Entry();
+            newEvent.eventID = EventTriggerType.PointerExit;
+            newEvent.callback.AddListener((eventData) => { OnStartClicking(levelOption.index); });
+            
+            eventTrigger.triggers.Add(newEvent); 
+            
+            levelOptions[i] = levelOption;
+        }
     }
+
+    //private void SetupGUIElements() {
+    //    guiElements = new RectTransform[levelsBundle.Entries.Length];
+    //    var index = 0;
+    //    foreach (var level in levelsBundle.Entries) {
+    //        var levelUIObject = new GameObject();
+    //        
+    //        var levelUIRectTransform = levelUIObject.AddComponent<RectTransform>();
+    //        levelUIRectTransform.SetParent(contentRectTransform);
+    //        levelUIRectTransform.gameObject.name =
+    //            "Button" + index; // Just for testing since all have the same name //level.name;
+    //        levelUIRectTransform.sizeDelta = defaultGuiElementSize;
+    //        guiElements[index] = levelUIRectTransform;
+    //        index++;
+    //
+    //        var levelUIButton = levelUIObject.AddComponent<Button>();
+    //        var levelUIImage = levelUIObject.AddComponent<Image>();
+    //        levelUIImage.sprite = level.preview;
+    //    }
+    //
+    //    guiElementWidth = guiElements[0].sizeDelta.x;
+    //    spacing = contentRectTransform.GetComponent<HorizontalLayoutGroup>().spacing;
+    //    contentRectTransform.GetComponent<ContentSizeFitter>().enabled = false;
+    //}
 
     //Button holding
     private void ButtonTimer() {
@@ -209,5 +273,22 @@ public class LevelSelectMenu : Entity {
 
     public void DebugLevelButton() {
         gameInstanceRef.StartGame("DebugLevel");
+    }
+
+
+
+    public void OnStartClicking(int index) {
+
+        LevelOption option = levelOptions[index];
+
+        Vector3 scrollRect = scrollRectComp.content.localPosition;
+        Vector3 optionRect = option.progressBar.rectTransform.localPosition;
+        Vector3 resultRect = new Vector3(scrollRect.x + -(optionRect.x + 100), scrollRect.y, scrollRect.z); //100 spacing
+
+        scrollRectComp.content.transform.localPosition = resultRect;
+
+
+
+        Log("I received event with index " + index);
     }
 }

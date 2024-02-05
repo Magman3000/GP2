@@ -339,6 +339,9 @@ public class GameInstance : MonoBehaviour {
             case GameState.PLAYING:
                 UpdatePlayingState();
                 break;
+            case GameState.LEVEL_SELECT_MENU:
+                UpdateLevelSelectMenuState();
+                break;
             case GameState.CONNECTION_MENU:
                 UpdateConnectionMenuState();
                 break;
@@ -427,7 +430,8 @@ public class GameInstance : MonoBehaviour {
                 fadeTransitionScript.StartTransition(SetupLevelSelectMenuState);
                 break;
             case GameState.CONNECTION_MENU:
-                fadeTransitionScript.StartTransition(SetupConnectionMenuState);
+                //fadeTransitionScript.StartTransition(SetupConnectionMenuState);
+                fadeTransitionScript.StartTransition(SetupLevelSelectMenuState);
                 break;
             case GameState.ROLE_SELECT_MENU:
                 fadeTransitionScript.StartTransition(SetupRoleSelectMenuState);
@@ -505,7 +509,6 @@ public class GameInstance : MonoBehaviour {
         levelSelectMenuScript.SetupMenuStartingState();
         levelSelectMenu.SetActive(true);
         SetApplicationTargetFrameRate(menusFrameTarget);
-
     }
     private void SetupStartState() {
         currentGameState = GameState.PLAYING;
@@ -575,6 +578,9 @@ public class GameInstance : MonoBehaviour {
     private void UpdateStatelessSystems() {
         soundSystemScript.Tick();
         netcodeScript.Tick();
+    }
+    private void UpdateLevelSelectMenuState() {
+        levelSelectMenuScript.Tick();
     }
     private void UpdateConnectionMenuState() {
         connectionMenuScript.Tick();
@@ -778,7 +784,7 @@ public class GameInstance : MonoBehaviour {
             levelSelectMenu = Instantiate(asset);
             levelSelectMenuScript = levelSelectMenu.GetComponent<LevelSelectMenu>();
             Validate(levelSelectMenuScript, "LevelSelectMenu component is missing on entity!", ValidationLevel.ERROR, true);
-            //levelSelectMenuScript.Initialize(this);
+            levelSelectMenuScript.Initialize(this);
         }
         else if (asset.CompareTag("LoseMenu")) {
             if (debugging)
