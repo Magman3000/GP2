@@ -5,12 +5,17 @@ using static MyUtility.Utility;
 
 public class Level : Entity {
 
+    [SerializeField] private Obstacle.ObstacleActivationState startingObstacleActivationState = Obstacle.ObstacleActivationState.RED;
+    [Tooltip("Time limit of the level in seconds.")]
+    [SerializeField] private uint timeLimit = 100;
+
+
 
     public Obstacle.ObstacleActivationState currentObstacleState = Obstacle.ObstacleActivationState.NONE;
 
 
 
-
+    private uint currentTimeLimit = 0;
 
     public List<Obstacle> registeredObstacles = new List<Obstacle>();
 
@@ -48,8 +53,6 @@ public class Level : Entity {
             obstaclesParent = obstacleParentTransform.gameObject;
             ScanForObstacles();
         }
-        //Initial state? Either decided by entity or applied here! InitialObstaclesState [SerializeField]
-        //CheckTree(transform);
     }
 
     private void CheckTree(Transform parent) {
@@ -83,6 +86,10 @@ public class Level : Entity {
         foreach (var child in obstaclesParent.GetComponentsInChildren<Obstacle>()) { //SET THE ACTIVATION THING TOO!
             registeredObstacles.Add(child);
             child.Initialize(gameInstanceRef);
+            if (child.GetObstacleActivationState() == startingObstacleActivationState)
+                child.SetActivationState(true);
+            else
+                child.SetActivationState(false);
         }
     }
     private void UpdateObstacles() {

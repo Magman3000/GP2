@@ -14,8 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   accelerationRate: 200
   decelerationRate: 150
-  maxSpeed: 150
-  turnRate: 3000
+  maxSpeed: 600
+  maxReverseSpeed: 250
+  reverseRate: 60
+  brakeRate: 200
+  turnRate: 1
+  rotationCorrectionRate: 1
+  gyroTiltRate: 10
+  gyroSensitivity: 0.6
+  gyroResetDuration: 0.5
+  driftRate: 0.05
   maxBoostSpeed: 500
   boostAccelerationRate: 300
   boostDecelerationRate: 234
+  gravity: 5
+  terrainAdjustmentAngle: 45
