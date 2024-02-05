@@ -31,6 +31,7 @@ public class LevelSelectMenu : Entity {
 
     private LevelsBundle levelsBundle;
     private ScrollRect scrollRectComp;
+    private HorizontalLayoutGroup layoutGroupComp;
 
     private Slider timeBar;
 
@@ -115,8 +116,8 @@ public class LevelSelectMenu : Entity {
 
         Transform scrollViewTransform = transform.Find("ScrollView");
         scrollRectComp = scrollViewTransform.GetComponent<ScrollRect>();
+        layoutGroupComp = scrollRectComp.content.gameObject.GetComponent<HorizontalLayoutGroup>();
 
-        
 
 
         //Canvas
@@ -281,12 +282,28 @@ public class LevelSelectMenu : Entity {
 
         LevelOption option = levelOptions[index];
 
+
+        float spacingTotal = layoutGroupComp.spacing * index + 1;
+        float totalWidth = option.progressBar.rectTransform.rect.width * index + 1;
+        float anchorPoint = -scrollRectComp.content.rect.width;
+
         Vector3 scrollRect = scrollRectComp.content.localPosition;
-        Vector3 optionRect = option.progressBar.rectTransform.localPosition;
-        Vector3 resultRect = new Vector3(scrollRect.x + -(optionRect.x + 100), scrollRect.y, scrollRect.z); //100 spacing
-
+        Vector3 resultRect = new Vector3(anchorPoint + (spacingTotal + totalWidth), scrollRect.y, scrollRect.z);
         scrollRectComp.content.transform.localPosition = resultRect;
+        //Log();
 
+
+        levelNameText.text = levelsBundle.Entries[index].name;
+
+        // bool positive = false;
+        // Vector3 scrollRect = scrollRectComp.content.localPosition;
+        // Vector3 optionRect = option.progressBar.rectTransform.localPosition;
+        // float distanceToOrigin = optionRect.x;
+        //
+        //
+        // Vector3 resultRect = new Vector3(scrollRect.x - distanceToOrigin, scrollRect.y, scrollRect.z);
+        // scrollRectComp.content.transform.localPosition = resultRect;
+        // scrollRectComp.velocity = Vector2.zero;
 
 
         Log("I received event with index " + index);
