@@ -23,12 +23,18 @@ public class DaredevilStats : ScriptableObject {
     //[Range(0.1f, 5000.0f)][SerializeField] public float turnRate = 500.0f;
     [Range(0.1f, 1000.0f)][SerializeField] public float rotationCorrectionRate = 5.0f;
 
-    //Spectrum size
+
     [Header("Gyroscope")]
-    [Range(0.1f, 10.0f)][SerializeField] public float gyroSensitivity = 1.0f;
-    [Range(0.01f, 500.0f)][SerializeField] public float gyroTiltRate = 50.0f;
-    [Range(0.01f, 2.0f)][SerializeField] public float gyroResetDuration = 0.5f;
-    [Range(0.01f, 1.0f)][SerializeField] public float driftRate = 0.1f;
+    //Try to keep the ranges equal for best results.
+    [Range(0.1f, 10.0f)][SerializeField] public float debugTiltRate = 10.0f;
+    [Range(0.1f, 10.0f)][SerializeField] public float midSpectrumSize = 3.0f; //Remove
+    [Range(0.1f, 10.0f)][SerializeField] public float leftSpectrumSize = 3.0f; //Remove
+    [Range(0.1f, 10.0f)][SerializeField] public float rightSpectrumSize = 3.0f; //Remove
+
+    [Range(0.1f, 10.0f)][SerializeField] public float gyroSensitivity = 1.0f; //Remove
+    [Range(0.01f, 500.0f)][SerializeField] public float gyroTiltRate = 50.0f; //Remove
+    [Range(0.01f, 2.0f)][SerializeField] public float gyroResetDuration = 0.5f; //Remove
+    [Range(0.01f, 1.0f)][SerializeField] public float driftRate = 0.1f; //Remove
 
 
     [Header("Speed Boost Settings")]
@@ -38,8 +44,8 @@ public class DaredevilStats : ScriptableObject {
     [Range(0.1f, 500.0f)][SerializeField] public float boostDecelerationRate = 400.0f;
 
 
-    [Range(0.1f, 500.0f)][SerializeField] public float gravity = 400.0f;
-    [Range(0.1f, 90.0f)][SerializeField] public float terrainAdjustmentAngle = 45.0f;
+    [Range(0.1f, 1000.0f)][SerializeField] public float gravity = 400.0f;
+    [Range(0.1f, 90.0f)][SerializeField] public float terrainAdjustmentAngle = 45.0f; //Remove
 
 
 

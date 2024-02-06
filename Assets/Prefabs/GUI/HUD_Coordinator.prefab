@@ -1366,6 +1366,7 @@ GameObject:
   - component: {fileID: 2159846710521915611}
   - component: {fileID: 8378556597161309381}
   - component: {fileID: 7451988968889528354}
+  - component: {fileID: 4424684840471366579}
   m_Layer: 5
   m_Name: DragWindow
   m_TagString: Untagged
@@ -1448,8 +1449,8 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 3308759335890720125}
-          m_TargetAssemblyTypeName: CoordinatorHUD, Assembly-CSharp
+        - m_Target: {fileID: 4424684840471366579}
+          m_TargetAssemblyTypeName: DragWindow, Assembly-CSharp
           m_MethodName: DragWindowBegin
           m_Mode: 1
           m_Arguments:
@@ -1464,8 +1465,8 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 3308759335890720125}
-          m_TargetAssemblyTypeName: CoordinatorHUD, Assembly-CSharp
+        - m_Target: {fileID: 4424684840471366579}
+          m_TargetAssemblyTypeName: DragWindow, Assembly-CSharp
           m_MethodName: DragWindowEnd
           m_Mode: 1
           m_Arguments:
@@ -1476,3 +1477,15 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &4424684840471366579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9109118548829071264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc134ce11faeaf84c94196042c313746, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
