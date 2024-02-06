@@ -178,12 +178,13 @@ public class Daredevil {
         //playerRef.GetBoxCollider().size = new Vector3(0.75f, 1, 2); // otherwise z is 2
     }
     private void UpdateGroundedState() {
-        Vector3 position = playerRef.transform.position + playerRef.GetCapsuleCollider().center;
-        Vector3 size = new Vector3(10.0f, 10.0f, 10.0f); //playerRef.GetCapsuleCollider().size;
+        Vector3 position = playerRef.transform.position;
+        Vector3 size = new Vector3(1.0f, 1.0f, 1.0f); //playerRef.GetCapsuleCollider().size;
         float offset = 1.6f;
         position.y += offset;
         bool results = Physics.BoxCast(position, size / 2, -playerRef.transform.up, playerRef.transform.rotation, offset * 2.0f);
         Debug.Log(isGrounded);
+
         isGrounded = results; //Separted to player vfx on landing! if(!ground && results)
         if (!isGrounded && results)
         {
