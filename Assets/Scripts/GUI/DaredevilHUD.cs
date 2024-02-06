@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class DaredevilHUD : Entity {
 
@@ -12,6 +13,8 @@ public class DaredevilHUD : Entity {
     
     private Player playerRef;
     private Daredevil daredevilRef;
+    public TMP_Text scoreText;
+    public TMP_Text timeLimitText;
 
     public override void Initialize(GameInstance game) {
         if (initialized)
@@ -20,6 +23,8 @@ public class DaredevilHUD : Entity {
         gameInstanceRef = game;
         initialized = true;
     }
+
+
     public void SetupStartState() {
 
     }
@@ -32,8 +37,14 @@ public class DaredevilHUD : Entity {
     }
 
 
-  
 
+    public void UpdateCurrentScore(float score) {
+        scoreText.text = ("Score: " + score);
+    }
+
+    public void UpdateTimeLimit(float timeLimit) {
+        timeLimitText.text = ("Seconds Left: " + timeLimit);
+    }
 
     public void BrakeOnEvent() {
         daredevilRef.SetBrakeState(true);
