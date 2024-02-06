@@ -430,8 +430,7 @@ public class GameInstance : MonoBehaviour {
                 fadeTransitionScript.StartTransition(SetupLevelSelectMenuState);
                 break;
             case GameState.CONNECTION_MENU:
-                //fadeTransitionScript.StartTransition(SetupConnectionMenuState);
-                fadeTransitionScript.StartTransition(SetupLevelSelectMenuState);
+                fadeTransitionScript.StartTransition(SetupConnectionMenuState);
                 break;
             case GameState.ROLE_SELECT_MENU:
                 fadeTransitionScript.StartTransition(SetupRoleSelectMenuState);

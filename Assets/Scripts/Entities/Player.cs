@@ -115,8 +115,6 @@ public class Player : NetworkedEntity {
    
 
 
-
-
     public Identity GetPlayerIdentity() { return assignedPlayerIdentity; }
 
     public DaredevilStats GetDaredevilStats() { return daredevilStats; }

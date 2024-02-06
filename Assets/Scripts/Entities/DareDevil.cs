@@ -101,11 +101,9 @@ public class Daredevil {
         UpdateGroundedState();
         playerRef.transform.eulerAngles = new Vector3(playerRef.transform.eulerAngles.x, playerRef.transform.eulerAngles.y, 0.0f); //Kepp oit
 
-        if (Input.GetKeyDown(KeyCode.A))
-            currentTiltIndex = 1;
-        if (Input.GetKeyDown(KeyCode.D))
-            currentTiltIndex = -1;
 
+
+        UpdateDebugTilt();
         UpdateTilt();
         UpdateMovement();
         UpdateRampBoost();
@@ -259,9 +257,21 @@ public class Daredevil {
     }
 
 
-
+    private void UpdateDebugTilt() {
+        if (Input.GetKeyDown(KeyCode.A)) {
+            tiltRate += stats.debugTiltRate * Time.deltaTime;
+            if (tiltRate > 1.0f)
+                tiltRate = 1.0f;
+        }
+        if (Input.GetKeyDown(KeyCode.D)) {
+            tiltRate -= stats.debugTiltRate * Time.deltaTime;
+            if (tiltRate < -1.0f)
+                tiltRate = -1.0f;
+        }
+    }
     private void UpdateTilt() {
-        tiltRate = Input.gyro.gravity.z;
+        if (SystemInfo.supportsGyroscope)
+            tiltRate = Input.gyro.gravity.z;
     }
 
 
