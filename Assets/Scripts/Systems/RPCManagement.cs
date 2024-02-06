@@ -99,9 +99,9 @@ public class RPCManagement : NetworkedEntity {
     }
     [ClientRpc]
     public void RelayRoleSelectionConfirmationClientRpc(ulong senderID, ClientRpcParams paramsPack) {
-        //gameInstanceRef.GetLevelManagement().QueueLevelLoadKey("DebugLevel"); //Temporary
-        //gameInstanceRef.StartGame();
-        gameInstanceRef.Transition(GameInstance.GameState.LEVEL_SELECT_MENU);
+        gameInstanceRef.GetLevelManagement().QueueLevelLoadKey("DebugLevel"); //Temporary
+        gameInstanceRef.StartGame();
+       // gameInstanceRef.Transition(GameInstance.GameState.LEVEL_SELECT_MENU);
     }
 
 
