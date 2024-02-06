@@ -10,6 +10,7 @@ public class Sandstorm : Obstacle
         if(!other.CompareTag("Player") || !activated) 
             return;
 
+        Debug.Log("Darude");
         other.transform.forward += (other.transform.position - transform.position).normalized * diruptionRatio * Time.deltaTime;
     }
 }
