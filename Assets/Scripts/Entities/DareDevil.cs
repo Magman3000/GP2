@@ -259,6 +259,7 @@ public class Daredevil {
 
 
     private void UpdateDebugTilt() {
+        /////
         if (Input.GetKeyDown(KeyCode.A)) {
             tiltRate += stats.debugTiltRate * Time.deltaTime;
             if (tiltRate > 1.0f)
