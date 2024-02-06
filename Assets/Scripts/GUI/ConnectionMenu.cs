@@ -62,6 +62,10 @@ public class ConnectionMenu : Entity {
             return;
         }
 
+        //TEMPORARY FOR DEBUGGING
+        if (Input.GetKeyDown(KeyCode.L)) {
+            gameInstanceRef.EnterDebugMode();
+        }
 
         CheckConnectionStatus();
     }
@@ -157,6 +161,8 @@ public class ConnectionMenu : Entity {
     //Called upon opening this menu
     public void SetupStartState() {
         CheckUnityServicesStatus();
+        SetMenuState(ConnectionMenuState.SELECT_CONNECTION);
+        connectionCodeTextComp.text = "";
     }
 
     private void SetupReferences() {

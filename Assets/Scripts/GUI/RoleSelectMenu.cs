@@ -197,8 +197,10 @@ public class RoleSelectMenu : Entity {
             if (gameInstanceRef.GetNetcode().IsHost()) {
                 ulong clientID = Netcode.GetClientID();
                 gameInstanceRef.GetRPCManagement().ConfirmRoleSelectionServerRpc((ulong)clientID);
-                gameInstanceRef.GetLevelManagement().QueueLevelLoadKey("DebugLevel"); //Temporary
-                gameInstanceRef.StartGame();
+                gameInstanceRef.Transition(GameInstance.GameState.LEVEL_SELECT_MENU);
+
+                //gameInstanceRef.GetLevelManagement().QueueLevelLoadKey("DebugLevel"); //Temporary
+                //gameInstanceRef.StartGame();
             }
         }
     }

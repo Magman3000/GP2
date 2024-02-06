@@ -6,7 +6,9 @@ using static MyUtility.Utility;
 
 public class RampSpeedBoost : Obstacle {
 
-    [SerializeField] float amount = 2.0f;
+    [SerializeField] public RampBoost RampBoost = new RampBoost();
+    
+
 
     public override void Initialize(GameInstance game) {
         base.Initialize(game);
@@ -22,7 +24,7 @@ public class RampSpeedBoost : Obstacle {
             return;
 
         Player player = other.GetComponent<Player>();
-        player.GetDaredevilData().ApplyRampBoost(amount);
+        player.GetDaredevilData().ApplyRampBoost(RampBoost);
         Log("Boosted!");
     }
 }

@@ -5,12 +5,17 @@ using static MyUtility.Utility;
 
 public class Level : Entity {
 
+    [SerializeField] private Obstacle.ObstacleActivationState startingObstacleActivationState = Obstacle.ObstacleActivationState.RED;
+    [Tooltip("Time limit of the level in seconds.")]
+    [SerializeField] private uint timeLimit = 100;
+
+
 
     public Obstacle.ObstacleActivationState currentObstacleState = Obstacle.ObstacleActivationState.NONE;
 
 
 
-
+    private uint currentTimeLimit = 0;
 
     public List<Obstacle> registeredObstacles = new List<Obstacle>();
 
@@ -31,8 +36,8 @@ public class Level : Entity {
             return;
 
 
-
-
+        foreach (var entity in registeredObstacles)
+            entity.Tick();
     }
     public void SetupReferences() {
         //Spawn Point
@@ -46,10 +51,8 @@ public class Level : Entity {
         Transform obstacleParentTransform = transform.Find("Obstacles");
         if (Validate(obstacleParentTransform, "No obstacles parent was found!\nObstacles activation state will be unused!", ValidationLevel.WARNING)) {
             obstaclesParent = obstacleParentTransform.gameObject;
-            InitializeObstacles();
+            ScanForObstacles();
         }
-        //Initial state? Either decided by entity or applied here! InitialObstaclesState [SerializeField]
-        CheckTree(transform);
     }
 
     private void CheckTree(Transform parent) {
@@ -76,12 +79,18 @@ public class Level : Entity {
         currentObstacleState = state;
         UpdateObstacles();
     }
-    private void InitializeObstacles() {
+    private void ScanForObstacles() {
         if (!obstaclesParent) //Ditch this to instead registering all of them since now its just obstacle class
             return;
 
-        foreach (var child in obstaclesParent.GetComponentsInChildren<Obstacle>()) //SET THE ACTIVATION THING TOO!
+        foreach (var child in obstaclesParent.GetComponentsInChildren<Obstacle>()) { //SET THE ACTIVATION THING TOO!
+            registeredObstacles.Add(child);
             child.Initialize(gameInstanceRef);
+            if (child.GetObstacleActivationState() == startingObstacleActivationState)
+                child.SetActivationState(true);
+            else
+                child.SetActivationState(false);
+        }
     }
     private void UpdateObstacles() {
         if (!obstaclesParent)

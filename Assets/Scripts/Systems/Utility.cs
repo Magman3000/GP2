@@ -61,6 +61,17 @@ namespace MyUtility {
             int newRange = newMax - newMin;
             return (((value - oldMin) * newRange) / oldRange) + newMin;
         }
-
+        /// <summary>
+        /// If bounds a is within b.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static bool IsInBounds(Bounds a, Bounds b) {
+            return a.Contains(b.min) && a.Contains(b.max);
+        }
+        public static Quaternion GyroToUnity(Quaternion q) {
+            return new Quaternion(q.x, q.y, -q.z, -q.w);  
+        }
     }
 }
