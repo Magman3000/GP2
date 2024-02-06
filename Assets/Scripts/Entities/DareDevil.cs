@@ -267,7 +267,6 @@ public class Daredevil {
 
 
     private void UpdateDebugTilt() {
-        /////
         if (Input.GetKeyDown(KeyCode.A)) {
             tiltRate += stats.debugTiltRate * Time.deltaTime;
             if (tiltRate > 1.0f)
@@ -281,7 +280,7 @@ public class Daredevil {
     }
     private void UpdateTilt() {
         if (SystemInfo.supportsGyroscope)
-            tiltRate = Input.gyro.gravity.z;
+            tiltRate = Input.gyro.gravity.x;
     }
 
 
