@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Blockades : Obstacle
 {
-    enum ColiderType
+    enum ColiderType //Which colider component used.
     {
         BOX,
         SPHERE,
