@@ -180,16 +180,16 @@ public class Daredevil {
     private void UpdateGroundedState() {
         Vector3 position = playerRef.transform.position;
         Vector3 size = new Vector3(1.0f, 1.0f, 1.0f); //playerRef.GetCapsuleCollider().size;
-        float offset = 1.6f;
+        float offset = 0.7f;
         position.y += offset;
         bool results = Physics.BoxCast(position, size / 2, -playerRef.transform.up, playerRef.transform.rotation, offset * 2.0f);
         Debug.Log(isGrounded);
-
-        isGrounded = results; //Separted to player vfx on landing! if(!ground && results)
         if (!isGrounded && results)
         {
             HitStop();
         }
+        isGrounded = results; //Separted to player vfx on landing! if(!ground && results)
+
     }
     private void UpdateGravity() {
         if (isGrounded)
