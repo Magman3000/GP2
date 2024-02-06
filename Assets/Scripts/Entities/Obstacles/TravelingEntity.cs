@@ -12,11 +12,13 @@ public class TravelingEntity : Obstacle
     
     public override void Initialize(GameInstance game)
     {
+       
         startingLocation = transform.position;
     }
 
     public override void Tick()
     {
+        Debug.Log("Traveling Entity Update");
         float temp = Vector3.Distance(startingLocation, endLocation);
         PatrolMovement(endLocation, movementSpeed);
         if(temp < 0.1) 
@@ -40,6 +42,7 @@ public class TravelingEntity : Obstacle
     }
     private void PatrolMovement(Vector3 destination, float interpolationRatio)
     {
+        Debug.Log("Patrol Movement Called");
         Vector3 postionCalculation = Vector3.Lerp(transform.position, destination, interpolationRatio * Time.deltaTime);
         transform.position = postionCalculation;
         float positionDistance = Vector3.Distance(postionCalculation, destination);

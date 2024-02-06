@@ -182,8 +182,10 @@ public class Daredevil {
         Vector3 size = new Vector3(1.0f, 1.0f, 1.0f); //playerRef.GetCapsuleCollider().size;
         float offset = 0.7f;
         position.y += offset;
-        bool results = Physics.BoxCast(position, size / 2, -playerRef.transform.up, playerRef.transform.rotation, offset * 2.0f);
+
+
         Debug.Log(isGrounded);
+        bool results = Physics.BoxCast(position, size / 2, -playerRef.transform.up, playerRef.transform.rotation, offset * 2.0f);
         if (!isGrounded && results)
         {
             HitStop();
@@ -267,13 +269,12 @@ public class Daredevil {
 
 
     private void UpdateDebugTilt() {
-        /////
-        if (Input.GetKeyDown(KeyCode.A)) {
+        if (Input.GetKeyDown(KeyCode.D)) {
             tiltRate += stats.debugTiltRate * Time.deltaTime;
             if (tiltRate > 1.0f)
                 tiltRate = 1.0f;
         }
-        if (Input.GetKeyDown(KeyCode.D)) {
+        if (Input.GetKeyDown(KeyCode.A)) {
             tiltRate -= stats.debugTiltRate * Time.deltaTime;
             if (tiltRate < -1.0f)
                 tiltRate = -1.0f;
@@ -281,7 +282,7 @@ public class Daredevil {
     }
     private void UpdateTilt() {
         if (SystemInfo.supportsGyroscope)
-            tiltRate = Input.gyro.gravity.z;
+            tiltRate = Input.gyro.gravity.x;
     }
 
 
