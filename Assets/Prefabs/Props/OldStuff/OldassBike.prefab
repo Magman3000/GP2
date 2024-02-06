@@ -342,7 +342,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8121388012976461336}
   m_Layer: 0
-  m_Name: Motorcycle_Placeholder
+  m_Name: OldassBike
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

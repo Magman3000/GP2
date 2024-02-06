@@ -45,6 +45,7 @@ public class Daredevil {
     private float tiltSpectrum = 0.0f;
     private float gyroResetTimer = 0.0f;
     private float tiltRate = 0.0f;
+    private float hitStopTimer = 0.0f;
 
     private GameObject frontWheelMesh;
     private GameObject backWheelMesh;
@@ -107,6 +108,7 @@ public class Daredevil {
         UpdateTilt();
         UpdateMovement();
         UpdateRampBoost();
+        HitstopTimer();
     }
     public void FixedTick() {
         if (!initialized) {
@@ -178,10 +180,15 @@ public class Daredevil {
     private void UpdateGroundedState() {
         Vector3 position = playerRef.transform.position + playerRef.GetCapsuleCollider().center;
         Vector3 size = new Vector3(10.0f, 10.0f, 10.0f); //playerRef.GetCapsuleCollider().size;
-        float offset = 0.6f;
+        float offset = 1.6f;
         position.y += offset;
         bool results = Physics.BoxCast(position, size / 2, -playerRef.transform.up, playerRef.transform.rotation, offset * 2.0f);
+        Debug.Log(isGrounded);
         isGrounded = results; //Separted to player vfx on landing! if(!ground && results)
+        if (!isGrounded && results)
+        {
+            HitStop();
+        }
     }
     private void UpdateGravity() {
         if (isGrounded)
@@ -195,10 +202,11 @@ public class Daredevil {
             return;
 
         if (rampBoostTimer > 0.0f) {
-            currentSpeed += currentRampBoost.accelerationRate * Time.deltaTime;
+            //currentSpeed += currentRampBoost.accelerationRate * Time.deltaTime;
+            UpdateSpeed(currentRampBoost.accelerationRate, currentRampBoost.maxSpeed, null, true);
             if (currentSpeed >= currentRampBoost.maxSpeed) {
-                currentSpeed = currentRampBoost.maxSpeed;
-                rampBoostTimer -= Time.deltaTime;
+                //currentSpeed = currentRampBoost.maxSpeed;
+                rampBoostTimer -= Time.deltaTime; //create function and add it as action callback
                 Log("Boost timer " + rampBoostTimer);
                 if (rampBoostTimer <= 0.0f) {
                     rampBoostTimer = 0.0f;
@@ -298,19 +306,23 @@ public class Daredevil {
 
 
     //Brake
-    private void Brake() {
-        currentSpeed -= stats.brakeRate * Time.deltaTime;
+    private void Brake()
+    {
+        //currentSpeed -= stats.brakeRate * Time.deltaTime;
+        UpdateSpeed(stats.brakeRate, 0.0f, null, false);
         //Log("Brake");
-        if (currentSpeed <= 0.0f) {
-            currentSpeed = 0.0f;
-        }
+        //if (currentSpeed <= 0.0f) {
+            //currentSpeed = 0.0f;
+        //}
     }
-    private void Reverse() {
-        currentSpeed -= stats.reverseRate * Time.deltaTime;
+    private void Reverse()
+    {
+        //currentSpeed -= stats.reverseRate * Time.deltaTime;
+        UpdateSpeed(stats.reverseRate, -stats.maxReverseSpeed, null, false);
         //Log("Reverse");
-        if (currentSpeed <= -stats.maxReverseSpeed) {
-            currentSpeed = -stats.maxReverseSpeed;
-        }
+        //if (currentSpeed <= -stats.maxReverseSpeed) {
+            //currentSpeed = -stats.maxReverseSpeed;
+        //}
     }
 
 
@@ -319,27 +331,31 @@ public class Daredevil {
     public void Accelerate() {
 
         if (isBoosting) {
-            currentSpeed += stats.boostAccelerationRate * Time.deltaTime;
+            //currentSpeed += stats.boostAccelerationRate * Time.deltaTime;
+            UpdateSpeed(stats.boostAccelerationRate, stats.maxBoostSpeed, null, true);
             //Log("Boost Accelerate");
-            if (currentSpeed >= stats.maxBoostSpeed) {
-                currentSpeed = stats.maxBoostSpeed;
-            }
+            //if (currentSpeed >= stats.maxBoostSpeed) {
+                //currentSpeed = stats.maxBoostSpeed;
+            //}
         }
         else if (!isBoosting) {
 
-            if (currentSpeed > stats.maxSpeed) { //Boost recovery
-                currentSpeed -= stats.boostDecelerationRate * Time.deltaTime;
+            if (currentSpeed > stats.maxSpeed)
+            { //Boost recovery
+                //currentSpeed -= stats.boostDecelerationRate * Time.deltaTime;
+                UpdateSpeed(stats.boostDecelerationRate, stats.maxSpeed, null, false);
                 //Log("Boost Recovery");
-                if (currentSpeed <= stats.maxSpeed) {
-                    currentSpeed = stats.maxSpeed;
-                }
+                //if (currentSpeed <= stats.maxSpeed) {
+                    //currentSpeed = stats.maxSpeed;
+                //}
             }
             else if (currentSpeed < stats.maxSpeed) {
-                currentSpeed += stats.accelerationRate * Time.deltaTime;
+                //currentSpeed += stats.accelerationRate * Time.deltaTime;
+                UpdateSpeed(stats.accelerationRate, stats.maxSpeed, null, true);
                 //Log("Accelerate");
-                if (currentSpeed >= stats.maxSpeed) {
-                    currentSpeed = stats.maxSpeed;
-                }
+                //if (currentSpeed >= stats.maxSpeed) {
+                    //currentSpeed = stats.maxSpeed;
+                //}
             }
         }
     }
@@ -347,23 +363,45 @@ public class Daredevil {
 
         //TODO: Add unique behavior for if was boosting
         if (currentSpeed > 0.0f) {
-            currentSpeed -= stats.decelerationRate * Time.deltaTime;
+            //currentSpeed -= stats.decelerationRate * Time.deltaTime;
+            UpdateSpeed(stats.decelerationRate, 0.0f, null, false);
             //Log("Normal Decelrate");
-            if (currentSpeed <= 0.0f) {
-                currentSpeed = 0.0f;
-            }
+            //if (currentSpeed <= 0.0f) {
+                //currentSpeed = 0.0f;
+            //}
         }
         else { 
             if (currentSpeed < 0.0f) {
-                currentSpeed += stats.decelerationRate * Time.deltaTime; //COuld be something else. Reverse deceleraton rate
+                //currentSpeed += stats.decelerationRate * Time.deltaTime; //COuld be something else. Reverse deceleraton rate
+                UpdateSpeed(stats.decelerationRate, 0.0f, null, true);
                 //Log("Reverse Decelrate");
-                if (currentSpeed > 0.0f) {
-                    currentSpeed = 0.0f;
-                }
-            } 
+                //if (currentSpeed > 0.0f) {
+                    //currentSpeed = 0.0f;
+                //}
+            }
         }
 
 
+    }
+
+    public void HitStop()
+    {
+        //pause timeScale and set a timer
+        Time.timeScale = 0.0f;
+        hitStopTimer = stats.hitStopDuration;
+
+    }
+
+    public void HitstopTimer() {
+        if (hitStopTimer == 0.0f)
+            return;
+        //count down the timer in unscaled time until timeScale can be reset
+        hitStopTimer -= Time.unscaledDeltaTime;
+        if (hitStopTimer <= 0.0f)
+        {
+            Time.timeScale = 1.0f;
+            hitStopTimer = 0.0f;
+        }
     }
 
 
