@@ -196,7 +196,7 @@ public class RoleSelectMenu : Entity {
             gameInstanceRef.GetPlayer().AssignPlayerIdentity(client1Identity);
             if (gameInstanceRef.GetNetcode().IsHost()) {
                 ulong clientID = Netcode.GetClientID();
-                //gameInstanceRef.GetRPCManagement().ConfirmRoleSelectionServerRpc((ulong)clientID);
+                gameInstanceRef.GetRPCManagement().ConfirmRoleSelectionServerRpc((ulong)clientID);
                 //gameInstanceRef.Transition(GameInstance.GameState.LEVEL_SELECT_MENU);
 
                 gameInstanceRef.GetLevelManagement().QueueLevelLoadKey("DebugLevel"); //Temporary
