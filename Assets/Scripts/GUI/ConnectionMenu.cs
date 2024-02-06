@@ -63,7 +63,7 @@ public class ConnectionMenu : Entity {
         }
 
         //TEMPORARY FOR DEBUGGING
-        if (Input.GetKeyDown(KeyCode.L)) {
+        if (Input.GetKeyDown(KeyCode.Tab)) {
             gameInstanceRef.EnterDebugMode();
         }
 
