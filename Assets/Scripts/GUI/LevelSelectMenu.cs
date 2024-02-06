@@ -50,10 +50,8 @@ public class LevelSelectMenu : Entity {
         if (initialized)
             return;
 
-
         gameInstanceRef = game;
         SetupReferences();
-        //SetupGUIElements();
 
         initialized = true;
     }
@@ -63,7 +61,6 @@ public class LevelSelectMenu : Entity {
             Error("");
             return;
         }
-
 
         if (Input.GetKeyDown(KeyCode.W)) {
             scrollRectComp.content.localPosition = Vector2.zero;
