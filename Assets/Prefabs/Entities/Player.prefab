@@ -265,9 +265,49 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3942716640420179616, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
+      propertyPath: m_Mass
+      value: 10000
+      objectReference: {fileID: 0}
+    - target: {fileID: 3942716640420179616, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
+      propertyPath: m_WheelDampingRate
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3942716640420179616, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
+      propertyPath: m_SuspensionDistance
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3942716640420179616, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
+      propertyPath: m_ForceAppPointDistance
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3942716640420179616, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
+      propertyPath: m_ForwardFriction.m_Stiffness
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 4607395114775887120, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
       propertyPath: m_Name
       value: Bike
+      objectReference: {fileID: 0}
+    - target: {fileID: 8490190432695951907, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
+      propertyPath: m_Mass
+      value: 10000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8490190432695951907, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
+      propertyPath: m_WheelDampingRate
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8490190432695951907, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
+      propertyPath: m_SuspensionDistance
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8490190432695951907, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
+      propertyPath: m_ForceAppPointDistance
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8490190432695951907, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
+      propertyPath: m_ForwardFriction.m_Stiffness
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
