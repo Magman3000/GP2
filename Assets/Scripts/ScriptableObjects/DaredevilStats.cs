@@ -26,6 +26,7 @@ public class DaredevilStats : ScriptableObject {
 
     [Header("Gyroscope")]
     //Try to keep the ranges equal for best results.
+    [Range(0.1f, 10.0f)][SerializeField] public float debugTiltRate = 10.0f;
     [Range(0.1f, 10.0f)][SerializeField] public float midSpectrumSize = 3.0f; //Remove
     [Range(0.1f, 10.0f)][SerializeField] public float leftSpectrumSize = 3.0f; //Remove
     [Range(0.1f, 10.0f)][SerializeField] public float rightSpectrumSize = 3.0f; //Remove

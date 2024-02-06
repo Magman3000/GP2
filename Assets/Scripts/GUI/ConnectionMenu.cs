@@ -161,6 +161,8 @@ public class ConnectionMenu : Entity {
     //Called upon opening this menu
     public void SetupStartState() {
         CheckUnityServicesStatus();
+        SetMenuState(ConnectionMenuState.SELECT_CONNECTION);
+        connectionCodeTextComp.text = "";
     }
 
     private void SetupReferences() {
