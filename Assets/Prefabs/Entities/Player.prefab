@@ -336,6 +336,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2245901431143040496, guid: da95704f02cc14d408f7a2f1d8781051, type: 3}
+      propertyPath: simulationSpeed
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2245901431143040496, guid: da95704f02cc14d408f7a2f1d8781051, type: 3}
       propertyPath: moveWithTransform
       value: 1
       objectReference: {fileID: 0}
@@ -346,6 +350,14 @@ PrefabInstance:
     - target: {fileID: 2245901431143040496, guid: da95704f02cc14d408f7a2f1d8781051, type: 3}
       propertyPath: ShapeModule.radius.value
       value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 2245901431143040496, guid: da95704f02cc14d408f7a2f1d8781051, type: 3}
+      propertyPath: SizeBySpeedModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2245901431143040496, guid: da95704f02cc14d408f7a2f1d8781051, type: 3}
+      propertyPath: SizeBySpeedModule.range.y
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 2245901431143040496, guid: da95704f02cc14d408f7a2f1d8781051, type: 3}
       propertyPath: ShapeModule.radiusThickness
@@ -362,6 +374,34 @@ PrefabInstance:
     - target: {fileID: 2245901431143040496, guid: da95704f02cc14d408f7a2f1d8781051, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
       value: 1.57
+      objectReference: {fileID: 0}
+    - target: {fileID: 2245901431143040496, guid: da95704f02cc14d408f7a2f1d8781051, type: 3}
+      propertyPath: SizeBySpeedModule.curve.maxCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2245901431143040496, guid: da95704f02cc14d408f7a2f1d8781051, type: 3}
+      propertyPath: SizeBySpeedModule.curve.maxCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2245901431143040496, guid: da95704f02cc14d408f7a2f1d8781051, type: 3}
+      propertyPath: SizeBySpeedModule.curve.maxCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2245901431143040496, guid: da95704f02cc14d408f7a2f1d8781051, type: 3}
+      propertyPath: SizeBySpeedModule.curve.maxCurve.m_Curve.Array.data[1].inSlope
+      value: 0.054489948
+      objectReference: {fileID: 0}
+    - target: {fileID: 2245901431143040496, guid: da95704f02cc14d408f7a2f1d8781051, type: 3}
+      propertyPath: SizeBySpeedModule.curve.maxCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2245901431143040496, guid: da95704f02cc14d408f7a2f1d8781051, type: 3}
+      propertyPath: SizeBySpeedModule.curve.maxCurve.m_Curve.Array.data[1].inWeight
+      value: 0.24800009
+      objectReference: {fileID: 0}
+    - target: {fileID: 2245901431143040496, guid: da95704f02cc14d408f7a2f1d8781051, type: 3}
+      propertyPath: SizeBySpeedModule.curve.maxCurve.m_Curve.Array.data[1].outSlope
+      value: 0.054489948
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
