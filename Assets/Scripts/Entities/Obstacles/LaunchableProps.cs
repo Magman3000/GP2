@@ -12,6 +12,7 @@ public class LaunchableProps : Obstacle
     }
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Hit");
         if(CompareTag("Player"))
         {
             Debug.Log("Yeet");
