@@ -14,6 +14,7 @@ public class LaunchableProps : Obstacle
     {
         if(CompareTag("Player"))
         {
+            Debug.Log("Yeet");
             Vector3 direction = (transform.position - other.transform.position) * launchMultiplier;
             rigidBody.AddForce(direction);
         }
