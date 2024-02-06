@@ -45,6 +45,7 @@ public class Daredevil {
     private float tiltSpectrum = 0.0f;
     private float gyroResetTimer = 0.0f;
     private float tiltRate = 0.0f;
+    private float hitStopTimer = 0.0f;
 
     private GameObject frontWheelMesh;
     private GameObject backWheelMesh;
@@ -107,6 +108,7 @@ public class Daredevil {
         UpdateTilt();
         UpdateMovement();
         UpdateRampBoost();
+        HitstopTimer();
     }
     public void FixedTick() {
         if (!initialized) {
@@ -178,10 +180,15 @@ public class Daredevil {
     private void UpdateGroundedState() {
         Vector3 position = playerRef.transform.position + playerRef.GetCapsuleCollider().center;
         Vector3 size = new Vector3(10.0f, 10.0f, 10.0f); //playerRef.GetCapsuleCollider().size;
-        float offset = 0.6f;
+        float offset = 1.6f;
         position.y += offset;
         bool results = Physics.BoxCast(position, size / 2, -playerRef.transform.up, playerRef.transform.rotation, offset * 2.0f);
+        Debug.Log(isGrounded);
         isGrounded = results; //Separted to player vfx on landing! if(!ground && results)
+        if (!isGrounded && results)
+        {
+            HitStop();
+        }
     }
     private void UpdateGravity() {
         if (isGrounded)
@@ -371,10 +378,30 @@ public class Daredevil {
                 //if (currentSpeed > 0.0f) {
                     //currentSpeed = 0.0f;
                 //}
-            } 
+            }
         }
 
 
+    }
+
+    public void HitStop()
+    {
+        //pause timeScale and set a timer
+        Time.timeScale = 0.0f;
+        hitStopTimer = stats.hitStopDuration;
+
+    }
+
+    public void HitstopTimer() {
+        if (hitStopTimer == 0.0f)
+            return;
+        //count down the timer in unscaled time until timeScale can be reset
+        hitStopTimer -= Time.unscaledDeltaTime;
+        if (hitStopTimer <= 0.0f)
+        {
+            Time.timeScale = 1.0f;
+            hitStopTimer = 0.0f;
+        }
     }
 
 

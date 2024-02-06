@@ -47,6 +47,7 @@ public class DaredevilStats : ScriptableObject {
     [Range(0.1f, 1000.0f)][SerializeField] public float gravity = 400.0f;
     [Range(0.1f, 90.0f)][SerializeField] public float terrainAdjustmentAngle = 45.0f; //Remove
 
-
+    [Header("Hitstop Setting")]
+    [Range(0.1f, 1.0f)][SerializeField] public float hitStopDuration = 0.1f;
 
 }
