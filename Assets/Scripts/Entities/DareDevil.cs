@@ -182,8 +182,10 @@ public class Daredevil {
         Vector3 size = new Vector3(1.0f, 1.0f, 1.0f); //playerRef.GetCapsuleCollider().size;
         float offset = 0.7f;
         position.y += offset;
-        bool results = Physics.BoxCast(position, size / 2, -playerRef.transform.up, playerRef.transform.rotation, offset * 2.0f);
+
+
         Debug.Log(isGrounded);
+        bool results = Physics.BoxCast(position, size / 2, -playerRef.transform.up, playerRef.transform.rotation, offset * 2.0f);
         if (!isGrounded && results)
         {
             HitStop();
