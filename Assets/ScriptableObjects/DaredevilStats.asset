@@ -19,6 +19,7 @@ MonoBehaviour:
   reverseRate: 60
   brakeRate: 200
   rotationCorrectionRate: 1
+  debugTiltRate: 10
   midSpectrumSize: 4
   leftSpectrumSize: 2
   rightSpectrumSize: 2
@@ -31,3 +32,4 @@ MonoBehaviour:
   boostDecelerationRate: 234
   gravity: 1000
   terrainAdjustmentAngle: 45
+  hitStopDuration: 0.3

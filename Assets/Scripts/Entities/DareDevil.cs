@@ -45,6 +45,7 @@ public class Daredevil {
     private float tiltSpectrum = 0.0f;
     private float gyroResetTimer = 0.0f;
     private float tiltRate = 0.0f;
+    private float hitStopTimer = 0.0f;
 
     private GameObject frontWheelMesh;
     private GameObject backWheelMesh;
@@ -53,6 +54,8 @@ public class Daredevil {
 
     private WheelCollider frontWheelColliderComp;
     private WheelCollider backWheelColliderComp;
+
+    private ParticleSystem landingDustParticle;
 
 
     public void Initialize(GameInstance game, Player player) {
@@ -72,7 +75,6 @@ public class Daredevil {
     }
     public void SetupReferences() {
 
-
         var meshTransform = playerRef.transform.Find("Mesh");
         var bikeTransform = meshTransform.Find("Bike").Find("SeparatedBike");
 
@@ -84,6 +86,13 @@ public class Daredevil {
         engineMesh = bikeTransform.Find("Engine").gameObject;
         seatMesh = bikeTransform.Find("Seat").gameObject;
 
+        GameObject landingDustGameObject = GameObject.Find("Landing_Dust");
+
+        if(landingDustGameObject != null)
+        {
+            landingDustParticle = landingDustGameObject.GetComponent<ParticleSystem>(); //prolly not supposed to be here but i wasn't sure where to put it //Chriss
+        }
+
         Validate(frontWheelMesh, "FrontWheel go", ValidationLevel.ERROR);
         Validate(backWheelMesh, "Backwheel go", ValidationLevel.ERROR);
         Validate(engineMesh, "Engine", ValidationLevel.ERROR);
@@ -91,6 +100,9 @@ public class Daredevil {
 
         Validate(frontWheelColliderComp, "FrontWheel", ValidationLevel.ERROR);
         Validate(backWheelColliderComp, "Backwheel", ValidationLevel.ERROR);
+
+       
+
     }
     public void Tick() {
         if (!initialized) {
@@ -101,14 +113,13 @@ public class Daredevil {
         UpdateGroundedState();
         playerRef.transform.eulerAngles = new Vector3(playerRef.transform.eulerAngles.x, playerRef.transform.eulerAngles.y, 0.0f); //Kepp oit
 
-        if (Input.GetKeyDown(KeyCode.A))
-            currentTiltIndex = 1;
-        if (Input.GetKeyDown(KeyCode.D))
-            currentTiltIndex = -1;
 
+
+        UpdateDebugTilt();
         UpdateTilt();
         UpdateMovement();
         UpdateRampBoost();
+        HitstopTimer();
     }
     public void FixedTick() {
         if (!initialized) {
@@ -178,12 +189,31 @@ public class Daredevil {
         //playerRef.GetBoxCollider().size = new Vector3(0.75f, 1, 2); // otherwise z is 2
     }
     private void UpdateGroundedState() {
-        Vector3 position = playerRef.transform.position + playerRef.GetCapsuleCollider().center;
-        Vector3 size = new Vector3(10.0f, 10.0f, 10.0f); //playerRef.GetCapsuleCollider().size;
-        float offset = 0.6f;
+        Vector3 position = playerRef.transform.position;
+        Vector3 size = new Vector3(1.0f, 1.0f, 1.0f); //playerRef.GetCapsuleCollider().size;
+        float offset = 0.7f;
         position.y += offset;
+
+
+        Debug.Log(isGrounded);
         bool results = Physics.BoxCast(position, size / 2, -playerRef.transform.up, playerRef.transform.rotation, offset * 2.0f);
+        if (!isGrounded && results)
+        {
+            HitStop();
+
+            if(landingDustParticle != null) //didn't work properly so will check it out on wednesday //Chriss
+            {
+                Debug.Log("landing particle activated");
+                landingDustParticle.Play(); //Landing Dust particle plays when the player hits the ground
+            }
+
+            else
+            {
+                Debug.Log("LandingDustParticle is null");
+            }
+        }
         isGrounded = results; //Separted to player vfx on landing! if(!ground && results)
+
     }
     private void UpdateGravity() {
         if (isGrounded)
@@ -260,9 +290,21 @@ public class Daredevil {
     }
 
 
-
+    private void UpdateDebugTilt() {
+        if (Input.GetKeyDown(KeyCode.D)) {
+            tiltRate += stats.debugTiltRate * Time.deltaTime;
+            if (tiltRate > 1.0f)
+                tiltRate = 1.0f;
+        }
+        if (Input.GetKeyDown(KeyCode.A)) {
+            tiltRate -= stats.debugTiltRate * Time.deltaTime;
+            if (tiltRate < -1.0f)
+                tiltRate = -1.0f;
+        }
+    }
     private void UpdateTilt() {
-        tiltRate = Input.gyro.gravity.x;
+        if (SystemInfo.supportsGyroscope)
+            tiltRate = Input.gyro.gravity.x;
     }
 
 
@@ -360,10 +402,30 @@ public class Daredevil {
                 //if (currentSpeed > 0.0f) {
                     //currentSpeed = 0.0f;
                 //}
-            } 
+            }
         }
 
 
+    }
+
+    public void HitStop()
+    {
+        //pause timeScale and set a timer
+        Time.timeScale = 0.0f;
+        hitStopTimer = stats.hitStopDuration;
+
+    }
+
+    public void HitstopTimer() {
+        if (hitStopTimer == 0.0f)
+            return;
+        //count down the timer in unscaled time until timeScale can be reset
+        hitStopTimer -= Time.unscaledDeltaTime;
+        if (hitStopTimer <= 0.0f)
+        {
+            Time.timeScale = 1.0f;
+            hitStopTimer = 0.0f;
+        }
     }
 
 

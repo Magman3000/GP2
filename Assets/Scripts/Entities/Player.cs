@@ -3,17 +3,6 @@ using UnityEngine;
 using static MyUtility.Utility;
 
 
-
-
-public struct HitstopData {
-    private float hitstop; //?
-
-    public HitstopData(float cameraShakeIntensity, float cameraShakeDuration) { //?
-        hitstop = cameraShakeIntensity / cameraShakeDuration;
-    }
-}
-
-
 public class Player : NetworkedEntity {
     public enum Identity {
         NONE = 0,
@@ -115,8 +104,6 @@ public class Player : NetworkedEntity {
    
 
 
-
-
     public Identity GetPlayerIdentity() { return assignedPlayerIdentity; }
 
     public DaredevilStats GetDaredevilStats() { return daredevilStats; }
@@ -129,7 +116,5 @@ public class Player : NetworkedEntity {
     public Rigidbody GetRigidbody() { return rigidbodyComp; }
     public CapsuleCollider GetCapsuleCollider() { return capsuleColliderComp; }
 
-    //?
-    public bool GetBoostCheck() { return speedBoostBool; }
-    public void SetBoostCheck(bool boostCheck) {  speedBoostBool = boostCheck; }
+
 }
