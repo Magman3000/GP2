@@ -55,19 +55,19 @@ public class CoordinatorHUD : Entity {
         Validate(batteryBar, "batteryBar component not found!", ValidationLevel.ERROR, true);
 
         //Dragwindow
-        Transform DragWindowTransform = transform.Find("DragWindow");
-        Validate(DragWindowTransform, "DragWindowTransform transform not found!", ValidationLevel.ERROR, true);
-        Transform DragWindowBodyTransform = DragWindowTransform.transform.Find("DragWindowBody");
-        Validate(DragWindowBodyTransform, "DragWindowBodyTransform transform not found!", ValidationLevel.ERROR, true);
+        Transform dragWindowTransform = transform.Find("DragWindow");
+        Validate(dragWindowTransform, "DragWindowTransform transform not found!", ValidationLevel.ERROR, true);
+        Transform dragWindowBodyTransform = dragWindowTransform.transform.Find("DragWindowBody");
+        Validate(dragWindowBodyTransform, "DragWindowBodyTransform transform not found!", ValidationLevel.ERROR, true);
         //Score inside dragwindow
-        Transform ScoreTextTransform = DragWindowBodyTransform.transform.Find("ScoreTMP");
-        Validate(ScoreTextTransform, "ScoreTextTransform transform not found!", ValidationLevel.ERROR, true);
-        timeLimitText = ScoreTextTransform.GetComponent<TMP_Text>();
+        Transform scoreTextTransform = dragWindowBodyTransform.transform.Find("ScoreTMP");
+        Validate(scoreTextTransform, "ScoreTextTransform transform not found!", ValidationLevel.ERROR, true);
+        timeLimitText = scoreTextTransform.GetComponent<TMP_Text>();
         Validate(timeLimitText, "timeLimitText transform not found!", ValidationLevel.ERROR, true);
         //TimeLimit inside dragwindow
-        Transform TimeLimitTextTransform = DragWindowBodyTransform.transform.Find("TimeLimitTMP");
-        Validate(TimeLimitTextTransform, "TimeLimitTextTransform transform not found!", ValidationLevel.ERROR, true);
-        scoreText = TimeLimitTextTransform.GetComponent<TMP_Text>();
+        Transform timeLimitTextTransform = dragWindowBodyTransform.transform.Find("TimeLimitTMP");
+        Validate(timeLimitTextTransform, "TimeLimitTextTransform transform not found!", ValidationLevel.ERROR, true);
+        scoreText = timeLimitTextTransform.GetComponent<TMP_Text>();
         Validate(timeLimitText, "scoreText transform not found!", ValidationLevel.ERROR, true);
     }
 
