@@ -28,6 +28,7 @@ public class DynamicSound : MonoBehaviour
         if(pitch < pitchMin) pitch = pitchMin;
         else if(pitch > pitchMax) pitch = pitchMax;
 
+        
         //Update Pitch and volume
     }
     
