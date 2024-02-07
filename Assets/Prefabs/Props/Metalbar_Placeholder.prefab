@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8246641908526040467}
   - component: {fileID: 4733836799079146125}
   - component: {fileID: 2048058824293237605}
+  - component: {fileID: 7000141305305172361}
   m_Layer: 0
   m_Name: Metalbar_Placeholder
   m_TagString: Untagged
@@ -83,3 +84,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &7000141305305172361
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2281842104063610003}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.7650269, y: 0.76572704, z: 3.0594828}
+  m_Center: {x: -0.0003490895, y: 0.36677504, z: 0.000024080276}

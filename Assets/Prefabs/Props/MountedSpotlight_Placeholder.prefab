@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3921671788442138291}
   - component: {fileID: 7695535676719749745}
   - component: {fileID: 980116773103884845}
+  - component: {fileID: 7828614259638298523}
   m_Layer: 0
   m_Name: MountedSpotlight_Placeholder
   m_TagString: Untagged
@@ -84,6 +85,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &7828614259638298523
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6404178979103594443}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.48356333, y: 0.5122902, z: 0.7957549}
+  m_Center: {x: -0.2417817, y: 0.2561451, z: -0.0061727166}
 --- !u!1 &7220050713547475384
 GameObject:
   m_ObjectHideFlags: 0

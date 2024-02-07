@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4081907128407357708}
   - component: {fileID: 3503686686458273541}
   - component: {fileID: 5253640995817860142}
+  - component: {fileID: 4581875802048334055}
   m_Layer: 0
   m_Name: Box3
   m_TagString: Untagged
@@ -83,6 +84,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &4581875802048334055
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1010652612158794944}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 100.00012, y: 100, z: 100.00006}
+  m_Center: {x: -0.000061035156, y: 50.000008, z: -0.000030517578}
 --- !u!1 &1970087013079129492
 GameObject:
   m_ObjectHideFlags: 0
@@ -129,6 +151,7 @@ GameObject:
   - component: {fileID: 3866424902415991279}
   - component: {fileID: 4940093778718429728}
   - component: {fileID: 4798910440716481435}
+  - component: {fileID: 5129304414573410143}
   m_Layer: 0
   m_Name: Box2
   m_TagString: Untagged
@@ -201,6 +224,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &5129304414573410143
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4272387881761266118}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 100, y: 100, z: 100}
+  m_Center: {x: 0.0000019073486, y: 50.000008, z: 0.00012207031}
 --- !u!1 &6464682763725255420
 GameObject:
   m_ObjectHideFlags: 0
@@ -212,6 +256,7 @@ GameObject:
   - component: {fileID: 7565815829142776324}
   - component: {fileID: 2600594400798250104}
   - component: {fileID: 3023853216734292042}
+  - component: {fileID: 6193474999557176452}
   m_Layer: 0
   m_Name: OpenBox
   m_TagString: Untagged
@@ -284,6 +329,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &6193474999557176452
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6464682763725255420}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 98.007935, y: 104.25626, z: 104.36234}
+  m_Center: {x: 0.7198304, y: 52.12813, z: -0.3381133}
 --- !u!1 &8741239345921745375
 GameObject:
   m_ObjectHideFlags: 0
@@ -295,6 +361,7 @@ GameObject:
   - component: {fileID: 4193175267014277901}
   - component: {fileID: 6804569456289805909}
   - component: {fileID: 8689657236759367611}
+  - component: {fileID: 2010497819710266954}
   m_Layer: 0
   m_Name: Box1
   m_TagString: Untagged
@@ -367,3 +434,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &2010497819710266954
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8741239345921745375}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 100, y: 100, z: 100}
+  m_Center: {x: 0.0000019073486, y: 50.000008, z: 0.00012207031}
