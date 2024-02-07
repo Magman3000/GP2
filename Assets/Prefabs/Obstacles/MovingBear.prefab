@@ -50,7 +50,7 @@ MonoBehaviour:
   activated: 0
   endLocation: {x: 0, y: 0, z: 0}
   movementSpeed: 1.5
-  resetTime: 10
+  resetTime: 4
 --- !u!114 &4599696848391520445
 MonoBehaviour:
   m_ObjectHideFlags: 0
