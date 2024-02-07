@@ -55,6 +55,8 @@ public class Daredevil {
     private WheelCollider frontWheelColliderComp;
     private WheelCollider backWheelColliderComp;
 
+    private ParticleSystem landingDustParticle;
+
 
     public void Initialize(GameInstance game, Player player) {
         if (initialized)
@@ -73,7 +75,6 @@ public class Daredevil {
     }
     public void SetupReferences() {
 
-
         var meshTransform = playerRef.transform.Find("Mesh");
         var bikeTransform = meshTransform.Find("Bike").Find("SeparatedBike");
 
@@ -85,6 +86,13 @@ public class Daredevil {
         engineMesh = bikeTransform.Find("Engine").gameObject;
         seatMesh = bikeTransform.Find("Seat").gameObject;
 
+        GameObject landingDustGameObject = GameObject.Find("Landing_Dust");
+
+        if(landingDustGameObject != null)
+        {
+            landingDustParticle = landingDustGameObject.GetComponent<ParticleSystem>(); //prolly not supposed to be here but i wasn't sure where to put it //Chriss
+        }
+
         Validate(frontWheelMesh, "FrontWheel go", ValidationLevel.ERROR);
         Validate(backWheelMesh, "Backwheel go", ValidationLevel.ERROR);
         Validate(engineMesh, "Engine", ValidationLevel.ERROR);
@@ -92,6 +100,9 @@ public class Daredevil {
 
         Validate(frontWheelColliderComp, "FrontWheel", ValidationLevel.ERROR);
         Validate(backWheelColliderComp, "Backwheel", ValidationLevel.ERROR);
+
+       
+
     }
     public void Tick() {
         if (!initialized) {
@@ -195,6 +206,17 @@ public class Daredevil {
         if (!isGrounded && results)
         {
             HitStop();
+
+            if(landingDustParticle != null) //didn't work properly so will check it out on wednesday //Chriss
+            {
+                Debug.Log("landing particle activated");
+                landingDustParticle.Play(); //Landing Dust particle plays when the player hits the ground
+            }
+
+            else
+            {
+                Debug.Log("LandingDustParticle is null");
+            }
         }
         isGrounded = results; //Separted to player vfx on landing! if(!ground && results)
 

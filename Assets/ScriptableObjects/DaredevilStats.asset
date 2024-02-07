@@ -32,4 +32,4 @@ MonoBehaviour:
   boostDecelerationRate: 234
   gravity: 1000
   terrainAdjustmentAngle: 45
-  hitStopDuration: 1
+  hitStopDuration: 0.3
