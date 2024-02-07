@@ -10,10 +10,12 @@ public class CoordinatorHUD : Entity {
     
     private Player playerRef;
     private Coordinator coordinatorRef;
+    private Vector3 daredevilPosition = Vector3.zero;
 
     private Slider boostCrankSlider;
     private Image batteryBar;
 
+    private const float distanceTrashHold = 10f;
 
     public override void Initialize(GameInstance game) {
         if (initialized)
@@ -28,8 +30,7 @@ public class CoordinatorHUD : Entity {
         if (!initialized)
             return;
 
-
-
+        UpdateRadar();
     }
     private void SetupReferences() {
 
@@ -96,5 +97,27 @@ public class CoordinatorHUD : Entity {
             RelayBoostState(false);
             coordinatorRef.SetBoostState(false);
         }
+    }
+    
+    public void SetDaredevilPosition(Vector3 position) {
+        daredevilPosition = position;
+    }
+
+    private void UpdateRadar() {
+        var playerPosition = daredevilPosition;
+        var currentLevel = gameInstanceRef.GetLevelManagement().GetCurrentLoadedLevel();
+        foreach (var obstacle in currentLevel.registeredObstacles) {
+            if (!obstacle)
+                continue;
+            var distance = Vector3.Distance(playerPosition, obstacle.transform.position);
+
+            if (distance < distanceTrashHold) {
+                PingRadar(daredevilPosition);
+            }
+        }
+    }
+
+    private void PingRadar(Vector3 position) {
+        Log("Pinging radar!");
     }
 }
