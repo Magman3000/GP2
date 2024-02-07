@@ -76,7 +76,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1153636229543940257, guid: 9e5b597eaaf3e884eb9f51e2eb9e97e9, type: 3}
       propertyPath: m_Name
-      value: Bear
+      value: Mesh
       objectReference: {fileID: 0}
     - target: {fileID: 3733737248047531692, guid: 9e5b597eaaf3e884eb9f51e2eb9e97e9, type: 3}
       propertyPath: m_LocalPosition.x
