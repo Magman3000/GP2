@@ -1,5 +1,4 @@
 using System.Xml.Serialization;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 //using UnityEngine.UIElements;
@@ -11,33 +10,29 @@ public class CoordinatorHUD : Entity {
     
     private Player playerRef;
     private Coordinator coordinatorRef;
+    private Vector3 daredevilPosition = Vector3.zero;
 
     private Slider boostCrankSlider;
     private Image batteryBar;
 
-    private TMP_Text scoreText;
-    private TMP_Text timeLimitText;
+    private const float distanceTrashHold = 10f;
 
-    
     public override void Initialize(GameInstance game) {
         if (initialized)
             return;
 
 
-
-        gameInstanceRef = game;
         SetupReferences();
+        gameInstanceRef = game;
         initialized = true;
     }
     public override void Tick() {
         if (!initialized)
             return;
 
-        UpdateCurrentScore();
-        UpdateTimeLimit();
+        UpdateRadar();
     }
-    private void SetupReferences()
-    {
+    private void SetupReferences() {
 
         //BoostCrank
         Transform boostCrankTransform = transform.Find("BoostCrank");
@@ -54,44 +49,7 @@ public class CoordinatorHUD : Entity {
         batteryBar = batteryBarFillTransform.GetComponent<Image>();
         Validate(batteryBar, "batteryBar component not found!", ValidationLevel.ERROR, true);
 
-        //Dragwindow
-        Transform DragWindowTransform = transform.Find("DragWindow");
-        Validate(DragWindowTransform, "DragWindowTransform transform not found!", ValidationLevel.ERROR, true);
-        Transform DragWindowBodyTransform = DragWindowTransform.transform.Find("DragWindowBody");
-        Validate(DragWindowBodyTransform, "DragWindowBodyTransform transform not found!", ValidationLevel.ERROR, true);
-        //Score inside dragwindow
-        Transform ScoreTextTransform = DragWindowBodyTransform.transform.Find("ScoreTMP");
-        Validate(ScoreTextTransform, "ScoreTextTransform transform not found!", ValidationLevel.ERROR, true);
-        timeLimitText = ScoreTextTransform.GetComponent<TMP_Text>();
-        Validate(timeLimitText, "timeLimitText transform not found!", ValidationLevel.ERROR, true);
-        //TimeLimit inside dragwindow
-        Transform TimeLimitTextTransform = DragWindowBodyTransform.transform.Find("TimeLimitTMP");
-        Validate(TimeLimitTextTransform, "TimeLimitTextTransform transform not found!", ValidationLevel.ERROR, true);
-        scoreText = TimeLimitTextTransform.GetComponent<TMP_Text>();
-        Validate(timeLimitText, "scoreText transform not found!", ValidationLevel.ERROR, true);
-
-
-
     }
-
-    //calling scoreSystem through gameInstance to change the score
-    public void UpdateCurrentScore()
-    {
-        scoreText.text = "Score: " + gameInstanceRef.GetScoreSystem().GetCurrentScore();
-    }
-
-    //getting the current time limit from calling level from levelmanagment 
-    public void UpdateTimeLimit()
-    {
-        timeLimitText.text = "Seconds Left: " + gameInstanceRef.GetLevelManagement().GetCurrentLoadedLevel().GetCurrentTimeLimit();
-    }
-
-
-    public void UpdateTimeLimit(float timeLimit)
-    {
-        timeLimitText.text = ("Seconds Left: " + timeLimit);
-    }
-
     public void SetupStartState() {
         batteryBar.fillAmount = coordinatorRef.GetStats().batteryLimit; //Could be changed to starting battery limit later!
     }
@@ -139,5 +97,27 @@ public class CoordinatorHUD : Entity {
             RelayBoostState(false);
             coordinatorRef.SetBoostState(false);
         }
+    }
+    
+    public void SetDaredevilPosition(Vector3 position) {
+        daredevilPosition = position;
+    }
+
+    private void UpdateRadar() {
+        var playerPosition = daredevilPosition;
+        var currentLevel = gameInstanceRef.GetLevelManagement().GetCurrentLoadedLevel();
+        foreach (var obstacle in currentLevel.registeredObstacles) {
+            if (!obstacle)
+                continue;
+            var distance = Vector3.Distance(playerPosition, obstacle.transform.position);
+
+            if (distance < distanceTrashHold) {
+                PingRadar(daredevilPosition);
+            }
+        }
+    }
+
+    private void PingRadar(Vector3 position) {
+        Log("Pinging radar!");
     }
 }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 9045315125004236897}
   - component: {fileID: 250004194516993994}
   - component: {fileID: 1692104218783575290}
+  - component: {fileID: 3211790785372832553}
   m_Layer: 0
   m_Name: LaunchableObjectChair
   m_TagString: Untagged
@@ -49,7 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedActivationState: 1
   activated: 0
-  launchMultiplier: 10
+  launchMultiplier: 10.1
 --- !u!54 &250004194516993994
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -98,6 +99,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.50660986, y: 1.0216342, z: 0.8115374}
   m_Center: {x: -0.0068834126, y: 0.48499376, z: 0.0040616393}
+--- !u!65 &3211790785372832553
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1997560364888021197}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.51, y: 1.03, z: 0.82}
+  m_Center: {x: -0.006883413, y: 0.4849938, z: 0.004061639}
 --- !u!1001 &6139921055355474288
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -148,7 +170,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6532102211805214412, guid: a9568d18a1534db4bae4fa63650fdeba, type: 3}
       propertyPath: m_Name
-      value: DirectorChair_Placeholder
+      value: Mesh
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

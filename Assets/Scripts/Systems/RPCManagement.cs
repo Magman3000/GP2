@@ -127,6 +127,20 @@ public class RPCManagement : NetworkedEntity {
     public void RelayBoostStateClientRpc(ulong senderID, bool state, ClientRpcParams paramsPack) {
         gameInstanceRef.GetPlayer().GetDaredevilData().SetBoostState(state);
     }
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void SetDaredevilTransformServerRpc(ulong senderID, Vector3 daredevilPosition) {
+        ClientRpcParams? clientParams = CreateClientRpcParams(senderID);
+        if (clientParams == null) {
+            Warning("Invalid client rpc params returned at SetDaredevilTransformServerRpc");
+            return;
+        }
+        RelayDaredevilTransformClientRpc(senderID, daredevilPosition, clientParams.Value);
+    }
+    [ClientRpc]
+    public void RelayDaredevilTransformClientRpc(ulong senderID, Vector3 daredevilPosition, ClientRpcParams paramsPack) {
+        gameInstanceRef.GetPlayer().GetCoordinatorHUD().SetDaredevilPosition(daredevilPosition);
+    }
 
     
     [ServerRpc(RequireOwnership = false)]
@@ -149,6 +163,4 @@ public class RPCManagement : NetworkedEntity {
 
         levelManagement.GetCurrentLoadedLevel().SetCurrentObstacleState(state);
     }
-
-
 }

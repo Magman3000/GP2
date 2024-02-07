@@ -49,8 +49,8 @@ MonoBehaviour:
   assignedActivationState: 2
   activated: 0
   endLocation: {x: 0, y: 0, z: 0}
-  movementSpeed: 3
-  resetTime: 10
+  movementSpeed: 1.5
+  resetTime: 4
 --- !u!114 &4599696848391520445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,7 +76,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1153636229543940257, guid: 9e5b597eaaf3e884eb9f51e2eb9e97e9, type: 3}
       propertyPath: m_Name
-      value: Bear
+      value: Mesh
       objectReference: {fileID: 0}
     - target: {fileID: 3733737248047531692, guid: 9e5b597eaaf3e884eb9f51e2eb9e97e9, type: 3}
       propertyPath: m_LocalPosition.x
