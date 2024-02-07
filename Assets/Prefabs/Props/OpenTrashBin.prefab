@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3724838972702597964}
   - component: {fileID: 2716525987709388756}
   - component: {fileID: 93391122963753885}
+  - component: {fileID: 4015966153311381450}
   m_Layer: 0
   m_Name: TrashBinOpen
   m_TagString: Untagged
@@ -83,6 +84,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &4015966153311381450
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3017747429010875825}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.90144575, y: 0.61885715, z: 1.1492426}
+  m_Center: {x: 0.03337547, y: -0.003033027, z: 0.5746187}
 --- !u!1 &3856615432204114762
 GameObject:
   m_ObjectHideFlags: 0
@@ -127,6 +149,7 @@ GameObject:
   - component: {fileID: 6317130764700998814}
   - component: {fileID: 7076140459231661223}
   - component: {fileID: 3875501025623209133}
+  - component: {fileID: 9209468775980922934}
   m_Layer: 0
   m_Name: TrashBinLid
   m_TagString: Untagged
@@ -199,3 +222,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &9209468775980922934
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8659549309721372993}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.7384718, y: 0.6049401, z: 0.062432036}
+  m_Center: {x: -0.3606204, y: -0.0014896073, z: 0.02401035}

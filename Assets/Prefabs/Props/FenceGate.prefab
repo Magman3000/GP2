@@ -94,6 +94,7 @@ GameObject:
   - component: {fileID: 8726354359956999401}
   - component: {fileID: 3354221183166510771}
   - component: {fileID: 2368973563552404566}
+  - component: {fileID: 4434308245979067408}
   m_Layer: 0
   m_Name: Fence_door_1
   m_TagString: Untagged
@@ -166,6 +167,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &4434308245979067408
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 943581222389413346}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.1479417, y: 2.703263, z: 4.8884554}
+  m_Center: {x: -0.04052654, y: 1.4338344, z: 2.696365}
 --- !u!1 &1590151614817910442
 GameObject:
   m_ObjectHideFlags: 0
@@ -260,6 +282,7 @@ GameObject:
   - component: {fileID: 8462016770650586285}
   - component: {fileID: 3505702126473655075}
   - component: {fileID: 2113017355701769925}
+  - component: {fileID: 3801017731031898816}
   m_Layer: 0
   m_Name: gate
   m_TagString: Untagged
@@ -332,6 +355,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &3801017731031898816
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2695656551859177756}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1556410543170635569, guid: c4febf73552a8534291c174ee4ab2e6f, type: 3}
 --- !u!1 &5989935627304496398
 GameObject:
   m_ObjectHideFlags: 0
@@ -343,6 +388,7 @@ GameObject:
   - component: {fileID: 3383658004635450667}
   - component: {fileID: 5256216798002600409}
   - component: {fileID: 4920305331333138598}
+  - component: {fileID: 1944673238520498957}
   m_Layer: 0
   m_Name: Fence_door_1.001
   m_TagString: Untagged
@@ -415,6 +461,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &1944673238520498957
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5989935627304496398}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.1479417, y: 2.7032628, z: 4.8884554}
+  m_Center: {x: -0.04052654, y: -1.2961209, z: 2.696365}
 --- !u!1 &5997969415721662879
 GameObject:
   m_ObjectHideFlags: 0

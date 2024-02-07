@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7913459093219295622}
+  - component: {fileID: 2264190035101786473}
   m_Layer: 0
   m_Name: StudioBuildingNoGate
   m_TagString: Untagged
@@ -34,6 +35,27 @@ Transform:
   - {fileID: 8422715494778678885}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2264190035101786473
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5126826504316571777}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 12.169316, y: 12.333178, z: 12.417027}
+  m_Center: {x: -5.859629, y: 5.666588, z: -0.4040122}
 --- !u!1001 &644373240854945971
 PrefabInstance:
   m_ObjectHideFlags: 0

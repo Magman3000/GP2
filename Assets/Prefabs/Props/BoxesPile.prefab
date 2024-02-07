@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1113218993310022763}
   - component: {fileID: 2033883862756984915}
   - component: {fileID: 8861872507769216071}
+  - component: {fileID: 4778200645602929506}
   m_Layer: 0
   m_Name: pCube1
   m_TagString: Untagged
@@ -83,6 +84,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &4778200645602929506
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 303073055275404745}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 100, y: 100, z: 100}
+  m_Center: {x: 0.0000019073486, y: 50.000008, z: 0.00012207031}
 --- !u!1 &359719763755509881
 GameObject:
   m_ObjectHideFlags: 0
@@ -133,6 +155,7 @@ GameObject:
   - component: {fileID: 8372800727641510827}
   - component: {fileID: 3576012722921968384}
   - component: {fileID: 1950876944333756924}
+  - component: {fileID: 1479617908807859881}
   m_Layer: 0
   m_Name: pCube7
   m_TagString: Untagged
@@ -205,6 +228,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &1479617908807859881
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1182048673333761095}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 100, y: 100, z: 100}
+  m_Center: {x: 0, y: 50, z: 0}
 --- !u!1 &1653662635189272106
 GameObject:
   m_ObjectHideFlags: 0
@@ -216,6 +260,7 @@ GameObject:
   - component: {fileID: 3500883046341558722}
   - component: {fileID: 646438398422685911}
   - component: {fileID: 9130097362185858920}
+  - component: {fileID: 5772623954457071930}
   m_Layer: 0
   m_Name: pCube8
   m_TagString: Untagged
@@ -288,6 +333,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &5772623954457071930
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1653662635189272106}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 109.78182, y: 149.0851, z: 103.22087}
+  m_Center: {x: -1.5953124, y: 74.54257, z: -0.0697732}
 --- !u!1 &2579072976694479162
 GameObject:
   m_ObjectHideFlags: 0
@@ -299,6 +365,7 @@ GameObject:
   - component: {fileID: 9135649794686776455}
   - component: {fileID: 1349274742902143886}
   - component: {fileID: 7469872030576384438}
+  - component: {fileID: 574832781551101234}
   m_Layer: 0
   m_Name: pCube4
   m_TagString: Untagged
@@ -371,6 +438,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &574832781551101234
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579072976694479162}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 100.00012, y: 100, z: 100.00006}
+  m_Center: {x: -0.00005722046, y: 50.000008, z: -0.000030517578}
 --- !u!1 &2665287782739890369
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,6 +470,7 @@ GameObject:
   - component: {fileID: 6713229391520780566}
   - component: {fileID: 8464456998922972412}
   - component: {fileID: 3570680959110228527}
+  - component: {fileID: 962504629115144736}
   m_Layer: 0
   m_Name: pCube2
   m_TagString: Untagged
@@ -454,6 +543,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &962504629115144736
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2665287782739890369}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 100, y: 100, z: 100}
+  m_Center: {x: 0.000017166138, y: 50.000008, z: 0.00012207031}
 --- !u!1 &3850162849629348971
 GameObject:
   m_ObjectHideFlags: 0
@@ -465,6 +575,7 @@ GameObject:
   - component: {fileID: 3322442266635779357}
   - component: {fileID: 3462105582877149113}
   - component: {fileID: 3557807304933569671}
+  - component: {fileID: 2612266243243319897}
   m_Layer: 0
   m_Name: pCube3
   m_TagString: Untagged
@@ -537,6 +648,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &2612266243243319897
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3850162849629348971}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 100, y: 100, z: 100}
+  m_Center: {x: 0.0000019073486, y: 50.000008, z: 0.0000076293945}
 --- !u!1 &4213059515866930501
 GameObject:
   m_ObjectHideFlags: 0
@@ -548,6 +680,7 @@ GameObject:
   - component: {fileID: 7045024848518589793}
   - component: {fileID: 1002537641165092769}
   - component: {fileID: 89747982523385651}
+  - component: {fileID: 2269907051090699364}
   m_Layer: 0
   m_Name: pCube5
   m_TagString: Untagged
@@ -620,6 +753,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &2269907051090699364
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4213059515866930501}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 102.38868, y: 174.17848, z: 109.142006}
+  m_Center: {x: -3.0367687, y: 87.08924, z: -1.7156601}
 --- !u!1 &5323730256946983316
 GameObject:
   m_ObjectHideFlags: 0
@@ -631,6 +785,7 @@ GameObject:
   - component: {fileID: 3085343114686507393}
   - component: {fileID: 986361802191592614}
   - component: {fileID: 7452423336095528135}
+  - component: {fileID: 2816170198532732574}
   m_Layer: 0
   m_Name: pCube6
   m_TagString: Untagged
@@ -703,3 +858,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &2816170198532732574
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5323730256946983316}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 100, y: 99.99999, z: 100}
+  m_Center: {x: 0.0000019073486, y: 50.000004, z: 0}
