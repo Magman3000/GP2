@@ -80,7 +80,7 @@ public class CoordinatorHUD : Entity {
     //getting the current time limit from calling level from levelmanagment 
     public void UpdateTimeLimit()
     {
-        timeLimitText.text = "Seconds Left: " + gameInstanceRef.GetLevelManagement().GetCurrentLoadedLevel().GetCurrentTimeLimit();
+        timeLimitText.text = "Seconds Left: " + gameInstanceRef.GetLevelManagement().GetCurrentLoadedLevel().GetCurrentTimeLimit(); //could be done in a better looking way
     }
 
     public void SetupStartState() {
