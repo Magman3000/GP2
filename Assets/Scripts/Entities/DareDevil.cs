@@ -74,7 +74,8 @@ public class Daredevil {
         gyroResetTimer = stats.gyroResetDuration;
     }
     public void SetupReferences() {
-
+        
+        var landingDustGameObject = playerRef.transform.Find("Landing_Dust");
         var meshTransform = playerRef.transform.Find("Mesh");
         var bikeTransform = meshTransform.Find("Bike").Find("SeparatedBike");
 
@@ -85,8 +86,6 @@ public class Daredevil {
 
         engineMesh = bikeTransform.Find("Engine").gameObject;
         seatMesh = bikeTransform.Find("Seat").gameObject;
-
-        GameObject landingDustGameObject = GameObject.Find("Landing_Dust");
 
         if(landingDustGameObject != null)
         {
@@ -195,12 +194,13 @@ public class Daredevil {
         position.y += offset;
 
 
-        Debug.Log(isGrounded);
+        //Debug.Log(isGrounded);
         bool results = Physics.BoxCast(position, size / 2, -playerRef.transform.up, playerRef.transform.rotation, offset * 2.0f);
         if (!isGrounded && results)
         {
             HitStop();
 
+            Debug.Log(landingDustParticle);
             if(landingDustParticle != null) //didn't work properly so will check it out on wednesday //Chriss
             {
                 Debug.Log("landing particle activated");
