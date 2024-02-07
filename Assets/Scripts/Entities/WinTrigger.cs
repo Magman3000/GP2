@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class WinTrigger : Entity
 {
-    Level levelRef;
+    
     public override void Initialize(GameInstance game)
     {
         if (initialized)

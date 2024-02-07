@@ -25,7 +25,7 @@ public class Player : NetworkedEntity {
 
     private CapsuleCollider capsuleColliderComp;
 
-    private bool speedBoostBool = false;
+    
 
 
     public override void Initialize(GameInstance game)
