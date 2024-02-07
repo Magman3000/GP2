@@ -18,23 +18,27 @@ public class TravelingEntity : Obstacle
 
     public override void Tick()
     {
-        Debug.Log("Traveling Entity Update");
-        float temp = Vector3.Distance(startingLocation, endLocation);
-        PatrolMovement(endLocation, movementSpeed);
-        if(temp < 0.1) 
+        if(activated)
         {
-            if(timer >= resetTime)
+            Debug.Log("Traveling Entity Update");
+            float temp = Vector3.Distance(startingLocation, endLocation);
+            PatrolMovement(endLocation, movementSpeed);
+            if (temp < 0.1)
             {
-                timer = 0.0f;
-                ResetPatrol();
+                if (timer >= resetTime)
+                {
+                    timer = 0.0f;
+                    ResetPatrol();
+                }
+                else
+                {
+                    timer += Time.deltaTime;
+                }
+
+
             }
-            else
-            {
-                timer += Time.deltaTime;
-            }
-           
-            
         }
+        
     }
     private void ResetPatrol()
     {

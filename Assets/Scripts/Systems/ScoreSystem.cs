@@ -9,6 +9,7 @@ public class ScoreSystem : Entity {
     [SerializeField] private int crashScorePenality = 100;
     [SerializeField] private int chaosScoreBonus = 10;
 
+   
 
     private int currentScore = 0;
 
@@ -27,6 +28,8 @@ public class ScoreSystem : Entity {
 
 
     }
+
+
     public void SetupStartState() {
         currentScore = 0;
     }
@@ -39,6 +42,6 @@ public class ScoreSystem : Entity {
         currentScore += chaosScoreBonus;
     }
 
-
+    public int GetCurrentScore() { return currentScore; }
 
 }

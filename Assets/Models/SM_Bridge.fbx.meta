@@ -3,7 +3,17 @@ guid: c31dc0d70a99eef4b90ca0d3303455ff
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_ColorAtlasBackground
+    second: {fileID: 2100000, guid: ef5a8d81f8f106a4fa80d077380bc3a7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_ColorAtlasForeground
+    second: {fileID: 2100000, guid: 8b40ce415e8c8ad45a154d940729286b, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

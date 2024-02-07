@@ -1,4 +1,5 @@
 using System.Xml.Serialization;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 //using UnityEngine.UIElements;
@@ -14,8 +15,11 @@ public class CoordinatorHUD : Entity {
 
     private Slider boostCrankSlider;
     private Image batteryBar;
+    private TMP_Text scoreText;
+    private TMP_Text timeLimitText;
 
     private const float distanceTrashHold = 10f;
+
 
     public override void Initialize(GameInstance game) {
         if (initialized)
@@ -32,7 +36,8 @@ public class CoordinatorHUD : Entity {
 
         UpdateRadar();
     }
-    private void SetupReferences() {
+    private void SetupReferences()
+    {
 
         //BoostCrank
         Transform boostCrankTransform = transform.Find("BoostCrank");
@@ -49,7 +54,35 @@ public class CoordinatorHUD : Entity {
         batteryBar = batteryBarFillTransform.GetComponent<Image>();
         Validate(batteryBar, "batteryBar component not found!", ValidationLevel.ERROR, true);
 
+        //Dragwindow
+        Transform dragWindowTransform = transform.Find("DragWindow");
+        Validate(dragWindowTransform, "DragWindowTransform transform not found!", ValidationLevel.ERROR, true);
+        Transform dragWindowBodyTransform = dragWindowTransform.transform.Find("DragWindowBody");
+        Validate(dragWindowBodyTransform, "DragWindowBodyTransform transform not found!", ValidationLevel.ERROR, true);
+        //Score inside dragwindow
+        Transform scoreTextTransform = dragWindowBodyTransform.transform.Find("ScoreTMP");
+        Validate(scoreTextTransform, "ScoreTextTransform transform not found!", ValidationLevel.ERROR, true);
+        timeLimitText = scoreTextTransform.GetComponent<TMP_Text>();
+        Validate(timeLimitText, "timeLimitText transform not found!", ValidationLevel.ERROR, true);
+        //TimeLimit inside dragwindow
+        Transform timeLimitTextTransform = dragWindowBodyTransform.transform.Find("TimeLimitTMP");
+        Validate(timeLimitTextTransform, "TimeLimitTextTransform transform not found!", ValidationLevel.ERROR, true);
+        scoreText = timeLimitTextTransform.GetComponent<TMP_Text>();
+        Validate(timeLimitText, "scoreText transform not found!", ValidationLevel.ERROR, true);
     }
+
+    //calling scoreSystem through gameInstance to change the score
+    public void UpdateCurrentScore()
+    {
+        scoreText.text = "Score: " + gameInstanceRef.GetScoreSystem().GetCurrentScore();
+    }
+
+    //getting the current time limit from calling level from levelmanagment 
+    public void UpdateTimeLimit()
+    {
+        timeLimitText.text = "Seconds Left: " + gameInstanceRef.GetLevelManagement().GetCurrentLoadedLevel().GetCurrentTimeLimit(); //could be done in a better looking way
+    }
+
     public void SetupStartState() {
         batteryBar.fillAmount = coordinatorRef.GetStats().batteryLimit; //Could be changed to starting battery limit later!
     }

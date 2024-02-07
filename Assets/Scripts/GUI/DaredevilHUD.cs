@@ -15,21 +15,30 @@ public class DaredevilHUD : Entity {
     private Player playerRef;
     private Daredevil daredevilRef;
 
-
     private TMP_Text scoreText;
     private TMP_Text timeLimitText;
+
+    
 
     public override void Initialize(GameInstance game) {
         if (initialized)
             return;
-        
-        
-        
-        SetupReferences();
+
+
+
+
         gameInstanceRef = game;
+        SetupReferences();
         initialized = true;
     }
 
+    public override void Tick() {
+        if (!initialized)
+            return;
+
+        UpdateCurrentScore();
+        UpdateTimeLimit();
+    }
     public void SetupStartState() {
 
     }
@@ -58,15 +67,19 @@ public class DaredevilHUD : Entity {
         Validate(timeLimitTextTransform, "TimeLimitTransform transform not found!", ValidationLevel.ERROR, true);
         timeLimitText = timeLimitTextTransform.GetComponent<TMP_Text>();
         Validate(timeLimitText, "TimeLimitText transform not found!", ValidationLevel.ERROR, true);
+
+
+        
     }
 
-
-    public void UpdateCurrentScore(float score) {
-        scoreText.text = ("Score: " + score);
+    //calling scoreSystem through gameInstance to change the score
+    public void UpdateCurrentScore() {
+        scoreText.text = "Score: " + gameInstanceRef.GetScoreSystem().GetCurrentScore();
     }
 
-    public void UpdateTimeLimit(float timeLimit) {
-        timeLimitText.text = ("Seconds Left: " + timeLimit);
+    //getting the current time limit from calling level from levelmanagment 
+    public void UpdateTimeLimit() {
+        timeLimitText.text = "Seconds Left: " + gameInstanceRef.GetLevelManagement().GetCurrentLoadedLevel().GetCurrentTimeLimit();
     }
 
     public void BrakeOnEvent() {

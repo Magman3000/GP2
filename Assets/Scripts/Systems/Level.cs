@@ -105,6 +105,6 @@ public class Level : Entity {
     }
 
 
-
+    public uint GetCurrentTimeLimit() { return currentTimeLimit; }
     public Vector3 GetSpawnPoint() { return spawnPoint; }
 }
