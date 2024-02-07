@@ -666,6 +666,8 @@ public class GameInstance : MonoBehaviour {
 
     public RoleSelectMenu GetRoleSelectMenu() { return roleSelectMenuScript; }
     public Player GetPlayer() { return playerScript; }
+    
+    public CoordinatorHUD GetCoordinatorHUD() { return coordinatorHUDScript; }
 
 
 

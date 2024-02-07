@@ -135,6 +135,12 @@ public class Daredevil {
         UpdateWheels();
         UpdateGravity();
         UpdateVelocity();
+        
+        UpdatePositionOnServer();
+    }
+
+    private void UpdatePositionOnServer() {
+        gameInstanceRef.GetRPCManagement().SetDaredevilTransformServerRpc(Netcode.GetClientID() ,playerRef.transform.position);
     }
 
 
@@ -170,7 +176,7 @@ public class Daredevil {
             if (dot <= Mathf.Cos(stats.terrainAdjustmentAngle * Mathf.Deg2Rad) || dot >= -Mathf.Cos(stats.terrainAdjustmentAngle * Mathf.Deg2Rad)) { //Not sure fully
 
                 if (IsInBounds(playerRef.GetCapsuleCollider().bounds, raycastHitData.collider.bounds)) {
-                    Log("IS ÍN BOUNDS!");
+                    Log("IS ï¿½N BOUNDS!");
                 }
 
                 playerRef.transform.up = raycastHitData.transform.up;
