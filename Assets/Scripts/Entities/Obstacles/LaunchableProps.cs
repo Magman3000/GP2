@@ -13,7 +13,7 @@ public class LaunchableProps : Obstacle
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("Hit");
-        if(CompareTag("Player"))
+        if(other.CompareTag("Player"))
         {
             Debug.Log("Yeet");
             Vector3 direction = (transform.position - other.transform.position) * launchMultiplier;
