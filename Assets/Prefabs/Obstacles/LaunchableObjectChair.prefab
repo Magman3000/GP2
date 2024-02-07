@@ -148,7 +148,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6532102211805214412, guid: a9568d18a1534db4bae4fa63650fdeba, type: 3}
       propertyPath: m_Name
-      value: DirectorChair_Placeholder
+      value: Mesh
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
