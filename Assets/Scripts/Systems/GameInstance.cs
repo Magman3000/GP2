@@ -645,7 +645,7 @@ public class GameInstance : MonoBehaviour {
         optionsMenu.SetActive(false);
         creditsMenu.SetActive(false);
         levelSelectMenu.SetActive(false);
-        winMenu.SetActive(false);
+        //winMenu.SetActive(false);
         loseMenu.SetActive(false);
         connectionMenu.SetActive(false);
         roleSelectMenu.SetActive(false);

@@ -282,6 +282,9 @@ public class Daredevil {
         //Log(currentSpeed);
     }
     private void UpdateVelocity() {
+        if (!isGrounded)
+            return;
+
         Vector3 velocity = direction * (currentSpeed * Time.deltaTime);
         //velocity.y = playerRigidbody.velocity.y;
         playerRigidbody.velocity = velocity;

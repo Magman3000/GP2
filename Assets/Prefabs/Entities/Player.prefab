@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3501090653
+  GlobalObjectIdHash: 3786494918
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -267,6 +267,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1778107557827191823, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a6e7e6f250cae314c9566353c218d531, type: 2}
     - target: {fileID: 3942716640420179616, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
       propertyPath: m_Mass
       value: 10000
@@ -287,6 +291,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bike
       objectReference: {fileID: 0}
+    - target: {fileID: 4815188865858909361, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a6e7e6f250cae314c9566353c218d531, type: 2}
+    - target: {fileID: 6430997581319169568, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a6e7e6f250cae314c9566353c218d531, type: 2}
+    - target: {fileID: 6771450938175277998, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a6e7e6f250cae314c9566353c218d531, type: 2}
+    - target: {fileID: 6798462996513923497, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a6e7e6f250cae314c9566353c218d531, type: 2}
     - target: {fileID: 8490190432695951907, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
       propertyPath: m_Mass
       value: 10000
@@ -303,6 +323,10 @@ PrefabInstance:
       propertyPath: m_ForceAppPointDistance
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 8948803539845878273, guid: bea0a0d96e2d1e44393eebb689f5a25a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 58c1bb976f71ae242a2f5f193aa6681e, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
