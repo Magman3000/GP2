@@ -22,18 +22,16 @@ public class WinMenu : Entity
 
     private void SetupReferences()
     {
-        //finding the background
-        Transform backgroundTransform = transform.Find("Background");
-        Validate(backgroundTransform, "BackgroundTransform transform not found!", ValidationLevel.ERROR, true);
+
 
         //finding the transform for the score text and then the text component
-        Transform scoreTextTransform = backgroundTransform.transform.Find("Score");
+        Transform scoreTextTransform = transform.Find("Score");
         Validate(scoreTextTransform, "ScoreTransform transform not found!", ValidationLevel.ERROR, true);
         scoreText = scoreTextTransform.GetComponent<TMP_Text>();
         Validate(scoreText, "ScoreTransform transform not found!", ValidationLevel.ERROR, true);
 
         //finding the transform for the time text and then the text component
-        Transform timeLimitTextTransform = backgroundTransform.transform.Find("SecondsLeft");
+        Transform timeLimitTextTransform = transform.Find("SecondsLeft");
         Validate(timeLimitTextTransform, "TimeLimitTransform transform not found!", ValidationLevel.ERROR, true);
         finalTimeText = timeLimitTextTransform.GetComponent<TMP_Text>();
         Validate(finalTimeText, "TimeLimitText transform not found!", ValidationLevel.ERROR, true);
