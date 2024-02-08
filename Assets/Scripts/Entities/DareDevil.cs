@@ -196,7 +196,7 @@ public class Daredevil {
     private void UpdateGroundedState() {
         Vector3 position = playerRef.transform.position;
         Vector3 size = new Vector3(1.0f, 1.0f, 1.0f); //playerRef.GetCapsuleCollider().size;
-        float offset = 0.7f;
+        float offset = 0.85f;
         position.y += offset;
 
 
@@ -204,7 +204,7 @@ public class Daredevil {
         bool results = Physics.BoxCast(position, size / 2, -playerRef.transform.up, playerRef.transform.rotation, offset * 2.0f);
         if (!isGrounded && results)
         {
-            HitStop();
+            //HitStop();
 
             Debug.Log(landingDustParticle);
             if(landingDustParticle != null) //didn't work properly so will check it out on wednesday //Chriss
@@ -283,7 +283,9 @@ public class Daredevil {
     }
     private void UpdateVelocity() {
         if (!isGrounded)
+        {
             return;
+        }
 
         Vector3 velocity = direction * (currentSpeed * Time.deltaTime);
         //velocity.y = playerRigidbody.velocity.y;
@@ -292,7 +294,7 @@ public class Daredevil {
             playerRef.transform.forward = direction;
     }
     private void UpdateDirection() {
-        if (isMoving)
+        if (isGrounded)
             direction = (playerRef.transform.forward + (playerRef.transform.right * stats.driftRate * tiltRate) * GetCurrentSpeedPercentage()).normalized;
         else if (isReversingAndBraking)
             direction = (playerRef.transform.forward + (playerRef.transform.right * stats.driftRate * -tiltRate) * GetCurrentSpeedPercentage()).normalized;
