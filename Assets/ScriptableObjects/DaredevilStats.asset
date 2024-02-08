@@ -30,6 +30,6 @@ MonoBehaviour:
   maxBoostSpeed: 500
   boostAccelerationRate: 300
   boostDecelerationRate: 234
-  gravity: 1000
+  gravity: 0.1
   terrainAdjustmentAngle: 45
   hitStopDuration: 0.1
