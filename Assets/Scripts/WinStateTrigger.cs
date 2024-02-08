@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WinStateTrigger : Entity
+public class WinStateTrigger : MonoBehaviour
 {
     //[SerializeField] GameInstance.GameState gameState = GameInstance.GameState.WIN_MENU;
     public GameObject winMenu;
-    
+    /*
     public override void Initialize(GameInstance game)
     {
         if (initialized)
@@ -18,7 +18,13 @@ public class WinStateTrigger : Entity
         gameInstanceRef = game;
         initialized = true;
     }
-    
+    */
+
+    private void Start()
+    {
+        winMenu = GameObject.Find("WinMenu(Clone)");
+        winMenu.SetActive(false);
+    }
 
     public void OnTriggerEnter(Collider other)
     {
