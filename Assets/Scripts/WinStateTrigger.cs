@@ -6,6 +6,7 @@ public class WinStateTrigger : MonoBehaviour
 {
     //[SerializeField] GameInstance.GameState gameState = GameInstance.GameState.WIN_MENU;
     public GameObject winMenu;
+    public float timer = 0;
     /*
     public override void Initialize(GameInstance game)
     {
@@ -24,6 +25,10 @@ public class WinStateTrigger : MonoBehaviour
     {
         winMenu = GameObject.Find("WinMenu(Clone)");
         winMenu.SetActive(false);
+    }
+    private void Update()
+    {
+        timer += Time.deltaTime;
     }
 
     public void OnTriggerEnter(Collider other)
